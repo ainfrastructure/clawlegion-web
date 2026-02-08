@@ -14,15 +14,13 @@ const globalForStatus = globalThis as unknown as {
 
 if (!globalForStatus.agentStatuses) {
   globalForStatus.agentStatuses = new Map()
-  // Initialize with default online status
-  globalForStatus.agentStatuses.set('SocialChefAI', {
-    status: 'online',
-    lastSeen: new Date().toISOString(),
-  })
-  globalForStatus.agentStatuses.set('SousChef', {
-    status: 'online',
-    lastSeen: new Date().toISOString(),
-  })
+  // Initialize with default online status for current agents
+  for (const agentId of ['jarvis', 'lux', 'archie', 'mason', 'vex', 'scout', 'ralph', 'sven']) {
+    globalForStatus.agentStatuses.set(agentId, {
+      status: 'online',
+      lastSeen: new Date().toISOString(),
+    })
+  }
 }
 
 const agentStatuses = globalForStatus.agentStatuses

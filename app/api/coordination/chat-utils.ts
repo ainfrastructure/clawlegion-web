@@ -31,21 +31,31 @@ export interface ChatRoom {
 // Configure via AGENT_WEBHOOK_<NAME> environment variables (e.g. AGENT_WEBHOOK_JARVIS=http://localhost:18789)
 export const AGENT_WEBHOOKS: Record<string, string> = {
   'jarvis': process.env.AGENT_WEBHOOK_JARVIS || 'http://localhost:18789',
-  'lux': process.env.AGENT_WEBHOOK_LUX || 'http://localhost:18789',
-  'verifier': process.env.AGENT_WEBHOOK_VERIFIER || 'http://localhost:18789',
-  'tester': process.env.AGENT_WEBHOOK_TESTER || 'http://localhost:18789',
-  'socialchefai': process.env.AGENT_WEBHOOK_SOCIALCHEFAI || 'http://localhost:18789',
-  'chef': process.env.AGENT_WEBHOOK_CHEF || 'http://localhost:18789',
+  'lux': process.env.AGENT_WEBHOOK_LUX || 'http://localhost:18796',
+  'archie': process.env.AGENT_WEBHOOK_ARCHIE || 'http://localhost:18790',
+  'mason': process.env.AGENT_WEBHOOK_MASON || 'http://localhost:18791',
+  'vex': process.env.AGENT_WEBHOOK_VEX || 'http://localhost:18792',
+  'scout': process.env.AGENT_WEBHOOK_SCOUT || 'http://localhost:18793',
+  'ralph': process.env.AGENT_WEBHOOK_RALPH || 'http://localhost:18794',
+  'sven': process.env.AGENT_WEBHOOK_SVEN || 'http://localhost:18795',
 }
 
-// Canonical agent names (for self-mention detection)
+// Canonical agent names (for self-mention detection and alias resolution)
 export const AGENT_NAMES: Record<string, string> = {
   'jarvis': 'jarvis',
   'lux': 'lux',
-  'verifier': 'verifier',
-  'tester': 'verifier',
-  'socialchefai': 'jarvis',
-  'chef': 'jarvis',
+  'archie': 'archie',
+  'mason': 'mason',
+  'vex': 'vex',
+  'scout': 'scout',
+  'ralph': 'ralph',
+  'sven': 'sven',
+  // Legacy aliases
+  'verifier': 'vex',
+  'tester': 'vex',
+  'planner': 'archie',
+  'builder': 'mason',
+  'researcher': 'scout',
 }
 
 export async function publishToRedis(message: ChatMessage) {
@@ -96,7 +106,7 @@ export async function notifyMentionedAgents(
     fromAgent?: string
   } = {}
 ) {
-  const mentions = message.content.match(/@(jarvis|lux|verifier|tester|SocialChefAI|Chef|all)/gi)
+  const mentions = message.content.match(/@(jarvis|lux|archie|mason|vex|scout|ralph|sven|verifier|tester|planner|builder|researcher|all)/gi)
   if (!mentions || mentions.length === 0) return
 
   const uniqueAgents = Array.from(new Set(mentions.map(m => m.substring(1).toLowerCase())))

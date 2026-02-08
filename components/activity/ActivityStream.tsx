@@ -20,10 +20,14 @@ interface ActivityItem {
 }
 
 const AGENT_EMOJIS: Record<string, string> = {
-  socialchefai: '🍳',
-  souschef: '🥄',
-  SocialChefAI: '🍳',
-  SousChef: '🥄'
+  jarvis: '🦞',
+  lux: '✨',
+  archie: '🏛️',
+  mason: '🔨',
+  vex: '🧪',
+  scout: '🔭',
+  ralph: '🔄',
+  sven: '👑',
 }
 
 export function ActivityStream() {

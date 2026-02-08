@@ -15,7 +15,7 @@ interface Notification {
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url)
-    const agent = searchParams.get('agent') || 'SousChef'
+    const agent = searchParams.get('agent') || 'jarvis'
 
     // Fetch room messages from Express to find @mentions
     const roomsRes = await fetch(`${API_URL}/api/coordination/rooms`, { cache: 'no-store' })
