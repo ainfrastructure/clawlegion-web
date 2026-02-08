@@ -1,8 +1,8 @@
 'use client'
 
 import { Suspense } from 'react'
-import { useState } from 'react'
-import { signIn } from 'next-auth/react'
+import { useState, useEffect } from 'react'
+import { signIn, useSession } from 'next-auth/react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Bot, Lock, User, AlertCircle, Loader2 } from 'lucide-react'
 
@@ -105,6 +105,19 @@ function LoginForm() {
 }
 
 export default function LoginPage() {
+  const { status } = useSession()
+  const router = useRouter()
+
+  useEffect(() => {
+    if (status === 'authenticated') {
+      router.replace('/dashboard')
+    }
+  }, [status, router])
+
+  if (status === 'authenticated') {
+    return null
+  }
+
   return (
     <div className="min-h-screen bg-slate-950 flex items-center justify-center px-4">
       <div className="w-full max-w-md">

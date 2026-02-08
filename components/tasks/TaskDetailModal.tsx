@@ -13,6 +13,7 @@ import { TaskActivityLog } from './TaskActivityLog'
 import { TaskStatusTimeline } from './TaskStatusTimeline'
 import { TaskHandoffTimeline } from './TaskHandoffTimeline'
 import { AgentAvatar } from '@/components/agents'
+import { formatTimeAgo } from '@/components/common/TimeAgo'
 import { WatchdogStatusBadge } from '@/components/watchdog'
 import { useTaskHealth } from '@/hooks/useWatchdog'
 import { getPriorityConfig, getStatusConfig } from './config'
@@ -104,20 +105,6 @@ function formatDuration(ms: number): string {
   const remainMin = minutes % 60
   if (remainMin === 0) return `${hours}h`
   return `${hours}h ${remainMin}m`
-}
-
-function getRelativeTime(dateString: string): string {
-  const date = new Date(dateString)
-  const now = new Date()
-  const diffMs = now.getTime() - date.getTime()
-  const diffMins = Math.floor(diffMs / 60000)
-  const diffHours = Math.floor(diffMins / 60)
-  const diffDays = Math.floor(diffHours / 24)
-  if (diffMins < 1) return 'just now'
-  if (diffMins < 60) return `${diffMins}m ago`
-  if (diffHours < 24) return `${diffHours}h ago`
-  if (diffDays < 7) return `${diffDays}d ago`
-  return date.toLocaleDateString()
 }
 
 // Lightweight markdown: paragraphs, **bold**, `code`, lists
@@ -591,27 +578,27 @@ export function TaskDetailModal({ taskId, task: initialTask, isOpen, onClose }: 
                         {/* Timestamps */}
                         <MetaField
                           label="Created"
-                          value={task?.createdAt ? getRelativeTime(task.createdAt) : '—'}
+                          value={task?.createdAt ? formatTimeAgo(new Date(task.createdAt)) : '—'}
                           icon={<Calendar className="w-3 h-3" />}
                         />
                         {task?.updatedAt && (
                           <MetaField
                             label="Updated"
-                            value={getRelativeTime(task.updatedAt)}
+                            value={formatTimeAgo(new Date(task.updatedAt))}
                             icon={<Clock className="w-3 h-3" />}
                           />
                         )}
                         {task?.approvedAt && (
                           <MetaField
                             label="Approved"
-                            value={getRelativeTime(task.approvedAt)}
+                            value={formatTimeAgo(new Date(task.approvedAt))}
                             icon={<CheckCircle className="w-3 h-3" />}
                           />
                         )}
                         {task?.verifiedAt && (
                           <MetaField
                             label="Verified"
-                            value={getRelativeTime(task.verifiedAt)}
+                            value={formatTimeAgo(new Date(task.verifiedAt))}
                             icon={<Shield className="w-3 h-3" />}
                           />
                         )}
@@ -708,7 +695,7 @@ export function TaskDetailModal({ taskId, task: initialTask, isOpen, onClose }: 
                             {task.updatedAt && (
                               <p className="text-xs text-slate-500 flex items-center gap-1 mt-0.5">
                                 <Timer className="w-3 h-3" />
-                                Active {getRelativeTime(task.updatedAt)}
+                                Active {formatTimeAgo(new Date(task.updatedAt))}
                               </p>
                             )}
                           </div>
@@ -789,7 +776,7 @@ export function TaskDetailModal({ taskId, task: initialTask, isOpen, onClose }: 
                                 {comment.author}
                               </span>
                               <span className="text-[10px] text-slate-500">
-                                {getRelativeTime(comment.timestamp)}
+                                {formatTimeAgo(new Date(comment.timestamp))}
                               </span>
                               {comment.authorType === 'agent' && (
                                 <span className="text-[9px] px-1.5 py-0.5 bg-blue-500/15 text-blue-400 rounded-full uppercase tracking-wider">

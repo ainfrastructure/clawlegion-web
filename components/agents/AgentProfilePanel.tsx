@@ -24,7 +24,7 @@ import {
   useUpdateAgentConfig,
   useRestartGateway,
 } from '@/hooks/useAgentConfig'
-import { StatusBadge, type AgentStatus } from './StatusBadge'
+import { StatusBadge, type AgentStatus } from '@/components/ui/StatusBadge'
 import { SoulEditorModal } from './SoulEditorModal'
 import { AgentsEditorModal } from './AgentsEditorModal'
 import { getAgentById, getAgentByName } from '@/components/chat-v2/agentConfig'

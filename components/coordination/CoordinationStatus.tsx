@@ -1,10 +1,11 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { 
+import { useState, useCallback } from 'react'
+import {
   Users, MessageSquare, GitBranch, CheckCircle, Clock,
   AlertCircle, Activity, Zap, ArrowRight
 } from 'lucide-react'
+import { usePollingInterval } from '@/hooks/usePollingInterval'
 
 interface CoordinationState {
   activeHandoff: {
@@ -37,35 +38,31 @@ export function CoordinationStatus() {
   })
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    const fetchState = async () => {
-      try {
-        const [messagesRes, agentsRes, tasksRes] = await Promise.all([
-          fetch('/api/coordination/room-messages?roomId=bot-collab').catch(() => null),
-          fetch('/api/agents/status').catch(() => null),
-          fetch('/api/tasks/queue').catch(() => null)
-        ])
+  const fetchState = useCallback(async () => {
+    try {
+      const [messagesRes, agentsRes, tasksRes] = await Promise.all([
+        fetch('/api/coordination/room-messages?roomId=bot-collab').catch(() => null),
+        fetch('/api/agents/status').catch(() => null),
+        fetch('/api/tasks/queue').catch(() => null)
+      ])
 
-        const messages = messagesRes?.ok ? await messagesRes.json() : { messages: [] }
-        const agents = agentsRes?.ok ? await agentsRes.json() : { agents: [] }
-        const tasks = tasksRes?.ok ? await tasksRes.json() : { summary: { queued: 0 } }
+      const messages = messagesRes?.ok ? await messagesRes.json() : { messages: [] }
+      const agents = agentsRes?.ok ? await agentsRes.json() : { agents: [] }
+      const tasks = tasksRes?.ok ? await tasksRes.json() : { summary: { queued: 0 } }
 
-        setState({
-          activeHandoff: null,
-          recentMessages: (messages.messages || []).slice(-5).reverse(),
-          agentStatus: agents.agents || [],
-          taskQueueSize: tasks.summary?.queued || 0
-        })
-      } catch (err) {
-        console.error('Failed to fetch coordination state:', err)
-      }
-      setLoading(false)
+      setState({
+        activeHandoff: null,
+        recentMessages: (messages.messages || []).slice(-5).reverse(),
+        agentStatus: agents.agents || [],
+        taskQueueSize: tasks.summary?.queued || 0
+      })
+    } catch (err) {
+      console.error('Failed to fetch coordination state:', err)
     }
-
-    fetchState()
-    const interval = setInterval(fetchState, 5000)
-    return () => clearInterval(interval)
+    setLoading(false)
   }, [])
+
+  usePollingInterval(fetchState, 5000)
 
   const statusColors = {
     online: 'bg-green-500',

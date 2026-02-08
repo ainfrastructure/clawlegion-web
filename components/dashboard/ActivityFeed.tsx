@@ -1,9 +1,9 @@
 'use client'
 
-import { formatDistanceToNow } from 'date-fns'
-import { 
-  CheckCircle, 
-  Rocket, 
+import { formatTimeAgo } from '@/components/common/TimeAgo'
+import {
+  CheckCircle,
+  Rocket,
   XCircle, 
   ClipboardList, 
   Sparkles, 
@@ -53,14 +53,6 @@ const ACTIVITY_CONFIG: Record<string, { icon: ReactNode; color: string }> = {
   commit_pushed: { icon: <FileText className="w-4 h-4" />, color: 'text-cyan-400' },
   pr_created: { icon: <GitMerge className="w-4 h-4" />, color: 'text-purple-400' },
   pr_merged: { icon: <Star className="w-4 h-4" />, color: 'text-emerald-400' },
-}
-
-function formatTime(timestamp: string): string {
-  try {
-    return formatDistanceToNow(new Date(timestamp), { addSuffix: true })
-  } catch {
-    return 'just now'
-  }
 }
 
 export function ActivityFeed({ activities, isLoading }: ActivityFeedProps) {
@@ -120,7 +112,7 @@ export function ActivityFeed({ activities, isLoading }: ActivityFeedProps) {
                       </div>
                     )}
                     <span className="text-xs text-slate-500">
-                      {formatTime(activity.timestamp)}
+                      {formatTimeAgo(new Date(activity.timestamp))}
                     </span>
                     {activity.sessionName && (
                       <span className="text-xs text-slate-500">

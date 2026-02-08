@@ -1,16 +1,25 @@
 import NextAuth from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 
-// In production, replace with a proper user database
-// Configure users via environment variables or a database
-const VALID_USERS = [
-  { 
-    id: '1', 
-    name: process.env.ADMIN_NAME || 'Admin', 
+// Configure users via environment variables (credentials stay in .env.local, not in code)
+type ValidUser = { id: string; name: string; username: string; email: string; password: string }
+
+const VALID_USERS: ValidUser[] = [
+  {
+    id: '1',
+    name: process.env.ADMIN_NAME || 'Admin',
     username: process.env.ADMIN_USERNAME || 'admin',
     email: process.env.ADMIN_EMAIL || 'admin@example.com',
-    password: process.env.ADMIN_PASSWORD || 'changeme' 
-  }
+    password: process.env.ADMIN_PASSWORD || 'changeme'
+  },
+  // Additional user (only active when env vars are set)
+  ...(process.env.USER2_USERNAME ? [{
+    id: '2',
+    name: process.env.USER2_NAME || process.env.USER2_USERNAME,
+    username: process.env.USER2_USERNAME,
+    email: process.env.USER2_EMAIL || `${process.env.USER2_USERNAME}@example.com`,
+    password: process.env.USER2_PASSWORD || '',
+  }] : []) as ValidUser[],
 ]
 
 if (!process.env.NEXTAUTH_SECRET) {

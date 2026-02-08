@@ -1,11 +1,12 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { 
+import {
   Activity, CheckCircle, AlertCircle, User, MessageSquare,
   Zap, Clock, GitCommit, Play, Pause
 } from 'lucide-react'
 import { AgentAvatar } from '@/components/agents'
+import { formatTimeAgo } from '@/components/common/TimeAgo'
 
 interface ActivityEvent {
   id: string
@@ -90,19 +91,6 @@ export function ActivityTimeline() {
     deployment: 'border-orange-500/30'
   }
 
-  const formatTime = (timestamp: string) => {
-    const date = new Date(timestamp)
-    const now = new Date()
-    const diffMs = now.getTime() - date.getTime()
-    const diffMin = Math.floor(diffMs / 60000)
-    
-    if (diffMin < 1) return 'Just now'
-    if (diffMin < 60) return `${diffMin}m ago`
-    const diffHr = Math.floor(diffMin / 60)
-    if (diffHr < 24) return `${diffHr}h ago`
-    return date.toLocaleDateString()
-  }
-
   return (
     <div className="glass-2 rounded-xl">
       {/* Header */}
@@ -157,7 +145,7 @@ export function ActivityTimeline() {
                 </div>
                 <span className="text-xs text-slate-500 flex items-center gap-1">
                   <Clock className="w-3 h-3" />
-                  {formatTime(event.timestamp)}
+                  {formatTimeAgo(new Date(event.timestamp))}
                 </span>
               </div>
             </div>

@@ -3,36 +3,32 @@
 import Image from 'next/image'
 import { cn } from '@/lib/utils'
 import { Bot } from 'lucide-react'
+import { ALL_AGENTS } from '@/components/chat-v2/agentConfig'
 
-// Agent avatar mapping - paths relative to public folder
-const agentAvatars: Record<string, string> = {
-  jarvis: '/agents/jarvis-lobster.png',
-  lux: '/agents/lux-lobster.png',
-  archie: '/agents/archie-planner.png',
-  mason: '/agents/mason-builder.png',
-  vex: '/agents/vex-verifier.png',
-  scout: '/agents/scout-researcher.png',
+// Derived from canonical agentConfig
+const agentAvatars: Record<string, string> = Object.fromEntries(
+  ALL_AGENTS.map(a => [a.id, a.avatar])
+)
+
+const agentNames: Record<string, string> = Object.fromEntries(
+  ALL_AGENTS.map(a => [a.id, a.name])
+)
+
+// Map hex colors to Tailwind bg classes
+const hexToBgClass: Record<string, string> = {
+  '#DC2626': 'bg-red-600',
+  '#22C55E': 'bg-green-600',
+  '#3B82F6': 'bg-blue-600',
+  '#F59E0B': 'bg-amber-600',
+  '#8B5CF6': 'bg-purple-600',
+  '#06B6D4': 'bg-cyan-600',
+  '#EC4899': 'bg-pink-600',
+  '#9333EA': 'bg-purple-600',
 }
 
-// Agent display names
-const agentNames: Record<string, string> = {
-  jarvis: 'Jarvis',
-  lux: 'Lux',
-  archie: 'Archie',
-  mason: 'Mason',
-  vex: 'Vex',
-  scout: 'Scout',
-}
-
-// Agent colors for fallback
-const agentColors: Record<string, string> = {
-  jarvis: 'bg-blue-600',
-  lux: 'bg-pink-600',
-  archie: 'bg-purple-600',
-  mason: 'bg-amber-600',
-  vex: 'bg-green-600',
-  scout: 'bg-cyan-600',
-}
+const agentColors: Record<string, string> = Object.fromEntries(
+  ALL_AGENTS.map(a => [a.id, hexToBgClass[a.color] ?? 'bg-slate-600'])
+)
 
 const sizeClasses = {
   xs: 'w-5 h-5 text-[10px]',

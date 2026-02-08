@@ -1,40 +1,16 @@
 'use client'
 
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts'
-import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState } from 'react'
 import { NewTaskModal } from '@/components/tasks/NewTaskModal'
 
 /**
  * Global keyboard shortcuts handler component.
- * This component provides app-wide keyboard navigation and actions.
- * 
- * Shortcuts:
- * - g + d: Go to Dashboard
- * - g + t: Go to Tasks
- * - g + a: Go to Agents
- * - g + s: Go to Sessions
- * - g + b: Go to Board
- * - g + r: Go to Repositories
- * - n: Open new task modal
- * - /: Focus search
- * - ?: Show keyboard shortcuts help (handled by KeyboardShortcutsHelp)
+ * All shortcut bindings are now managed by useShortcutConfig and
+ * dispatched through useKeyboardShortcuts dynamically.
  */
 export function GlobalKeyboardShortcuts() {
   const [showNewTaskModal, setShowNewTaskModal] = useState(false)
-  const router = useRouter()
-
-  // Cmd+, → navigate to settings appearance tab
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === ',' && (e.metaKey || e.ctrlKey)) {
-        e.preventDefault()
-        router.push('/settings?tab=appearance')
-      }
-    }
-    document.addEventListener('keydown', handleKeyDown)
-    return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [router])
 
   useKeyboardShortcuts({
     onNewTask: () => setShowNewTaskModal(true),

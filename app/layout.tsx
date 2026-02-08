@@ -3,11 +3,8 @@ import type { Metadata } from 'next'
 import { DM_Sans, JetBrains_Mono } from 'next/font/google'
 import './globals.css'
 import { Providers } from './providers'
-// AgentChat moved to AuthenticatedLayout
-import { CommandPalette } from '@/components/ui/CommandPalette'
+// AgentChat, CommandPalette, KeyboardShortcutsHelp, GlobalKeyboardShortcuts moved to AuthenticatedLayout
 import { ToastProvider } from '@/components/ui/Toast'
-import { KeyboardShortcutsHelp } from '@/components/ui/KeyboardShortcutsHelp'
-import { GlobalKeyboardShortcuts } from '@/components/ui/GlobalKeyboardShortcuts'
 import { AuthenticatedLayout } from '@/components/layout'
 import { SessionProvider } from '@/components/auth'
 import { BuildInfo } from '@/components/BuildInfo'
@@ -58,9 +55,6 @@ export default function RootLayout({
               <AuthenticatedLayout>
                 {children}
               </AuthenticatedLayout>
-              <CommandPalette />
-              <KeyboardShortcutsHelp />
-              <GlobalKeyboardShortcuts />
               <BuildInfo />
             </ToastProvider>
           </Providers>

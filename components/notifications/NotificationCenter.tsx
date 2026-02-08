@@ -1,10 +1,12 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { 
-  Bell, X, Check, CheckCheck, MessageSquare, AlertCircle, 
+import { useState, useEffect, useCallback } from 'react'
+import {
+  Bell, X, Check, CheckCheck, MessageSquare, AlertCircle,
   Info, Zap, User, Clock, Settings, Trash2
 } from 'lucide-react'
+import { formatTimeAgo } from '@/components/common/TimeAgo'
+import { usePollingInterval } from '@/hooks/usePollingInterval'
 
 interface Notification {
   id: string
@@ -22,42 +24,37 @@ export function NotificationCenter() {
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [filter, setFilter] = useState<'all' | 'unread'>('all')
 
-  useEffect(() => {
-    // Fetch notifications from chat rooms for @mentions
-    const fetchNotifications = async () => {
-      try {
-        const res = await fetch('/api/coordination/room-messages?roomId=bot-collab')
-        if (res.ok) {
-          const data = await res.json()
-          // Convert mentions to notifications
-          const mentions = (data.messages || [])
-            .filter((m: any) => 
-              m.content.toLowerCase().includes('@socialchefai') ||
-              m.content.toLowerCase().includes('@all') ||
-              m.content.toLowerCase().includes('@both')
-            )
-            .slice(-10)
-            .map((m: any) => ({
-              id: m.id,
-              type: 'mention' as const,
-              title: `${m.author} mentioned you`,
-              message: m.content.slice(0, 100),
-              read: false, // Would track in real app
-              timestamp: m.timestamp,
-              sender: m.author
-            }))
-          
-          setNotifications(mentions.reverse())
-        }
-      } catch (err) {
-        console.error('Failed to fetch notifications:', err)
-      }
-    }
+  const fetchNotifications = useCallback(async () => {
+    try {
+      const res = await fetch('/api/coordination/room-messages?roomId=bot-collab')
+      if (res.ok) {
+        const data = await res.json()
+        // Convert mentions to notifications
+        const mentions = (data.messages || [])
+          .filter((m: any) =>
+            m.content.toLowerCase().includes('@socialchefai') ||
+            m.content.toLowerCase().includes('@all') ||
+            m.content.toLowerCase().includes('@both')
+          )
+          .slice(-10)
+          .map((m: any) => ({
+            id: m.id,
+            type: 'mention' as const,
+            title: `${m.author} mentioned you`,
+            message: m.content.slice(0, 100),
+            read: false, // Would track in real app
+            timestamp: m.timestamp,
+            sender: m.author
+          }))
 
-    fetchNotifications()
-    const interval = setInterval(fetchNotifications, 10000)
-    return () => clearInterval(interval)
+        setNotifications(mentions.reverse())
+      }
+    } catch (err) {
+      console.error('Failed to fetch notifications:', err)
+    }
   }, [])
+
+  usePollingInterval(fetchNotifications, 10000)
 
   useEffect(() => {
     const handleToggle = () => setIsOpen(prev => !prev)
@@ -101,19 +98,6 @@ export function NotificationCenter() {
     alert: <AlertCircle className="w-4 h-4 text-red-400" />,
     info: <Info className="w-4 h-4 text-blue-400" />,
     success: <Check className="w-4 h-4 text-green-400" />
-  }
-
-  const formatTime = (timestamp: string) => {
-    const date = new Date(timestamp)
-    const now = new Date()
-    const diffMs = now.getTime() - date.getTime()
-    const diffMin = Math.floor(diffMs / 60000)
-    
-    if (diffMin < 1) return 'now'
-    if (diffMin < 60) return `${diffMin}m`
-    const diffHr = Math.floor(diffMin / 60)
-    if (diffHr < 24) return `${diffHr}h`
-    return date.toLocaleDateString()
   }
 
   const filteredNotifications = filter === 'unread' 
@@ -223,7 +207,7 @@ export function NotificationCenter() {
                           {n.title}
                         </p>
                         <span className="text-xs text-slate-500 flex-shrink-0">
-                          {formatTime(n.timestamp)}
+                          {formatTimeAgo(new Date(n.timestamp))}
                         </span>
                       </div>
                       <p className="text-sm text-slate-400 mt-0.5 line-clamp-2">

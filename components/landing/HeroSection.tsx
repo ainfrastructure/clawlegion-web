@@ -1,7 +1,13 @@
-import { Bot, ArrowRight, Play } from 'lucide-react'
+'use client'
+
+import { ArrowRight, Play, Loader2, CheckCircle } from 'lucide-react'
 import { MascotHero } from './MascotHero'
+import { useEarlyAccessForm } from '@/hooks/useEarlyAccessForm'
+import { LAUNCH_CONFIG } from '@/lib/launch-config'
 
 export function HeroSection() {
+  const { email, setEmail, status, errorMessage, handleSubmit } = useEarlyAccessForm('hero')
+
   return (
     <section className="relative min-h-screen flex flex-col items-center justify-center px-4 sm:px-6 pt-24 pb-16 overflow-hidden">
       {/* Background grid */}
@@ -23,12 +29,12 @@ export function HeroSection() {
         </div>
 
         {/* Badge */}
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 mb-8">
+        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/10 border border-amber-500/20 mb-8">
           <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75" />
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500" />
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75" />
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500" />
           </span>
-          <span className="text-sm font-medium text-blue-300">Private Beta — Now Open</span>
+          <span className="text-sm font-medium text-amber-300">{LAUNCH_CONFIG.badgeText}</span>
         </div>
 
         {/* Headline */}
@@ -41,43 +47,68 @@ export function HeroSection() {
         </h1>
 
         {/* Subtitle */}
-        <p className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed">
-          The control plane for autonomous AI agents. Monitor, coordinate, and manage
-          your AI workforce from a single command center.
+        <p className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto mb-6 leading-relaxed">
+          Ship faster with autonomous AI agents. Monitor, coordinate, and scale your entire
+          AI workforce from a single command center.
         </p>
 
-        {/* CTAs */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-          <a
-            href="#early-access"
-            className="px-8 py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-semibold transition-all flex items-center gap-2 shadow-lg shadow-blue-500/25 text-base"
-          >
-            Request Early Access
-            <ArrowRight className="w-5 h-5" />
-          </a>
-          <a
-            href="#demo"
-            className="px-8 py-4 glass-2 hover:bg-white/[0.08] text-white rounded-xl font-semibold transition-all flex items-center gap-2 text-base"
-          >
-            <Play className="w-5 h-5" />
-            Watch Demo
-          </a>
+        {/* Price anchor */}
+        <div className="flex items-center justify-center gap-3 mb-8">
+          <span className="text-slate-500 line-through text-lg">${LAUNCH_CONFIG.originalPrice}/mo</span>
+          <span className="text-3xl font-bold text-white">${LAUNCH_CONFIG.earlyBirdPrice}/mo</span>
+          <span className="px-2.5 py-1 bg-green-500/15 border border-green-500/25 rounded-full text-green-400 text-sm font-medium">
+            Save {LAUNCH_CONFIG.discount}%
+          </span>
         </div>
 
-        {/* Social proof hint */}
-        <div className="mt-12 flex items-center justify-center gap-3 text-sm text-slate-500">
-          <div className="flex -space-x-2">
-            {[...Array(4)].map((_, i) => (
-              <div
-                key={i}
-                className="w-8 h-8 rounded-full bg-slate-700 border-2 border-slate-950 flex items-center justify-center"
-              >
-                <Bot className="w-4 h-4 text-slate-400" />
-              </div>
-            ))}
+        {/* Email form CTA */}
+        {status === 'success' ? (
+          <div className="inline-flex items-center gap-3 px-6 py-4 glass-2 rounded-xl text-green-400 mb-4">
+            <CheckCircle className="w-5 h-5" />
+            <span className="font-medium">You&apos;re on the list! We&apos;ll be in touch.</span>
           </div>
-          <span>Join 50+ teams in the private beta</span>
-        </div>
+        ) : (
+          <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 max-w-lg mx-auto mb-4">
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="you@company.com"
+              required
+              className="flex-1 px-4 py-3.5 glass-2 rounded-xl text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
+            />
+            <button
+              type="submit"
+              disabled={status === 'loading'}
+              className="px-6 py-3.5 bg-blue-600 hover:bg-blue-500 disabled:bg-blue-600/50 text-white rounded-xl font-semibold transition-colors flex items-center justify-center gap-2 shadow-lg shadow-blue-500/25 text-sm whitespace-nowrap shimmer-btn"
+            >
+              {status === 'loading' ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <>
+                  {LAUNCH_CONFIG.ctaText}
+                  <ArrowRight className="w-4 h-4" />
+                </>
+              )}
+            </button>
+          </form>
+        )}
+
+        {status === 'error' && (
+          <p className="text-sm text-red-400 mb-4">{errorMessage}</p>
+        )}
+
+        {/* Microcopy */}
+        <p className="text-xs text-slate-500 mb-4">{LAUNCH_CONFIG.guaranteeText}</p>
+
+        {/* Watch demo link */}
+        <a
+          href="#demo"
+          className="inline-flex items-center gap-2 text-sm text-slate-400 hover:text-white transition-colors"
+        >
+          <Play className="w-4 h-4" />
+          Watch Demo
+        </a>
       </div>
     </section>
   )

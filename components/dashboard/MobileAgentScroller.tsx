@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 import { Bot } from 'lucide-react'
-import { StatusDot, type AgentStatus } from '../agents/StatusBadge'
+import { StatusDot, type AgentStatus } from '@/components/ui/StatusBadge'
 
 // Status can come as various strings from API - we normalize it
 type StatusInput = AgentStatus | 'active' | string

@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { cn } from '@/lib/utils'
 import { ALL_AGENTS, getAgentAvatar, AgentConfig } from './agentConfig'
+import { formatTimeAgo } from '@/components/common/TimeAgo'
 
 interface DMThread {
   id: string
@@ -55,19 +56,6 @@ export function DMList({ selectedAgentId, onSelectAgent, userId = 'default-user'
   const getMessageCount = (agentId: string) => {
     const thread = dmThreads.find(t => t.agentId === agentId)
     return thread?.messageCount || 0
-  }
-
-  // Format relative time
-  const formatTime = (dateStr: string) => {
-    const date = new Date(dateStr)
-    const now = new Date()
-    const diffMs = now.getTime() - date.getTime()
-    const diffMins = Math.floor(diffMs / 60000)
-    
-    if (diffMins < 1) return 'now'
-    if (diffMins < 60) return `${diffMins}m`
-    if (diffMins < 1440) return `${Math.floor(diffMins / 60)}h`
-    return `${Math.floor(diffMins / 1440)}d`
   }
 
   // Get all agents as an array for display
@@ -129,7 +117,7 @@ export function DMList({ selectedAgentId, onSelectAgent, userId = 'default-user'
                 </span>
                 {lastMessage && (
                   <span className="text-xs text-slate-500 flex-shrink-0 ml-2">
-                    {formatTime(lastMessage.createdAt)}
+                    {formatTimeAgo(new Date(lastMessage.createdAt))}
                   </span>
                 )}
               </div>

@@ -25,6 +25,7 @@ import {
 } from 'lucide-react'
 import { AgentAvatar } from '@/components/agents'
 import { getStatusConfig } from './config'
+import { formatTimeAgo } from '@/components/common/TimeAgo'
 
 interface TaskActivity {
   id: string
@@ -53,21 +54,6 @@ const CRITICAL_EVENTS = new Set([
   'routing_failed',
   'subwork_failed',
 ])
-
-function getRelativeTime(dateString: string): string {
-  const date = new Date(dateString)
-  const now = new Date()
-  const diffMs = now.getTime() - date.getTime()
-  const diffMins = Math.floor(diffMs / 60000)
-  const diffHours = Math.floor(diffMins / 60)
-  const diffDays = Math.floor(diffHours / 24)
-
-  if (diffMins < 1) return 'just now'
-  if (diffMins < 60) return `${diffMins}m ago`
-  if (diffHours < 24) return `${diffHours}h ago`
-  if (diffDays < 7) return `${diffDays}d ago`
-  return date.toLocaleDateString()
-}
 
 function getDateGroupLabel(dateString: string): string {
   const date = new Date(dateString)
@@ -324,7 +310,7 @@ export function TaskActivityLog({ activities, isLoading }: TaskActivityLogProps)
 
                       {/* Timestamp */}
                       <div className="text-[10px] text-slate-500 mt-1">
-                        {getRelativeTime(activity.timestamp)}
+                        {formatTimeAgo(new Date(activity.timestamp))}
                         <span className="mx-1">&middot;</span>
                         {new Date(activity.timestamp).toLocaleTimeString('en-US', {
                           hour: '2-digit',

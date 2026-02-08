@@ -11,9 +11,10 @@ import {
   ChevronUp,
   AlertTriangle
 } from 'lucide-react'
-import { WatchdogStatusBadge, WatchdogStatus } from './WatchdogStatusBadge'
+import { WatchdogStatusBadge, type WatchdogStatus } from '@/components/ui/StatusBadge'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import api from '@/lib/api'
+import { formatTimeAgo } from '@/components/common/TimeAgo'
 
 interface TaskHealth {
   taskId: string
@@ -45,12 +46,6 @@ function formatDuration(ms: number | null): string {
   if (hours > 0) return `${hours}h ${minutes % 60}m`
   if (minutes > 0) return `${minutes}m ${seconds % 60}s`
   return `${seconds}s`
-}
-
-function formatTimeAgo(dateStr: string | null): string {
-  if (!dateStr) return 'Never'
-  const diff = Date.now() - new Date(dateStr).getTime()
-  return formatDuration(diff) + ' ago'
 }
 
 export function TaskHealthTable({ tasks, isLoading }: TaskHealthTableProps) {
@@ -175,7 +170,7 @@ export function TaskHealthTable({ tasks, isLoading }: TaskHealthTableProps) {
                   <WatchdogStatusBadge status={task.watchdogStatus} pulse={task.watchdogStatus !== 'healthy'} />
                 </td>
                 <td className="px-4 py-3 text-sm text-slate-400">
-                  {formatTimeAgo(task.lastHeartbeat)}
+                  {task.lastHeartbeat ? formatTimeAgo(new Date(task.lastHeartbeat)) : 'Never'}
                   {task.missedHeartbeats > 0 && (
                     <span className="ml-2 text-xs text-yellow-400">
                       ({task.missedHeartbeats} missed)
@@ -250,7 +245,7 @@ export function TaskHealthTable({ tasks, isLoading }: TaskHealthTableProps) {
             <div className="grid grid-cols-2 gap-2 text-sm mb-3">
               <div>
                 <span className="text-slate-500">Last heartbeat:</span>
-                <span className="ml-1 text-slate-300">{formatTimeAgo(task.lastHeartbeat)}</span>
+                <span className="ml-1 text-slate-300">{task.lastHeartbeat ? formatTimeAgo(new Date(task.lastHeartbeat)) : 'Never'}</span>
               </div>
               <div>
                 <span className="text-slate-500">Running:</span>

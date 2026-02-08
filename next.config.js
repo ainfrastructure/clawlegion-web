@@ -4,6 +4,7 @@ const backendUrl = `http://localhost:${backendPort}`
 const clawdbotUrl = process.env.CLAWDBOT_URL || 'http://localhost:18789'
 
 const nextConfig = {
+  devIndicators: false,
   eslint: { ignoreDuringBuilds: true },
   reactStrictMode: true,
   async redirects() {

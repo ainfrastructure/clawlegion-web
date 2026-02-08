@@ -2,10 +2,11 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import { 
-  Search, Home, LayoutDashboard, ListTodo, Users, Settings, 
+import {
+  Search, Home, LayoutDashboard, ListTodo, Users, Settings,
   MessageSquare, Bell, GitBranch, Zap, Command
 } from 'lucide-react'
+import { useShortcutConfig } from '@/hooks/useShortcutConfig'
 
 interface CommandItem {
   id: string
@@ -23,6 +24,7 @@ export function CommandPalette() {
   const [selectedIndex, setSelectedIndex] = useState(0)
   const inputRef = useRef<HTMLInputElement>(null)
   const router = useRouter()
+  const { getBinding, enabled } = useShortcutConfig()
 
   const commands: CommandItem[] = [
     {
@@ -31,7 +33,7 @@ export function CommandPalette() {
       icon: <Home className="w-4 h-4" />,
       action: () => router.push('/'),
       keywords: ['home', 'start'],
-      shortcut: 'G H'
+      shortcut: getBinding('go-home').currentDisplay,
     },
     {
       id: 'dashboard',
@@ -39,7 +41,7 @@ export function CommandPalette() {
       icon: <LayoutDashboard className="w-4 h-4" />,
       action: () => router.push('/dashboard'),
       keywords: ['dashboard', 'main', 'overview'],
-      shortcut: 'G D'
+      shortcut: getBinding('go-dashboard').currentDisplay,
     },
     {
       id: 'tasks',
@@ -47,7 +49,7 @@ export function CommandPalette() {
       icon: <ListTodo className="w-4 h-4" />,
       action: () => router.push('/tasks'),
       keywords: ['tasks', 'kanban', 'board', 'todo'],
-      shortcut: 'G T'
+      shortcut: getBinding('go-tasks').currentDisplay,
     },
     {
       id: 'agents',
@@ -55,7 +57,7 @@ export function CommandPalette() {
       icon: <Users className="w-4 h-4" />,
       action: () => router.push('/agents'),
       keywords: ['agents', 'bots', 'workers'],
-      shortcut: 'G A'
+      shortcut: getBinding('go-agents').currentDisplay,
     },
     {
       id: 'sessions',
@@ -63,7 +65,7 @@ export function CommandPalette() {
       icon: <GitBranch className="w-4 h-4" />,
       action: () => router.push('/sessions'),
       keywords: ['sessions', 'runs', 'executions'],
-      shortcut: 'G S'
+      shortcut: getBinding('go-sessions').currentDisplay,
     },
     {
       id: 'chat',
@@ -72,7 +74,7 @@ export function CommandPalette() {
       icon: <MessageSquare className="w-4 h-4" />,
       action: () => document.dispatchEvent(new CustomEvent('toggle-chat')),
       keywords: ['chat', 'message', 'talk'],
-      shortcut: 'C'
+      shortcut: getBinding('chat').currentDisplay,
     },
     {
       id: 'notifications',
@@ -80,7 +82,7 @@ export function CommandPalette() {
       icon: <Bell className="w-4 h-4" />,
       action: () => document.dispatchEvent(new CustomEvent('toggle-notifications')),
       keywords: ['notifications', 'alerts', 'updates'],
-      shortcut: 'N'
+      shortcut: getBinding('new-task').currentDisplay,
     },
     {
       id: 'quick-task',
@@ -89,7 +91,7 @@ export function CommandPalette() {
       icon: <Zap className="w-4 h-4" />,
       action: () => document.dispatchEvent(new CustomEvent('create-task')),
       keywords: ['create', 'new', 'task', 'add'],
-      shortcut: 'T'
+      shortcut: getBinding('quick-task').currentDisplay,
     },
     {
       id: 'settings',
@@ -97,7 +99,7 @@ export function CommandPalette() {
       icon: <Settings className="w-4 h-4" />,
       action: () => router.push('/settings'),
       keywords: ['settings', 'preferences', 'config'],
-      shortcut: ','
+      shortcut: getBinding('settings').currentDisplay,
     }
   ]
 
@@ -114,7 +116,7 @@ export function CommandPalette() {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       // Cmd/Ctrl + K to open
-      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k' && enabled) {
         e.preventDefault()
         setIsOpen(prev => !prev)
         setSearch('')

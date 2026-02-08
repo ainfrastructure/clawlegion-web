@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
+import { usePollingInterval } from '@/hooks/usePollingInterval'
 import { Bot, Activity, Clock, CheckCircle, Circle, Loader2 } from 'lucide-react'
 
 interface Agent {
@@ -71,43 +72,39 @@ export function AgentStatusPanel({ compact = false }: AgentStatusPanelProps) {
   const [summary, setSummary] = useState({ total: 0, online: 0, busy: 0, idle: 0, offline: 0 })
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    const fetchAgents = async () => {
-      try {
-        const res = await fetch('/api/agents?includeOffline=true')
-        if (res.ok) {
-          const data = await res.json()
-          const rawList = data.agents || []
-          // Normalize backend fields to match component's Agent interface
-          const agentList: Agent[] = rawList.map((a: any) => ({
-            id: a.id,
-            name: a.name,
-            emoji: a.emoji || '🤖',
-            role: a.role || a.type || 'worker',
-            status: a.status || 'offline',
-            lastSeen: a.lastActiveAt || a.lastSeen || new Date().toISOString(),
-            currentTask: a.currentTask || a.currentTaskId,
-            tasksCompleted: a.stats?.tasksCompleted ?? a.tasksCompleted ?? 0,
-            avgResponseTime: a.stats?.avgDuration ? a.stats.avgDuration / 1000 : (a.avgResponseTime ?? 0),
-            activityHistory: a.activityHistory,
-          }))
-          setAgents(agentList)
-          const online = agentList.filter(a => a.status === 'online').length
-          const busy = agentList.filter(a => a.status === 'busy').length
-          const idle = agentList.filter(a => a.status === 'idle').length
-          const offline = agentList.filter(a => a.status === 'offline').length
-          setSummary({ total: agentList.length, online, busy, idle, offline })
-        }
-      } catch (err) {
-        console.error('Failed to fetch agents:', err)
+  const fetchAgents = async () => {
+    try {
+      const res = await fetch('/api/agents?includeOffline=true')
+      if (res.ok) {
+        const data = await res.json()
+        const rawList = data.agents || []
+        // Normalize backend fields to match component's Agent interface
+        const agentList: Agent[] = rawList.map((a: any) => ({
+          id: a.id,
+          name: a.name,
+          emoji: a.emoji || '🤖',
+          role: a.role || a.type || 'worker',
+          status: a.status || 'offline',
+          lastSeen: a.lastActiveAt || a.lastSeen || new Date().toISOString(),
+          currentTask: a.currentTask || a.currentTaskId,
+          tasksCompleted: a.stats?.tasksCompleted ?? a.tasksCompleted ?? 0,
+          avgResponseTime: a.stats?.avgDuration ? a.stats.avgDuration / 1000 : (a.avgResponseTime ?? 0),
+          activityHistory: a.activityHistory,
+        }))
+        setAgents(agentList)
+        const online = agentList.filter(a => a.status === 'online').length
+        const busy = agentList.filter(a => a.status === 'busy').length
+        const idle = agentList.filter(a => a.status === 'idle').length
+        const offline = agentList.filter(a => a.status === 'offline').length
+        setSummary({ total: agentList.length, online, busy, idle, offline })
       }
-      setLoading(false)
+    } catch (err) {
+      console.error('Failed to fetch agents:', err)
     }
+    setLoading(false)
+  }
 
-    fetchAgents()
-    const interval = setInterval(fetchAgents, 5000)
-    return () => clearInterval(interval)
-  }, [])
+  usePollingInterval(fetchAgents, 5000)
 
   const statusColors = {
     online: 'bg-green-500',

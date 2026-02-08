@@ -10,6 +10,7 @@ import {
   IntegrationsTab,
   AgentDefaultsTab,
   AppearanceTab,
+  KeyboardShortcutsTab,
   DangerZoneTab,
 } from '@/components/settings'
 
@@ -38,6 +39,7 @@ function SettingsContent() {
         {activeTab === 'integrations' && <IntegrationsTab />}
         {activeTab === 'agents' && <AgentDefaultsTab />}
         {activeTab === 'appearance' && <AppearanceTab />}
+        {activeTab === 'keyboard-shortcuts' && <KeyboardShortcutsTab />}
         {activeTab === 'danger-zone' && <DangerZoneTab />}
       </SettingsTabs>
     </PageContainer>

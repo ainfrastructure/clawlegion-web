@@ -3,8 +3,14 @@
 import { useState, useEffect } from 'react'
 import { Menu, X } from 'lucide-react'
 import { MascotIcon } from './MascotIcon'
+import { LAUNCH_CONFIG } from '@/lib/launch-config'
 
-export function LandingNav() {
+type LandingNavProps = {
+  bannerVisible?: boolean
+  onContactClick?: () => void
+}
+
+export function LandingNav({ bannerVisible = false, onContactClick }: LandingNavProps) {
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
 
@@ -16,12 +22,16 @@ export function LandingNav() {
 
   const navLinks = [
     { href: '#features', label: 'Features' },
+    { href: '#pricing', label: 'Pricing' },
     { href: '#demo', label: 'Demo' },
+    { label: 'Contact', action: 'contact' as const },
   ]
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      className={`fixed left-0 right-0 z-50 transition-all duration-300 ${
+        bannerVisible ? 'top-[41px]' : 'top-0'
+      } ${
         scrolled
           ? 'glass-2 border-b border-white/[0.06]'
           : 'bg-transparent'
@@ -37,20 +47,30 @@ export function LandingNav() {
 
           {/* Desktop links */}
           <div className="hidden md:flex items-center gap-8">
-            {navLinks.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                className="text-sm text-slate-400 hover:text-white transition-colors"
-              >
-                {link.label}
-              </a>
-            ))}
+            {navLinks.map((link) =>
+              'action' in link ? (
+                <button
+                  key={link.label}
+                  onClick={onContactClick}
+                  className="text-sm text-slate-400 hover:text-white transition-colors"
+                >
+                  {link.label}
+                </button>
+              ) : (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  className="text-sm text-slate-400 hover:text-white transition-colors"
+                >
+                  {link.label}
+                </a>
+              )
+            )}
             <a
-              href="#early-access"
-              className="px-5 py-2 bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold rounded-lg transition-colors shadow-lg shadow-blue-500/25"
+              href="#pricing"
+              className="px-5 py-2 bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold rounded-lg transition-colors shadow-lg shadow-blue-500/25 shimmer-btn"
             >
-              Get Early Access
+              {LAUNCH_CONFIG.navCtaText}
             </a>
           </div>
 
@@ -66,22 +86,32 @@ export function LandingNav() {
         {/* Mobile dropdown */}
         {menuOpen && (
           <div className="md:hidden glass-2 rounded-xl mt-2 mb-4 p-4 space-y-3">
-            {navLinks.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                onClick={() => setMenuOpen(false)}
-                className="block text-sm text-slate-400 hover:text-white transition-colors py-2"
-              >
-                {link.label}
-              </a>
-            ))}
+            {navLinks.map((link) =>
+              'action' in link ? (
+                <button
+                  key={link.label}
+                  onClick={() => { setMenuOpen(false); onContactClick?.() }}
+                  className="block text-sm text-slate-400 hover:text-white transition-colors py-2 w-full text-left"
+                >
+                  {link.label}
+                </button>
+              ) : (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setMenuOpen(false)}
+                  className="block text-sm text-slate-400 hover:text-white transition-colors py-2"
+                >
+                  {link.label}
+                </a>
+              )
+            )}
             <a
-              href="#early-access"
+              href="#pricing"
               onClick={() => setMenuOpen(false)}
-              className="block text-center px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold rounded-lg transition-colors"
+              className="block text-center px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold rounded-lg transition-colors shimmer-btn"
             >
-              Get Early Access
+              {LAUNCH_CONFIG.navCtaText}
             </a>
           </div>
         )}

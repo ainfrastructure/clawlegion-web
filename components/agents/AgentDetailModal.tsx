@@ -3,7 +3,7 @@
 import Image from 'next/image'
 import { Bot, Settings, Zap } from 'lucide-react'
 import { Modal } from '@/components/ui/Modal'
-import { StatusBadge, type AgentStatus } from './StatusBadge'
+import { StatusBadge, type AgentStatus } from '@/components/ui/StatusBadge'
 import { ReachabilityIndicator } from './ReachabilityIndicator'
 import { getAgentById, getAgentByName } from '@/components/chat-v2/agentConfig'
 

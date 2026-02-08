@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 import { Bot, MoreVertical, Pause, Settings, CheckCircle2, Clock } from 'lucide-react'
-import { StatusBadge, StatusDot, type AgentStatus } from './StatusBadge'
+import { StatusBadge, StatusDot, type AgentStatus } from '@/components/ui/StatusBadge'
 import { ReachabilityIndicator, ReachabilityDot } from './ReachabilityIndicator'
 
 export interface AgentData {

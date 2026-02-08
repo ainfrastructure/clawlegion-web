@@ -2,49 +2,15 @@
 
 import { useState, useEffect } from 'react'
 import { X, Keyboard, Command } from 'lucide-react'
-
-interface Shortcut {
-  key: string
-  description: string
-  category: string
-}
-
-const shortcuts: Shortcut[] = [
-  // Navigation
-  { key: '⌘ K', description: 'Open command palette / search', category: 'Navigation' },
-  { key: 'G D', description: 'Go to Dashboard', category: 'Navigation' },
-  { key: 'G T', description: 'Go to Tasks', category: 'Navigation' },
-  { key: 'G A', description: 'Go to Agents', category: 'Navigation' },
-  { key: 'G S', description: 'Go to Sessions', category: 'Navigation' },
-  { key: 'G B', description: 'Go to Board (Kanban)', category: 'Navigation' },
-  { key: 'G R', description: 'Go to Repositories', category: 'Navigation' },
-  
-  // Actions
-  { key: 'N', description: 'Create new task', category: 'Actions' },
-  { key: 'T', description: 'Create quick task (inline)', category: 'Actions' },
-  { key: 'E', description: 'Edit selected item', category: 'Actions' },
-  { key: 'C', description: 'Open chat panel', category: 'Actions' },
-  { key: '?', description: 'Show this help', category: 'Actions' },
-  
-  // Task Management
-  { key: 'X', description: 'Mark task complete', category: 'Task Management' },
-  { key: 'P', description: 'Change priority', category: 'Task Management' },
-  { key: 'A', description: 'Assign task', category: 'Task Management' },
-  { key: 'Delete', description: 'Delete selected task', category: 'Task Management' },
-  
-  // General
-  { key: 'Esc', description: 'Close modal/panel', category: 'General' },
-  { key: '↑ ↓', description: 'Navigate lists', category: 'General' },
-  { key: 'J / K', description: 'Next/Previous item', category: 'General' },
-  { key: 'Enter', description: 'Select/Open item', category: 'General' },
-  { key: '/', description: 'Focus search', category: 'General' },
-]
+import { useShortcutConfig } from '@/hooks/useShortcutConfig'
 
 export function KeyboardShortcutsHelp() {
   const [isOpen, setIsOpen] = useState(false)
+  const { getAllBindings, enabled } = useShortcutConfig()
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      if (!enabled) return
       if (e.key === '?' && !e.metaKey && !e.ctrlKey &&
           !(e.target instanceof HTMLInputElement) &&
           !(e.target instanceof HTMLTextAreaElement)) {
@@ -58,16 +24,17 @@ export function KeyboardShortcutsHelp() {
 
     document.addEventListener('keydown', handleKeyDown)
     return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [isOpen])
+  }, [isOpen, enabled])
 
   if (!isOpen) return null
 
-  const categories = [...new Set(shortcuts.map(s => s.category))]
+  const bindings = getAllBindings()
+  const categories = [...new Set(bindings.map(b => b.category))]
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       {/* Backdrop */}
-      <div 
+      <div
         className="absolute inset-0 bg-black/50 backdrop-blur-sm"
         onClick={() => setIsOpen(false)}
       />
@@ -80,7 +47,7 @@ export function KeyboardShortcutsHelp() {
             <Keyboard className="w-5 h-5 text-slate-400" />
             <h2 className="font-semibold">Keyboard Shortcuts</h2>
           </div>
-          <button 
+          <button
             onClick={() => setIsOpen(false)}
             className="text-slate-400 hover:text-white"
           >
@@ -96,16 +63,16 @@ export function KeyboardShortcutsHelp() {
                 {category}
               </h3>
               <div className="space-y-1">
-                {shortcuts
-                  .filter(s => s.category === category)
-                  .map(shortcut => (
-                    <div 
-                      key={shortcut.key}
+                {bindings
+                  .filter(b => b.category === category)
+                  .map(binding => (
+                    <div
+                      key={binding.id}
                       className="flex items-center justify-between py-1.5"
                     >
-                      <span className="text-sm text-slate-300">{shortcut.description}</span>
-                      <kbd className="px-2 py-1 bg-slate-800 border border-white/[0.06] rounded text-xs font-mono">
-                        {shortcut.key}
+                      <span className="text-sm text-slate-300">{binding.description}</span>
+                      <kbd className={`px-2 py-1 bg-slate-800 border border-white/[0.06] rounded text-xs font-mono ${binding.isCustom ? 'text-blue-400 border-blue-500/30' : ''}`}>
+                        {binding.currentDisplay}
                       </kbd>
                     </div>
                   ))

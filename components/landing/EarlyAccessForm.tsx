@@ -1,42 +1,12 @@
 'use client'
 
-import { useState } from 'react'
 import { ArrowRight, CheckCircle, Loader2 } from 'lucide-react'
+import { CountdownTimer } from './CountdownTimer'
+import { useEarlyAccessForm } from '@/hooks/useEarlyAccessForm'
+import { LAUNCH_CONFIG } from '@/lib/launch-config'
 
 export function EarlyAccessForm() {
-  const [email, setEmail] = useState('')
-  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
-  const [errorMessage, setErrorMessage] = useState('')
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!email || status === 'loading') return
-
-    setStatus('loading')
-    setErrorMessage('')
-
-    try {
-      const res = await fetch('/api/early-access', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
-      })
-
-      const data = await res.json()
-
-      if (!res.ok) {
-        setStatus('error')
-        setErrorMessage(data.error || 'Something went wrong. Please try again.')
-        return
-      }
-
-      setStatus('success')
-      setEmail('')
-    } catch {
-      setStatus('error')
-      setErrorMessage('Network error. Please try again.')
-    }
-  }
+  const { email, setEmail, status, errorMessage, handleSubmit } = useEarlyAccessForm('footer')
 
   return (
     <section id="early-access" className="relative px-4 sm:px-6 py-24 overflow-hidden">
@@ -47,11 +17,18 @@ export function EarlyAccessForm() {
 
       <div className="relative z-10 max-w-2xl mx-auto text-center">
         <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4 tracking-tight">
-          Join the Private Beta
+          Don&apos;t Miss the Founder Price
         </h2>
-        <p className="text-lg text-slate-400 mb-10">
-          Be among the first to command your own AI fleet. Early access is free.
+        <p className="text-lg text-slate-400 mb-4">
+          Lock in ${LAUNCH_CONFIG.earlyBirdPrice}/mo forever — this price won&apos;t last.
+          Join now and keep your founder rate even as we add features and raise pricing.
         </p>
+
+        {/* Compact countdown */}
+        <div className="flex items-center justify-center gap-2 text-sm text-slate-400 mb-8">
+          <span>Offer ends in:</span>
+          <CountdownTimer variant="compact" />
+        </div>
 
         {status === 'success' ? (
           <div className="inline-flex items-center gap-3 px-6 py-4 glass-2 rounded-xl text-green-400">
@@ -71,13 +48,13 @@ export function EarlyAccessForm() {
             <button
               type="submit"
               disabled={status === 'loading'}
-              className="px-6 py-3 bg-blue-600 hover:bg-blue-500 disabled:bg-blue-600/50 text-white rounded-xl font-semibold transition-colors flex items-center justify-center gap-2 shadow-lg shadow-blue-500/25 text-sm whitespace-nowrap"
+              className="px-6 py-3 bg-blue-600 hover:bg-blue-500 disabled:bg-blue-600/50 text-white rounded-xl font-semibold transition-colors flex items-center justify-center gap-2 shadow-lg shadow-blue-500/25 text-sm whitespace-nowrap shimmer-btn"
             >
               {status === 'loading' ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
               ) : (
                 <>
-                  Request Access
+                  {LAUNCH_CONFIG.ctaText}
                   <ArrowRight className="w-4 h-4" />
                 </>
               )}
@@ -88,6 +65,9 @@ export function EarlyAccessForm() {
         {status === 'error' && (
           <p className="mt-3 text-sm text-red-400">{errorMessage}</p>
         )}
+
+        {/* Trust microcopy */}
+        <p className="mt-4 text-xs text-slate-500">{LAUNCH_CONFIG.guaranteeText}</p>
       </div>
     </section>
   )

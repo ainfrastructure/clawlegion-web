@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 import { Bot, Wifi, WifiOff } from 'lucide-react'
-import { StatusDot, type AgentStatus } from './StatusBadge'
+import { StatusDot, type AgentStatus } from '@/components/ui/StatusBadge'
 import { getAgentById, getAgentByName, type AgentConfig as EnrichedAgent } from '@/components/chat-v2/agentConfig'
 
 type FleetAgentData = {

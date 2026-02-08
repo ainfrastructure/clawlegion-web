@@ -35,11 +35,11 @@ export default function VerificationPage() {
 
   const { data, isLoading, refetch } = useQuery({
     queryKey: ['verification'],
-    queryFn: () => api.get('/verification/reports').then(r => r.data).catch(() => ({ reports: [], summary: { passed: 0, failed: 0, total: 0 } })),
+    queryFn: () => api.get('/frontend-verifier/status').then(r => r.data).catch(() => ({ reports: [], summary: { passed: 0, failed: 0, total: 0 } })),
   })
 
   const runMutation = useMutation({
-    mutationFn: () => api.post('/verification/run'),
+    mutationFn: () => api.post('/frontend-verifier/run'),
     onSuccess: () => refetch(),
   })
 

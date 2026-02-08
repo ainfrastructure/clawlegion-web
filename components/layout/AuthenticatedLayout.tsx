@@ -12,6 +12,9 @@ import { MobileDrawer } from './MobileDrawer'
 import { useMobile } from '@/hooks/useMobile'
 import { Breadcrumbs } from '@/components/ui'
 import { PresenceDots } from '@/components/agents/PresenceIndicator'
+import { CommandPalette } from '@/components/ui/CommandPalette'
+import { KeyboardShortcutsHelp } from '@/components/ui/KeyboardShortcutsHelp'
+import { GlobalKeyboardShortcuts } from '@/components/ui/GlobalKeyboardShortcuts'
 import { Bell } from 'lucide-react'
 
 function LiveClock() {
@@ -41,14 +44,32 @@ export function AuthenticatedLayout({ children }: { children: React.ReactNode })
   const [drawerOpen, setDrawerOpen] = useState(false)
 
   // Don't show sidebar/chrome on public pages
-  const isPublicPage = pathname === '/login' || pathname === '/'
-  // Check if user is authenticated
-  const isAuthenticated = status === "authenticated"
+  const isPublicPage = pathname === '/login' || pathname === '/' || pathname === '/auth/error'
 
   if (isPublicPage) {
-    // Minimal layout - just the content
     return <>{children}</>
   }
+
+  // Auth guard for protected pages
+  if (status === 'loading') {
+    return (
+      <div className="min-h-screen ambient-bg flex items-center justify-center">
+        <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+      </div>
+    )
+  }
+
+  if (status === 'unauthenticated') {
+    return null
+  }
+
+  const overlays = (
+    <>
+      <CommandPalette />
+      <KeyboardShortcutsHelp />
+      <GlobalKeyboardShortcuts />
+    </>
+  )
 
   // Mobile layout
   if (isMobile) {
@@ -72,6 +93,7 @@ export function AuthenticatedLayout({ children }: { children: React.ReactNode })
           {/* Bottom navigation */}
           <MobileNav />
         </div>
+        {overlays}
       </SidebarProvider>
     )
   }
@@ -103,6 +125,7 @@ export function AuthenticatedLayout({ children }: { children: React.ReactNode })
         )}
         {children}
       </MainContent>
+      {overlays}
     </SidebarProvider>
   )
 }

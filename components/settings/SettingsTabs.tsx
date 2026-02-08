@@ -1,15 +1,16 @@
 'use client'
 
 import { ReactNode } from 'react'
-import { Key, Plug, Bot, Paintbrush, AlertTriangle } from 'lucide-react'
+import { Key, Plug, Bot, Paintbrush, Keyboard, AlertTriangle } from 'lucide-react'
 
-export type SettingsTab = 'api-keys' | 'integrations' | 'agents' | 'appearance' | 'danger-zone'
+export type SettingsTab = 'api-keys' | 'integrations' | 'agents' | 'appearance' | 'keyboard-shortcuts' | 'danger-zone'
 
 const tabs: { id: SettingsTab; label: string; icon: ReactNode; color: string }[] = [
   { id: 'api-keys', label: 'API Keys', icon: <Key size={18} />, color: 'text-amber-400' },
   { id: 'integrations', label: 'Integrations', icon: <Plug size={18} />, color: 'text-blue-400' },
   { id: 'agents', label: 'Agent Defaults', icon: <Bot size={18} />, color: 'text-purple-400' },
   { id: 'appearance', label: 'Appearance', icon: <Paintbrush size={18} />, color: 'text-pink-400' },
+  { id: 'keyboard-shortcuts', label: 'Shortcuts', icon: <Keyboard size={18} />, color: 'text-green-400' },
   { id: 'danger-zone', label: 'Danger Zone', icon: <AlertTriangle size={18} />, color: 'text-red-400' },
 ]
 

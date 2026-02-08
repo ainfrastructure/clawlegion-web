@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { usePollingInterval } from '@/hooks/usePollingInterval';
 
 interface AgentTask {
   id: string;
@@ -39,13 +40,11 @@ export function AgentControlPanel({ className = '' }: AgentControlPanelProps) {
     }
   }, []);
 
+  // Polling fallback when SSE is not active
+  usePollingInterval(fetchAgents, 5000, !useSSE);
+
   useEffect(() => {
-    if (!useSSE) {
-      // Polling fallback
-      fetchAgents();
-      const interval = setInterval(fetchAgents, 5000);
-      return () => clearInterval(interval);
-    }
+    if (!useSSE) return;
 
     // SSE connection
     const eventSource = new EventSource('/api/agents/stream?format=sse');

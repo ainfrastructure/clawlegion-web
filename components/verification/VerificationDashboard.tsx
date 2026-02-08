@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useCallback } from 'react'
+import { usePollingInterval } from '@/hooks/usePollingInterval'
 import { 
   ShieldCheck, AlertTriangle, CheckCircle2, XCircle, 
   RefreshCw, TrendingUp, Activity, Eye, Loader2
@@ -53,11 +54,7 @@ export function VerificationDashboard() {
     finally { setLoading(false) }
   }, [])
 
-  useEffect(() => {
-    fetchData()
-    const interval = setInterval(fetchData, 30000)
-    return () => clearInterval(interval)
-  }, [fetchData])
+  usePollingInterval(fetchData, 30000)
 
   const runVerification = async () => {
     setRunning(true)

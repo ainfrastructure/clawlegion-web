@@ -1,8 +1,10 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
+import { usePollingInterval } from '@/hooks/usePollingInterval'
 import { cn } from '@/lib/utils'
 import { Activity, Play, Pause, RefreshCw, MessageSquare, CheckCircle2, AlertCircle } from 'lucide-react'
+import { formatTimeAgo } from '@/components/common/TimeAgo'
 
 interface AgentStatus {
   id: string
@@ -39,26 +41,22 @@ export function AgentControlPanel() {
   const [loading, setLoading] = useState(false)
 
   // Poll for updates
-  useEffect(() => {
-    const fetchAgents = async () => {
-      try {
-        const res = await fetch('/api/tasks/stats')
-        if (res.ok) {
-          const data = await res.json()
-          setAgents(prev => prev.map(agent => ({
-            ...agent,
-            tasksCompleted: data.byAssignee?.[agent.id] || agent.tasksCompleted
-          })))
-        }
-      } catch (err) {
-        console.error('Failed to fetch agent stats:', err)
+  const fetchAgents = async () => {
+    try {
+      const res = await fetch('/api/tasks/stats')
+      if (res.ok) {
+        const data = await res.json()
+        setAgents(prev => prev.map(agent => ({
+          ...agent,
+          tasksCompleted: data.byAssignee?.[agent.id] || agent.tasksCompleted
+        })))
       }
+    } catch (err) {
+      console.error('Failed to fetch agent stats:', err)
     }
-    
-    fetchAgents()
-    const interval = setInterval(fetchAgents, 10000)
-    return () => clearInterval(interval)
-  }, [])
+  }
+
+  usePollingInterval(fetchAgents, 10000)
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -78,14 +76,6 @@ export function AgentControlPanel() {
       case 'error': return <AlertCircle className="w-4 h-4 text-red-400" />
       default: return null
     }
-  }
-
-  const formatTimeAgo = (timestamp: string) => {
-    const diff = Date.now() - new Date(timestamp).getTime()
-    const mins = Math.floor(diff / 60000)
-    if (mins < 1) return 'just now'
-    if (mins < 60) return `${mins}m ago`
-    return `${Math.floor(mins / 60)}h ago`
   }
 
   return (
@@ -134,7 +124,7 @@ export function AgentControlPanel() {
                       <CheckCircle2 className="w-3 h-3" />
                       {agent.tasksCompleted} tasks
                     </span>
-                    <span>Active {formatTimeAgo(agent.lastActivity)}</span>
+                    <span>Active {formatTimeAgo(new Date(agent.lastActivity))}</span>
                   </div>
                 </div>
               </div>

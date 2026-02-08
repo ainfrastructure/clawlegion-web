@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
+import { usePollingInterval } from '@/hooks/usePollingInterval';
 
 interface Service {
   name: string;
@@ -53,11 +54,7 @@ export function HealthStatusBanner() {
     }
   }, [dismissed]);
 
-  useEffect(() => {
-    fetchHealth();
-    const interval = setInterval(fetchHealth, 30000); // Poll every 30s
-    return () => clearInterval(interval);
-  }, [fetchHealth]);
+  usePollingInterval(fetchHealth, 30000);
 
   if (loading) return null;
   if (!health) return null;

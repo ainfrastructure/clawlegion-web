@@ -1,7 +1,9 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useCallback } from 'react'
 import { Bell, BellRing, X, AtSign, CheckCircle2, Clock } from 'lucide-react'
+import { formatTimeAgo } from '@/components/common/TimeAgo'
+import { usePollingInterval } from '@/hooks/usePollingInterval'
 
 interface Notification {
   id: string
@@ -16,21 +18,6 @@ interface Notification {
 interface NotificationBellProps {
   agentId?: string
   className?: string
-}
-
-function formatTime(timestamp: string): string {
-  const date = new Date(timestamp)
-  const now = new Date()
-  const diffMs = now.getTime() - date.getTime()
-  const diffMin = Math.floor(diffMs / 60000)
-  
-  if (diffMin < 1) return 'now'
-  if (diffMin < 60) return `${diffMin}m`
-  
-  const diffHours = Math.floor(diffMin / 60)
-  if (diffHours < 24) return `${diffHours}h`
-  
-  return date.toLocaleDateString()
 }
 
 export function NotificationBell({ agentId = 'dashboard', className = '' }: NotificationBellProps) {
@@ -54,11 +41,7 @@ export function NotificationBell({ agentId = 'dashboard', className = '' }: Noti
     }
   }, [agentId])
 
-  useEffect(() => {
-    fetchNotifications()
-    const interval = setInterval(fetchNotifications, 30000)
-    return () => clearInterval(interval)
-  }, [fetchNotifications])
+  usePollingInterval(fetchNotifications, 30000)
 
   const markAsRead = async (notificationId: string) => {
     try {
@@ -189,7 +172,7 @@ export function NotificationBell({ agentId = 'dashboard', className = '' }: Noti
                         </p>
                         <div className="flex items-center gap-1 mt-1 text-[10px] text-slate-600">
                           <Clock className="w-2.5 h-2.5" />
-                          {formatTime(notification.createdAt)}
+                          {formatTimeAgo(new Date(notification.createdAt))}
                         </div>
                       </div>
                       

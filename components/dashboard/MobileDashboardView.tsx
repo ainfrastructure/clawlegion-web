@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { ArrowRight, CheckCircle2, Clock, Activity, Users, Zap, HeartPulse } from 'lucide-react'
 import { MobileAgentScroller, type MobileAgentData } from './MobileAgentScroller'
 import { PageContainer } from '@/components/layout'
-import type { AgentStatus } from '@/components/agents/StatusBadge'
+import type { AgentStatus } from '@/components/ui/StatusBadge'
 
 interface Task {
   id: string

@@ -9,68 +9,47 @@ import type {
   Checkpoint,
   PipelineStep
 } from '@/components/flow-config/types'
+import { ALL_AGENTS } from '@/components/chat-v2/agentConfig'
+
+// Map hex colors from agentConfig to Tailwind color names used by flow-config
+const hexToColorName: Record<string, AgentMetadata['color']> = {
+  '#DC2626': 'red',
+  '#22C55E': 'emerald',
+  '#3B82F6': 'blue',
+  '#F59E0B': 'amber',
+  '#8B5CF6': 'purple',
+  '#06B6D4': 'cyan',
+  '#EC4899': 'pink',
+  '#9333EA': 'purple',
+}
+
+// Map agentConfig tiers to flow-config tiers
+const tierMap: Record<string, AgentMetadata['tier']> = {
+  council: 'council',
+  army: 'worker',
+}
+
+// Agents enabled by default in flow presets
+const defaultEnabledAgents = new Set(['archie', 'mason', 'vex'])
 
 /**
- * Agent metadata for UI display
+ * Agent metadata for UI display — derived from canonical agentConfig
  */
-export const AGENT_METADATA: Record<AgentRole, AgentMetadata> = {
-  scout: {
-    name: 'Scout',
-    emoji: '🔭',
-    color: 'cyan',
-    description: 'Researcher — gathers information and investigates options',
-    defaultEnabled: false,
-    tier: 'worker',
-  },
-  archie: {
-    name: 'Archie',
-    emoji: '🏛️',
-    color: 'blue',
-    description: 'Planner — creates specifications and approach',
-    defaultEnabled: true,
-    tier: 'worker',
-  },
-  mason: {
-    name: 'Mason',
-    emoji: '🔨',
-    color: 'amber',
-    description: 'Builder — implements code based on plans',
-    defaultEnabled: true,
-    tier: 'worker',
-  },
-  vex: {
-    name: 'Vex',
-    emoji: '🧪',
-    color: 'purple',
-    description: 'Verifier — tests and proves functionality',
-    defaultEnabled: true,
-    tier: 'worker',
-  },
-  jarvis: {
-    name: 'Jarvis',
-    emoji: '🦞',
-    color: 'red',
-    description: 'Orchestrator — routes tasks and manages the fleet',
-    defaultEnabled: false,
-    tier: 'orchestrator',
-  },
-  lux: {
-    name: 'Lux',
-    emoji: '✨',
-    color: 'emerald',
-    description: 'Advisor — handles escalations and strategic decisions',
-    defaultEnabled: false,
-    tier: 'council',
-  },
-  ralph: {
-    name: 'Ralph',
-    emoji: '🔄',
-    color: 'pink',
-    description: 'Loop controller — manages build-verify cycles and budgets',
-    defaultEnabled: false,
-    tier: 'orchestrator',
-  },
-}
+export const AGENT_METADATA: Record<AgentRole, AgentMetadata> = Object.fromEntries(
+  ALL_AGENTS
+    .filter(a => a.id !== 'sven') // Sven is decommissioned, not in flow presets
+    .map(a => [
+      a.id as AgentRole,
+      {
+        name: a.name,
+        emoji: a.emoji,
+        color: hexToColorName[a.color] ?? 'blue',
+        description: a.description,
+        defaultEnabled: defaultEnabledAgents.has(a.id),
+        tier: a.id === 'jarvis' || a.id === 'ralph' ? 'orchestrator' as AgentMetadata['tier'] : tierMap[a.tier] ?? 'worker',
+      } satisfies AgentMetadata,
+    ])
+) as Record<AgentRole, AgentMetadata>
 
 /**
  * Resource level options for dropdowns

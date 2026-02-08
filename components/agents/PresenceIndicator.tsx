@@ -1,7 +1,8 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useCallback } from 'react'
 import { Circle, Brain, ChefHat, Utensils, Clock } from 'lucide-react'
+import { usePollingInterval } from '@/hooks/usePollingInterval'
 
 interface AgentPresence {
   id: string
@@ -63,25 +64,21 @@ export function PresenceIndicator({ compact = false, showRooms = true, className
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
-    const fetchPresence = async () => {
-      try {
-        const res = await fetch('/api/presence')
-        if (!res.ok) throw new Error('Failed to fetch presence')
-        const data = await res.json()
-        setAgents(data.agents || [])
-        setError(null)
-      } catch (err) {
-        setError('Could not load presence')
-      } finally {
-        setLoading(false)
-      }
+  const fetchPresence = useCallback(async () => {
+    try {
+      const res = await fetch('/api/presence')
+      if (!res.ok) throw new Error('Failed to fetch presence')
+      const data = await res.json()
+      setAgents(data.agents || [])
+      setError(null)
+    } catch (err) {
+      setError('Could not load presence')
+    } finally {
+      setLoading(false)
     }
-
-    fetchPresence()
-    const interval = setInterval(fetchPresence, 15000) // Refresh every 15s
-    return () => clearInterval(interval)
   }, [])
+
+  usePollingInterval(fetchPresence, 15000)
 
   if (loading) {
     return (
@@ -165,21 +162,17 @@ export function PresenceIndicator({ compact = false, showRooms = true, className
 export function PresenceDots({ className = '' }: { className?: string }) {
   const [agents, setAgents] = useState<AgentPresence[]>([])
 
-  useEffect(() => {
-    const fetchPresence = async () => {
-      try {
-        const res = await fetch('/api/presence')
-        if (res.ok) {
-          const data = await res.json()
-          setAgents(data.agents || [])
-        }
-      } catch {}
-    }
-
-    fetchPresence()
-    const interval = setInterval(fetchPresence, 15000)
-    return () => clearInterval(interval)
+  const fetchPresence = useCallback(async () => {
+    try {
+      const res = await fetch('/api/presence')
+      if (res.ok) {
+        const data = await res.json()
+        setAgents(data.agents || [])
+      }
+    } catch {}
   }, [])
+
+  usePollingInterval(fetchPresence, 15000)
 
   const onlineCount = agents.filter(a => a.status === 'online').length
 

@@ -1,4 +1,4 @@
-import { Bot } from 'lucide-react'
+import { MascotTrioIcon } from './MascotTrioIcon'
 
 const footerLinks = {
   Product: [
@@ -21,7 +21,11 @@ const footerLinks = {
   ],
 }
 
-export function LandingFooter() {
+type LandingFooterProps = {
+  onContactClick?: () => void
+}
+
+export function LandingFooter({ onContactClick }: LandingFooterProps) {
   return (
     <footer className="px-4 sm:px-6 pt-16 pb-8 border-t border-white/[0.04]">
       <div className="max-w-6xl mx-auto">
@@ -29,7 +33,7 @@ export function LandingFooter() {
           {/* Brand column */}
           <div className="col-span-2 md:col-span-1">
             <div className="flex items-center gap-2 mb-4">
-              <Bot className="w-6 h-6 text-blue-500" />
+              <MascotTrioIcon size={24} />
               <span className="font-bold text-white">ClawLegion</span>
             </div>
             <p className="text-sm text-slate-500 leading-relaxed">
@@ -44,12 +48,21 @@ export function LandingFooter() {
               <ul className="space-y-2">
                 {links.map((link) => (
                   <li key={link.label}>
-                    <a
-                      href={link.href}
-                      className="text-sm text-slate-500 hover:text-slate-300 transition-colors"
-                    >
-                      {link.label}
-                    </a>
+                    {link.label === 'Contact' && onContactClick ? (
+                      <button
+                        onClick={onContactClick}
+                        className="text-sm text-slate-500 hover:text-slate-300 transition-colors"
+                      >
+                        {link.label}
+                      </button>
+                    ) : (
+                      <a
+                        href={link.href}
+                        className="text-sm text-slate-500 hover:text-slate-300 transition-colors"
+                      >
+                        {link.label}
+                      </a>
+                    )}
                   </li>
                 ))}
               </ul>

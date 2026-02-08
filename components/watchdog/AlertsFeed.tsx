@@ -12,6 +12,7 @@ import {
 } from 'lucide-react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import api from '@/lib/api'
+import { formatTimeAgo } from '@/components/common/TimeAgo'
 
 interface WatchdogAlert {
   id: string
@@ -50,17 +51,6 @@ const alertConfig: Record<string, { icon: React.ReactNode; color: string; bg: st
     color: 'text-red-400',
     bg: 'bg-red-500/20'
   }
-}
-
-function formatTimeAgo(dateStr: string): string {
-  const diff = Date.now() - new Date(dateStr).getTime()
-  const seconds = Math.floor(diff / 1000)
-  const minutes = Math.floor(seconds / 60)
-  const hours = Math.floor(minutes / 60)
-  
-  if (hours > 0) return `${hours}h ago`
-  if (minutes > 0) return `${minutes}m ago`
-  return `${seconds}s ago`
 }
 
 export function AlertsFeed({ alerts, isLoading, onViewTask }: AlertsFeedProps) {
@@ -132,7 +122,7 @@ export function AlertsFeed({ alerts, isLoading, onViewTask }: AlertsFeedProps) {
                           {alert.alertType.replace('_', ' ')}
                         </span>
                         <span className="text-xs text-slate-500">
-                          {formatTimeAgo(alert.createdAt)}
+                          {formatTimeAgo(new Date(alert.createdAt))}
                         </span>
                       </div>
                       <p className="text-sm text-slate-300 mb-2">{alert.message}</p>

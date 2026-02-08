@@ -70,6 +70,19 @@ export function FeaturesGrid() {
             </div>
           ))}
         </div>
+
+        {/* Mid-section CTA */}
+        <div className="text-center mt-16">
+          <p className="text-xl font-semibold text-white mb-4">
+            All of this for just <span className="text-blue-400">$49/mo</span>
+          </p>
+          <a
+            href="#pricing"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-semibold transition-colors shadow-lg shadow-blue-500/25 text-sm shimmer-btn"
+          >
+            See Pricing
+          </a>
+        </div>
       </div>
     </section>
   )

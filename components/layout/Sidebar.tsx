@@ -1,5 +1,6 @@
 'use client'
 import { GlobalSearch } from "@/components/search"
+import { MascotTrioIcon } from '@/components/landing/MascotTrioIcon'
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
@@ -26,7 +27,10 @@ import {
   Activity,
   AlertCircle,
   HeartPulse,
+  LogOut,
+  User,
 } from 'lucide-react'
+import { signOut, useSession } from 'next-auth/react'
 import { PresenceDots } from '@/components/agents/PresenceIndicator'
 import { useSidebar } from './SidebarContext'
 
@@ -92,6 +96,7 @@ const navItems: NavItem[] = [
 
 export function Sidebar() {
   const { collapsed, toggleCollapsed } = useSidebar()
+  const { data: session } = useSession()
   const pathname = usePathname()
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
     '/tasks': true,
@@ -123,10 +128,10 @@ export function Sidebar() {
       {/* Logo */}
       <div className={`h-14 flex items-center border-b border-white/[0.06] ${collapsed ? 'justify-center px-2' : 'px-4'}`}>
         {collapsed ? (
-          <Bot className="w-7 h-7 text-blue-500" />
+          <MascotTrioIcon size={28} />
         ) : (
           <Link href="/dashboard" className="flex items-center gap-2">
-            <Bot className="w-7 h-7 text-blue-500" />
+            <MascotTrioIcon size={28} />
             <span className="font-bold text-lg">ClawLegion</span>
           </Link>
         )}
@@ -218,6 +223,37 @@ export function Sidebar() {
           <div className="flex items-center gap-2 text-xs text-slate-500">
             <span>Agents:</span>
             <PresenceDots />
+          </div>
+        )}
+      </div>
+
+      {/* User / Logout */}
+      <div className={`border-t border-white/[0.06] p-3 ${collapsed ? 'flex flex-col items-center gap-2' : ''}`}>
+        {collapsed ? (
+          <button
+            onClick={() => signOut()}
+            className="p-2 text-slate-400 hover:text-red-400 hover:bg-white/[0.04] rounded-lg transition-colors"
+            title="Sign out"
+          >
+            <LogOut className="w-4 h-4" />
+          </button>
+        ) : (
+          <div className="flex items-center gap-2">
+            <div className="w-7 h-7 bg-slate-800 rounded-full flex items-center justify-center shrink-0">
+              <User className="w-3.5 h-3.5 text-slate-400" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-medium text-slate-300 truncate">
+                {session?.user?.name || 'User'}
+              </p>
+            </div>
+            <button
+              onClick={() => signOut()}
+              className="p-1.5 text-slate-500 hover:text-red-400 hover:bg-white/[0.04] rounded-lg transition-colors"
+              title="Sign out"
+            >
+              <LogOut className="w-3.5 h-3.5" />
+            </button>
           </div>
         )}
       </div>

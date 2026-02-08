@@ -9,7 +9,7 @@ interface TimeAgoProps {
   live?: boolean
 }
 
-function formatTimeAgo(date: Date): string {
+export function formatTimeAgo(date: Date): string {
   const now = new Date()
   const diffMs = now.getTime() - date.getTime()
   const diffSec = Math.floor(diffMs / 1000)

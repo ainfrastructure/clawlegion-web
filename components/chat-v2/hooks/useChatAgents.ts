@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { Agent } from '../AgentSelector'
+import { ALL_AGENTS } from '../agentConfig'
 
 interface UseChatAgentsResult {
   agents: Agent[]
@@ -10,23 +11,14 @@ interface UseChatAgentsResult {
   refetch: () => void
 }
 
-// Default/mock agents for when API is not available
-const DEFAULT_AGENTS: Agent[] = [
-  {
-    id: 'jarvis',
-    name: 'Jarvis',
-    color: '#F97316', // orange-500
-    icon: '🎯',
-    isOnline: true,
-  },
-  {
-    id: 'lux',
-    name: 'Lux',
-    color: '#22C55E', // green-500
-    icon: '✨',
-    isOnline: true,
-  },
-]
+// Derived from canonical agentConfig
+const DEFAULT_AGENTS: Agent[] = ALL_AGENTS.map(a => ({
+  id: a.id,
+  name: a.name,
+  color: a.color,
+  icon: a.emoji,
+  isOnline: true,
+}))
 
 export function useChatAgents(): UseChatAgentsResult {
   const [agents, setAgents] = useState<Agent[]>(DEFAULT_AGENTS)

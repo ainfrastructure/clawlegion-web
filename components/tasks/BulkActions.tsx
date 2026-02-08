@@ -40,7 +40,7 @@ export function BulkActions({ tasks, selectedIds, onSelectAll, onClearSelection,
       ))
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['task-queue'] })
+      queryClient.invalidateQueries({ queryKey: ['task-tracking-tasks'] })
       onClearSelection()
     },
   })
@@ -50,7 +50,7 @@ export function BulkActions({ tasks, selectedIds, onSelectAll, onClearSelection,
       await Promise.all(ids.map(id => api.delete(`/task-tracking/tasks/${id}`)))
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['task-queue'] })
+      queryClient.invalidateQueries({ queryKey: ['task-tracking-tasks'] })
       onClearSelection()
     },
   })
@@ -60,7 +60,7 @@ export function BulkActions({ tasks, selectedIds, onSelectAll, onClearSelection,
       await Promise.all(ids.map(id => api.patch(`/task-tracking/tasks/${id}`, { priority })))
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['task-queue'] })
+      queryClient.invalidateQueries({ queryKey: ['task-tracking-tasks'] })
     },
   })
 

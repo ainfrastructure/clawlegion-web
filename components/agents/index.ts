@@ -5,7 +5,7 @@ export { QuickActionsBar } from './QuickActionsBar';
 
 // New unified components
 export { AgentCard, type AgentData } from './AgentCard';
-export { StatusBadge, StatusDot, type AgentStatus } from './StatusBadge';
+export { StatusBadge, StatusDot, type AgentStatus } from '@/components/ui/StatusBadge';
 export { ReachabilityIndicator, ReachabilityDot } from './ReachabilityIndicator';
 
 // Agent avatar component
