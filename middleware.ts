@@ -9,29 +9,15 @@ export async function middleware(request: NextRequest) {
   const publicPaths = [
     '/login',
     '/auth/error',
-    '/api/auth',
-    '/api/tasks',      // Keep API open for agents
-    '/api/agents',
-    '/api/coordination',
-    '/api/sse',
-    '/api/notifications',
-    '/api/presence',
-    '/api/health',
-    '/api/bus-status', // Message bus status for agent monitoring
+    '/api/',           // All API routes open (backend proxy + agents need these)
     '/_next',
     '/favicon.ico',
-    // Dashboard pages - public for now
-    '/',
-    '/dashboard',
-    '/tasks',
-    '/agents',
-    '/chat',
-    '/sessions',
-    '/sprint',
+    '/agents/',        // Agent avatar images (public/agents/)
+    '/avatars/',       // Avatar images (public/avatars/)
   ]
 
   // Check if path is public
-  const isPublicPath = publicPaths.some(path => pathname.startsWith(path))
+  const isPublicPath = pathname === '/' || publicPaths.some(path => pathname.startsWith(path))
   
   if (isPublicPath) {
     return NextResponse.next()
