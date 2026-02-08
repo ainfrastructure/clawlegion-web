@@ -23,10 +23,10 @@ const REPO_URL = 'https://github.com/ainfrastructure/clawlegion'
 
 export function BuildInfo() {
   const pathname = usePathname()
+  const [expanded, setExpanded] = useState(false)
+
   // Hide on landing page
   if (pathname === '/') return null
-
-  const [expanded, setExpanded] = useState(false)
   
   const buildTime = process.env.NEXT_PUBLIC_BUILD_TIME || ''
   const commitSha = process.env.NEXT_PUBLIC_COMMIT_SHA || 'dev'
