@@ -40,9 +40,27 @@ export function MascotHero() {
           align-items: center;
         }
         .mascot-hero-wrapper svg {
-          width: 230px;
+          width: 340px;
           height: auto;
+        }
+        .mascot-main {
           animation: mascotBob 4s ease-in-out infinite;
+        }
+        @keyframes miniLeftBob {
+          0%, 100% { transform: translate(-95px, 70px) scale(0.5); }
+          50% { transform: translate(-95px, 66px) scale(0.5); }
+        }
+        @keyframes miniRightBob {
+          0%, 100% { transform: translate(300px, 70px) scale(0.5); }
+          50% { transform: translate(300px, 66px) scale(0.5); }
+        }
+        .mascot-mini-left {
+          animation: miniLeftBob 3.8s ease-in-out infinite;
+          animation-delay: 0.5s;
+        }
+        .mascot-mini-right {
+          animation: miniRightBob 3.8s ease-in-out infinite;
+          animation-delay: 1.2s;
         }
         .mascot-eye-inner {
           animation: eyeGlowPulse 3s ease-in-out infinite;
@@ -78,7 +96,7 @@ export function MascotHero() {
           animation: clawIdleL 2.8s ease-in-out infinite;
         }
       `}</style>
-      <svg viewBox="-10 50 520 420" xmlns="http://www.w3.org/2000/svg">
+      <svg viewBox="-120 30 740 450" xmlns="http://www.w3.org/2000/svg">
         <defs>
           {/* Body glow filter */}
           <filter id="mhBodyGlow" x="-50%" y="-50%" width="200%" height="200%">
@@ -132,8 +150,66 @@ export function MascotHero() {
           </radialGradient>
         </defs>
 
+        {/* --- Left mini mascot --- */}
+        <g className="mascot-mini-left" transform="translate(-95, 70) scale(0.5)">
+          <rect x="185" y="390" width="32" height="50" rx="10" fill="url(#mhLegGrad)"/>
+          <ellipse cx="201" cy="440" rx="20" ry="10" fill="url(#mhLegGrad)"/>
+          <rect x="283" y="390" width="32" height="50" rx="10" fill="url(#mhLegGrad)"/>
+          <ellipse cx="299" cy="440" rx="20" ry="10" fill="url(#mhLegGrad)"/>
+          <rect x="60" y="256" width="50" height="10" rx="5" fill="url(#mhClawGrad)"/>
+          <path d="M58,252 C54,240 44,224 30,220 C16,216 4,224 4,238 C4,248 10,254 20,257 L58,258 Z" fill="url(#mhClawGrad)" stroke="#1e3a8a" strokeWidth="1"/>
+          <path d="M58,270 C54,282 44,298 30,302 C16,306 4,298 4,284 C4,274 10,268 20,265 L58,264 Z" fill="url(#mhClawGrad)" stroke="#1e3a8a" strokeWidth="1"/>
+          <path d="M50,257 L46,254 L42,258 L38,254 L34,258 L30,254 L26,257" stroke="#1e3a8a" strokeWidth="1.8" fill="none" strokeLinecap="round"/>
+          <path d="M50,265 L46,268 L42,264 L38,268 L34,264 L30,268 L26,265" stroke="#1e3a8a" strokeWidth="1.8" fill="none" strokeLinecap="round"/>
+          <ellipse cx="52" cy="261" rx="12" ry="14" fill="url(#mhClawGrad)"/>
+          <rect x="390" y="256" width="50" height="10" rx="5" fill="url(#mhClawGrad)"/>
+          <path d="M442,252 C446,240 456,224 470,220 C484,216 496,224 496,238 C496,248 490,254 480,257 L442,258 Z" fill="url(#mhClawGrad)" stroke="#1e3a8a" strokeWidth="1"/>
+          <path d="M442,270 C446,282 456,298 470,302 C484,306 496,298 496,284 C496,274 490,268 480,265 L442,264 Z" fill="url(#mhClawGrad)" stroke="#1e3a8a" strokeWidth="1"/>
+          <path d="M450,257 L454,254 L458,258 L462,254 L466,258 L470,254 L474,257" stroke="#1e3a8a" strokeWidth="1.8" fill="none" strokeLinecap="round"/>
+          <path d="M450,265 L454,268 L458,264 L462,268 L466,264 L470,268 L474,265" stroke="#1e3a8a" strokeWidth="1.8" fill="none" strokeLinecap="round"/>
+          <ellipse cx="448" cy="261" rx="12" ry="14" fill="url(#mhClawGrad)"/>
+          <circle cx="250" cy="260" r="145" fill="url(#mhBodyGrad)"/>
+          <path d="M210,140 Q205,110 185,70 Q182,60 190,68 Q208,95 218,135 Z" fill="url(#mhHornGrad)"/>
+          <path d="M290,140 Q295,110 315,70 Q318,60 310,68 Q292,95 282,135 Z" fill="url(#mhHornGrad)"/>
+          <circle cx="215" cy="255" r="10" fill="#00d4c8" opacity="0.3" filter="url(#mhEyeGlow)"/>
+          <circle cx="215" cy="255" r="8" fill="#00d4c8"/>
+          <circle cx="215" cy="253" r="4" fill="#40fff0" opacity="0.6"/>
+          <circle cx="285" cy="255" r="10" fill="#00d4c8" opacity="0.3" filter="url(#mhEyeGlow)"/>
+          <circle cx="285" cy="255" r="8" fill="#00d4c8"/>
+          <circle cx="285" cy="253" r="4" fill="#40fff0" opacity="0.6"/>
+        </g>
+
+        {/* --- Right mini mascot --- */}
+        <g className="mascot-mini-right" transform="translate(300, 70) scale(0.5)">
+          <rect x="185" y="390" width="32" height="50" rx="10" fill="url(#mhLegGrad)"/>
+          <ellipse cx="201" cy="440" rx="20" ry="10" fill="url(#mhLegGrad)"/>
+          <rect x="283" y="390" width="32" height="50" rx="10" fill="url(#mhLegGrad)"/>
+          <ellipse cx="299" cy="440" rx="20" ry="10" fill="url(#mhLegGrad)"/>
+          <rect x="60" y="256" width="50" height="10" rx="5" fill="url(#mhClawGrad)"/>
+          <path d="M58,252 C54,240 44,224 30,220 C16,216 4,224 4,238 C4,248 10,254 20,257 L58,258 Z" fill="url(#mhClawGrad)" stroke="#1e3a8a" strokeWidth="1"/>
+          <path d="M58,270 C54,282 44,298 30,302 C16,306 4,298 4,284 C4,274 10,268 20,265 L58,264 Z" fill="url(#mhClawGrad)" stroke="#1e3a8a" strokeWidth="1"/>
+          <path d="M50,257 L46,254 L42,258 L38,254 L34,258 L30,254 L26,257" stroke="#1e3a8a" strokeWidth="1.8" fill="none" strokeLinecap="round"/>
+          <path d="M50,265 L46,268 L42,264 L38,268 L34,264 L30,268 L26,265" stroke="#1e3a8a" strokeWidth="1.8" fill="none" strokeLinecap="round"/>
+          <ellipse cx="52" cy="261" rx="12" ry="14" fill="url(#mhClawGrad)"/>
+          <rect x="390" y="256" width="50" height="10" rx="5" fill="url(#mhClawGrad)"/>
+          <path d="M442,252 C446,240 456,224 470,220 C484,216 496,224 496,238 C496,248 490,254 480,257 L442,258 Z" fill="url(#mhClawGrad)" stroke="#1e3a8a" strokeWidth="1"/>
+          <path d="M442,270 C446,282 456,298 470,302 C484,306 496,298 496,284 C496,274 490,268 480,265 L442,264 Z" fill="url(#mhClawGrad)" stroke="#1e3a8a" strokeWidth="1"/>
+          <path d="M450,257 L454,254 L458,258 L462,254 L466,258 L470,254 L474,257" stroke="#1e3a8a" strokeWidth="1.8" fill="none" strokeLinecap="round"/>
+          <path d="M450,265 L454,268 L458,264 L462,268 L466,264 L470,268 L474,265" stroke="#1e3a8a" strokeWidth="1.8" fill="none" strokeLinecap="round"/>
+          <ellipse cx="448" cy="261" rx="12" ry="14" fill="url(#mhClawGrad)"/>
+          <circle cx="250" cy="260" r="145" fill="url(#mhBodyGrad)"/>
+          <path d="M210,140 Q205,110 185,70 Q182,60 190,68 Q208,95 218,135 Z" fill="url(#mhHornGrad)"/>
+          <path d="M290,140 Q295,110 315,70 Q318,60 310,68 Q292,95 282,135 Z" fill="url(#mhHornGrad)"/>
+          <circle cx="215" cy="255" r="10" fill="#00d4c8" opacity="0.3" filter="url(#mhEyeGlow)"/>
+          <circle cx="215" cy="255" r="8" fill="#00d4c8"/>
+          <circle cx="215" cy="253" r="4" fill="#40fff0" opacity="0.6"/>
+          <circle cx="285" cy="255" r="10" fill="#00d4c8" opacity="0.3" filter="url(#mhEyeGlow)"/>
+          <circle cx="285" cy="255" r="8" fill="#00d4c8"/>
+          <circle cx="285" cy="253" r="4" fill="#40fff0" opacity="0.6"/>
+        </g>
+
         {/* --- Main character --- */}
-        <g>
+        <g className="mascot-main">
           {/* Left leg */}
           <rect x="185" y="390" width="32" height="50" rx="10" fill="url(#mhLegGrad)"/>
           <ellipse cx="201" cy="440" rx="20" ry="10" fill="url(#mhLegGrad)"/>
