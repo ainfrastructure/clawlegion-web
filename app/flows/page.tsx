@@ -125,6 +125,43 @@ export default function FlowsPage() {
     }
   }, [activeFlow.id, handleNewFlow])
 
+  const handleSaveAsNew = useCallback(async () => {
+    if (!activeFlow.name.trim()) return
+    setIsSaving(true)
+
+    const config: FlowConfiguration = {
+      agents: stepsToAgentConfigs(activeFlow.steps),
+      steps: activeFlow.steps,
+      loopSettings: activeFlow.loopSettings,
+    }
+
+    try {
+      const response = await fetch('/api/flow-config/presets', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: activeFlow.name,
+          description: activeFlow.description,
+          config,
+        }),
+      })
+      if (response.ok) {
+        const saved = await response.json()
+        setUserFlows(prev => [...prev, saved])
+        setActiveFlow(prev => ({ ...prev, id: saved.id }))
+        setSavedSnapshot(JSON.stringify({
+          name: activeFlow.name,
+          description: activeFlow.description,
+          steps: activeFlow.steps,
+        }))
+      }
+    } catch (error) {
+      console.error('Failed to save flow:', error)
+    } finally {
+      setIsSaving(false)
+    }
+  }, [activeFlow])
+
   const handleSave = useCallback(async () => {
     if (!activeFlow.name.trim()) return
     setIsSaving(true)
@@ -165,44 +202,7 @@ export default function FlowsPage() {
     } finally {
       setIsSaving(false)
     }
-  }, [activeFlow])
-
-  const handleSaveAsNew = useCallback(async () => {
-    if (!activeFlow.name.trim()) return
-    setIsSaving(true)
-
-    const config: FlowConfiguration = {
-      agents: stepsToAgentConfigs(activeFlow.steps),
-      steps: activeFlow.steps,
-      loopSettings: activeFlow.loopSettings,
-    }
-
-    try {
-      const response = await fetch('/api/flow-config/presets', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: activeFlow.name,
-          description: activeFlow.description,
-          config,
-        }),
-      })
-      if (response.ok) {
-        const saved = await response.json()
-        setUserFlows(prev => [...prev, saved])
-        setActiveFlow(prev => ({ ...prev, id: saved.id }))
-        setSavedSnapshot(JSON.stringify({
-          name: activeFlow.name,
-          description: activeFlow.description,
-          steps: activeFlow.steps,
-        }))
-      }
-    } catch (error) {
-      console.error('Failed to save flow:', error)
-    } finally {
-      setIsSaving(false)
-    }
-  }, [activeFlow])
+  }, [activeFlow, handleSaveAsNew])
 
   const handleReset = useCallback(() => {
     if (activeFlow.id) {

@@ -273,7 +273,7 @@ export function TaskDetailModal({ taskId, task: initialTask, isOpen, onClose }: 
       // Small delay to let DOM update
       setTimeout(scrollToBottom, 100)
     }
-  }, [commentsData?.length, scrollToBottom])
+  }, [commentsData, scrollToBottom])
 
   // Ping mutation — posts to room-messages AND sends webhook via /api/agents/:id/ping
   const pingAgentMutation = useMutation({
