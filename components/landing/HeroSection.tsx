@@ -1,4 +1,5 @@
 import { Bot, ArrowRight, Play } from 'lucide-react'
+import { MascotHero } from './MascotHero'
 
 export function HeroSection() {
   return (
@@ -13,6 +14,14 @@ export function HeroSection() {
       </div>
 
       <div className="relative z-10 text-center max-w-4xl mx-auto">
+        {/* Mascot */}
+        <div className="relative mb-6 flex justify-center">
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <div className="w-64 h-64 bg-blue-500/15 rounded-full blur-[80px]" />
+          </div>
+          <MascotHero />
+        </div>
+
         {/* Badge */}
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 mb-8">
           <span className="relative flex h-2 w-2">

@@ -1,5 +1,7 @@
 export { LandingNav } from './LandingNav'
 export { HeroSection } from './HeroSection'
+export { MascotHero } from './MascotHero'
+export { MascotIcon } from './MascotIcon'
 export { ProductShowcase } from './ProductShowcase'
 export { LogoBar } from './LogoBar'
 export { FeaturesGrid } from './FeaturesGrid'

@@ -1,7 +1,8 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Bot, Menu, X } from 'lucide-react'
+import { Menu, X } from 'lucide-react'
+import { MascotIcon } from './MascotIcon'
 
 export function LandingNav() {
   const [scrolled, setScrolled] = useState(false)
@@ -30,7 +31,7 @@ export function LandingNav() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <a href="#" className="flex items-center gap-2">
-            <Bot className="w-7 h-7 text-blue-500" />
+            <MascotIcon size={28} />
             <span className="font-bold text-lg text-white">ClawLegion</span>
           </a>
 
