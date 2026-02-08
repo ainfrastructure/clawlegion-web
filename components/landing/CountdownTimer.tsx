@@ -2,37 +2,22 @@
 
 import { useState, useEffect, useCallback } from 'react'
 
-const FIFTEEN_HOURS_MS = 15 * 60 * 60 * 1000
-const STORAGE_KEY = 'countdown-start-ts'
-
 type TimeLeft = {
   hours: number
   minutes: number
   seconds: number
 }
 
-function getStartTimestamp(): number {
-  if (typeof window === 'undefined') return Date.now()
-  const stored = localStorage.getItem(STORAGE_KEY)
-  if (stored) {
-    const ts = Number(stored)
-    if (!isNaN(ts)) return ts
-  }
-  const now = Date.now()
-  localStorage.setItem(STORAGE_KEY, String(now))
-  return now
-}
-
 function getTimeLeft(): TimeLeft {
-  const start = getStartTimestamp()
-  const elapsed = Date.now() - start
-  const remaining = FIFTEEN_HOURS_MS - (elapsed % FIFTEEN_HOURS_MS)
-
-  // Reset the stored timestamp when a cycle completes
-  if (elapsed >= FIFTEEN_HOURS_MS) {
-    const cycleStart = start + Math.floor(elapsed / FIFTEEN_HOURS_MS) * FIFTEEN_HOURS_MS
-    localStorage.setItem(STORAGE_KEY, String(cycleStart))
+  const now = new Date()
+  // Target: next 09:00 in user's local timezone
+  const target = new Date(now)
+  target.setHours(9, 0, 0, 0)
+  // If it's already past 09:00 today, count down to tomorrow 09:00
+  if (now >= target) {
+    target.setDate(target.getDate() + 1)
   }
+  const remaining = target.getTime() - now.getTime()
 
   return {
     hours: Math.floor(remaining / (1000 * 60 * 60)),
