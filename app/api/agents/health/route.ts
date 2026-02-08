@@ -27,16 +27,17 @@ interface HealthCheckResponse {
   cachedAt: string
 }
 
-// Default agents with health endpoints (OpenClaw ports) — matches agentConfig.ts canonical source
+// Default agents with health endpoints (OpenClaw ports)
+// Configure via AGENT_HEALTH_<NAME> environment variables (e.g. AGENT_HEALTH_JARVIS=http://localhost:18789/health)
 const DEFAULT_AGENTS: AgentConfig[] = [
-  { id: 'sven', name: 'Sven', healthEndpoint: 'http://localhost:18795/health' },
-  { id: 'jarvis', name: 'Jarvis', healthEndpoint: 'http://localhost:18789/health' },
-  { id: 'lux', name: 'Lux', healthEndpoint: 'http://localhost:18796/health' },
-  { id: 'archie', name: 'Archie', healthEndpoint: 'http://localhost:18790/health' },
-  { id: 'mason', name: 'Mason', healthEndpoint: 'http://localhost:18791/health' },
-  { id: 'vex', name: 'Vex', healthEndpoint: 'http://localhost:18792/health' },
-  { id: 'scout', name: 'Scout', healthEndpoint: 'http://localhost:18793/health' },
-  { id: 'ralph', name: 'Ralph', healthEndpoint: 'http://localhost:18794/health' },
+  { id: 'sven', name: 'Sven', healthEndpoint: process.env.AGENT_HEALTH_SVEN || 'http://localhost:18795/health' },
+  { id: 'jarvis', name: 'Jarvis', healthEndpoint: process.env.AGENT_HEALTH_JARVIS || 'http://localhost:18789/health' },
+  { id: 'lux', name: 'Lux', healthEndpoint: process.env.AGENT_HEALTH_LUX || 'http://localhost:18796/health' },
+  { id: 'archie', name: 'Archie', healthEndpoint: process.env.AGENT_HEALTH_ARCHIE || 'http://localhost:18790/health' },
+  { id: 'mason', name: 'Mason', healthEndpoint: process.env.AGENT_HEALTH_MASON || 'http://localhost:18791/health' },
+  { id: 'vex', name: 'Vex', healthEndpoint: process.env.AGENT_HEALTH_VEX || 'http://localhost:18792/health' },
+  { id: 'scout', name: 'Scout', healthEndpoint: process.env.AGENT_HEALTH_SCOUT || 'http://localhost:18793/health' },
+  { id: 'ralph', name: 'Ralph', healthEndpoint: process.env.AGENT_HEALTH_RALPH || 'http://localhost:18794/health' },
 ]
 
 // Simple in-memory cache with 30s TTL
