@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { usePathname } from 'next/navigation'
 import { GitCommit, Clock, ChevronDown, ChevronUp, GitBranch, ExternalLink, MessageSquare } from 'lucide-react'
 
 function getRelativeTime(dateString: string): string {
@@ -21,6 +22,10 @@ function getRelativeTime(dateString: string): string {
 const REPO_URL = 'https://github.com/ainfrastructure/clawlegion'
 
 export function BuildInfo() {
+  const pathname = usePathname()
+  // Hide on landing page
+  if (pathname === '/') return null
+
   const [expanded, setExpanded] = useState(false)
   
   const buildTime = process.env.NEXT_PUBLIC_BUILD_TIME || ''
