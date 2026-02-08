@@ -6,6 +6,8 @@ const schema = z.object({
   source: z.string().optional(),
 })
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://clawlegion-backend-production.up.railway.app'
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
@@ -20,40 +22,17 @@ export async function POST(req: NextRequest) {
 
     const { email, source } = result.data
 
-    const webhookUrl = process.env.DISCORD_WEBHOOK_URL
-
-    if (!webhookUrl) {
-      console.error('Missing DISCORD_WEBHOOK_URL')
-      return NextResponse.json(
-        { error: 'Server configuration error. Please try again later.' },
-        { status: 500 }
-      )
-    }
-
-    const discordRes = await fetch(webhookUrl, {
+    const backendRes = await fetch(`${API_URL}/api/early-access/signup`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        embeds: [
-          {
-            title: 'New Beta Signup',
-            color: 0x3b82f6,
-            fields: [
-              { name: 'Email', value: email },
-              ...(source ? [{ name: 'Source', value: source, inline: true }] : []),
-            ],
-            timestamp: new Date().toISOString(),
-          },
-        ],
-      }),
+      body: JSON.stringify({ email, source }),
     })
 
-    if (!discordRes.ok) {
-      const err = await discordRes.text()
-      console.error('Discord API error:', err)
+    if (!backendRes.ok) {
+      const err = await backendRes.json().catch(() => ({ error: 'Backend error' }))
       return NextResponse.json(
-        { error: 'Failed to process signup. Please try again.' },
-        { status: 502 }
+        { error: err.error || 'Failed to process signup.' },
+        { status: backendRes.status }
       )
     }
 
