@@ -2,7 +2,7 @@ import type { OpenClawAgent } from '@/hooks/useAgentConfig'
 
 // Agent definitions with OpenClaw ports
 export const AGENTS = [
-  { id: 'sven', name: 'Sven', port: 18788, role: 'CEO' },
+  { id: 'sven', name: 'Sven', port: 18795, role: 'CEO' },
   { id: 'jarvis', name: 'Jarvis', port: 18789, role: 'Orchestrator' },
   { id: 'lux', name: 'Lux', port: 18796, role: 'Council Member' },
   { id: 'archie', name: 'Archie', port: 18790, role: 'Planner' },

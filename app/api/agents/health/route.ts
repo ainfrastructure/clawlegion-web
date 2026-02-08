@@ -79,16 +79,22 @@ async function fetchAgentsFromConfig(): Promise<AgentConfig[]> {
   try {
     // Try to fetch from OpenClaw config API
     const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'
-    const response = await fetch(`${baseUrl}/agent-config`, {
+    const response = await fetch(`${baseUrl}/api/agent-config`, {
       cache: 'no-store',
     })
     if (response.ok) {
       const data = await response.json()
-      return (data.agents || []).map((a: any) => ({
+      const configAgents: AgentConfig[] = (data.agents || []).map((a: any) => ({
         id: a.id,
         name: a.identity?.name || a.name,
         healthEndpoint: a.healthEndpoint,
       }))
+      // Only use config agents if they have health endpoints; otherwise merge with defaults
+      const hasEndpoints = configAgents.some(a => a.healthEndpoint)
+      if (hasEndpoints) {
+        return configAgents
+      }
+      // Config agents lack health endpoints — use defaults (which have them)
     }
   } catch (err) {
     console.warn('Could not fetch agents from config API, using defaults')
