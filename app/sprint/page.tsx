@@ -63,7 +63,7 @@ export default function SprintPage() {
             Complete Sprint
           </button>
           <Link
-            href="/tasks"
+            href={`/tasks${activeSprint ? `?sprintId=${activeSprint.id}` : ''}`}
             className="px-4 py-2 bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 border border-white/[0.06] rounded-lg text-sm transition-colors"
           >
             View Board

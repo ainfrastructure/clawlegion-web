@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback, useEffect, Suspense } from 'react'
+import { useState, useCallback, useEffect, useRef, Suspense } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useSearchParams, useRouter, usePathname } from 'next/navigation'
 import Link from 'next/link'
@@ -13,6 +13,9 @@ import {
   CheckCircle2,
   Zap,
   LayoutGrid,
+  Target,
+  ChevronDown,
+  Sparkles,
 } from 'lucide-react'
 import { TaskDetailModal } from '@/components/tasks/TaskDetailModal'
 import { EnhancedTaskModal } from '@/components/tasks/EnhancedTaskModal'
@@ -48,6 +51,19 @@ export default function TasksPage() {
 
 function TasksPageContent() {
   const [selectedTaskForModal, setSelectedTaskForModal] = useState<Task | null>(null)
+  const [sprintDropdownOpen, setSprintDropdownOpen] = useState(false)
+  const sprintDropdownRef = useRef<HTMLDivElement>(null)
+
+  // Close dropdown on click outside
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (sprintDropdownRef.current && !sprintDropdownRef.current.contains(e.target as Node)) {
+        setSprintDropdownOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [])
   const [showNewTaskModal, setShowNewTaskModal] = useState(false)
   const queryClient = useQueryClient()
   
@@ -55,6 +71,9 @@ function TasksPageContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const pathname = usePathname()
+
+  // Sprint filtering from URL params
+  const sprintId = searchParams.get('sprintId')
 
   // Data fetching
   const { data, isLoading, refetch } = useQuery({
@@ -68,7 +87,40 @@ function TasksPageContent() {
     queryFn: () => api.get('/task-tracking/repositories').then(r => r.data),
   })
 
-  const tasks: Task[] = data?.tasks ?? []
+  const { data: sprintData } = useQuery({
+    queryKey: ['active-sprint'],
+    queryFn: () => api.get('/sprints/active').then(r => r.data),
+  })
+
+  const { data: allSprintsData } = useQuery({
+    queryKey: ['all-sprints'],
+    queryFn: () => api.get('/sprints').then(r => r.data),
+  })
+
+  const allSprints = allSprintsData?.sprints ?? []
+
+  const allTasks: Task[] = data?.tasks ?? []
+  // Filter by sprint: URL param > active sprint > all tasks
+  const showAllTasks = searchParams.get('allTasks') === 'true'
+  const effectiveSprintId = showAllTasks ? null : (sprintId || sprintData?.sprint?.id || null)
+  const tasks: Task[] = effectiveSprintId 
+    ? allTasks.filter(t => t.sprintId === effectiveSprintId) 
+    : allTasks
+  
+  const selectedSprint = allSprints.find((s: { id: string }) => s.id === effectiveSprintId)
+
+  const handleSprintChange = useCallback((newSprintId: string | null) => {
+    const params = new URLSearchParams(searchParams.toString())
+    params.delete('taskId')
+    if (newSprintId === null) {
+      params.delete('sprintId')
+      params.set('allTasks', 'true')
+    } else {
+      params.set('sprintId', newSprintId)
+      params.delete('allTasks')
+    }
+    router.push(`${pathname}?${params.toString()}`)
+  }, [searchParams, router, pathname])
 
   // Filter and selection hooks
   const {
@@ -90,27 +142,27 @@ function TasksPageContent() {
   // Bulk action mutations
   const bulkCompleteMutation = useMutation({
     mutationFn: (taskIds: string[]) => 
-      Promise.all(taskIds.map(id => api.patch(`/tasks/${id}`, { status: 'completed' }))),
+      Promise.all(taskIds.map(id => api.patch(`/task-tracking/tasks/${id}`, { status: 'completed' }))),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['task-queue'] })
+      queryClient.invalidateQueries({ queryKey: ['task-tracking-tasks'] })
       clearSelection()
     }
   })
 
   const bulkDeleteMutation = useMutation({
     mutationFn: (taskIds: string[]) => 
-      Promise.all(taskIds.map(id => api.delete(`/tasks/${id}`))),
+      Promise.all(taskIds.map(id => api.delete(`/task-tracking/tasks/${id}`))),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['task-queue'] })
+      queryClient.invalidateQueries({ queryKey: ['task-tracking-tasks'] })
       clearSelection()
     }
   })
 
   const bulkPriorityMutation = useMutation({
     mutationFn: ({ taskIds, priority }: { taskIds: string[], priority: string }) => 
-      Promise.all(taskIds.map(id => api.patch(`/tasks/${id}`, { priority }))),
+      Promise.all(taskIds.map(id => api.patch(`/task-tracking/tasks/${id}`, { priority }))),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['task-queue'] })
+      queryClient.invalidateQueries({ queryKey: ['task-tracking-tasks'] })
     }
   })
 
@@ -187,6 +239,103 @@ function TasksPageContent() {
         isCompletePending={bulkCompleteMutation.isPending}
         isDeletePending={bulkDeleteMutation.isPending}
       />
+
+      {/* Sprint Selector — Glassmorphism */}
+      <div className="mb-4 relative" ref={sprintDropdownRef}>
+        <button
+          onClick={() => setSprintDropdownOpen(!sprintDropdownOpen)}
+          className="w-full flex items-center justify-between gap-3 px-4 py-3 rounded-xl border border-white/[0.08] bg-white/[0.03] backdrop-blur-xl hover:bg-white/[0.06] transition-all duration-200 group"
+        >
+          <div className="flex items-center gap-3">
+            <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
+              effectiveSprintId 
+                ? 'bg-purple-500/20 border border-purple-500/30' 
+                : 'bg-slate-500/20 border border-slate-500/30'
+            }`}>
+              {effectiveSprintId 
+                ? <Target className="w-4 h-4 text-purple-400" />
+                : <Sparkles className="w-4 h-4 text-slate-400" />
+              }
+            </div>
+            <div className="text-left">
+              <div className="text-sm font-medium text-white">
+                {selectedSprint?.name || 'All Tasks'}
+              </div>
+              <div className="text-xs text-slate-500">
+                {tasks.length} task{tasks.length !== 1 ? 's' : ''}{selectedSprint?.status === 'active' ? ' • Active Sprint' : ''}
+              </div>
+            </div>
+          </div>
+          <ChevronDown className={`w-4 h-4 text-slate-500 transition-transform duration-200 ${sprintDropdownOpen ? 'rotate-180' : ''}`} />
+        </button>
+
+        {/* Dropdown */}
+        {sprintDropdownOpen && (
+          <div className="absolute top-full left-0 right-0 mt-2 z-50 rounded-xl border border-white/[0.08] bg-slate-900/80 backdrop-blur-2xl shadow-2xl shadow-black/40 overflow-hidden">
+            {/* All Tasks option */}
+            <button
+              onClick={() => { handleSprintChange(null); setSprintDropdownOpen(false) }}
+              className={`w-full flex items-center gap-3 px-4 py-3 hover:bg-white/[0.06] transition-colors ${
+                !effectiveSprintId ? 'bg-white/[0.04]' : ''
+              }`}
+            >
+              <div className="w-7 h-7 rounded-lg bg-slate-500/20 border border-slate-500/20 flex items-center justify-center">
+                <Sparkles className="w-3.5 h-3.5 text-slate-400" />
+              </div>
+              <div className="text-left flex-1">
+                <div className="text-sm text-white">All Tasks</div>
+                <div className="text-xs text-slate-500">{allTasks.length} tasks</div>
+              </div>
+              {!effectiveSprintId && <div className="w-1.5 h-1.5 rounded-full bg-purple-400" />}
+            </button>
+
+            <div className="h-px bg-white/[0.06] mx-3" />
+
+            {/* Sprint options */}
+            {allSprints.map((s: { id: string; name: string; status: string; taskCount?: number; progress?: number }) => (
+              <button
+                key={s.id}
+                onClick={() => { handleSprintChange(s.id); setSprintDropdownOpen(false) }}
+                className={`w-full flex items-center gap-3 px-4 py-3 hover:bg-white/[0.06] transition-colors ${
+                  effectiveSprintId === s.id ? 'bg-white/[0.04]' : ''
+                }`}
+              >
+                <div className={`w-7 h-7 rounded-lg flex items-center justify-center ${
+                  s.status === 'active' 
+                    ? 'bg-emerald-500/20 border border-emerald-500/30' 
+                    : s.status === 'completed'
+                    ? 'bg-blue-500/20 border border-blue-500/30'
+                    : 'bg-amber-500/20 border border-amber-500/30'
+                }`}>
+                  <Target className={`w-3.5 h-3.5 ${
+                    s.status === 'active' ? 'text-emerald-400' : s.status === 'completed' ? 'text-blue-400' : 'text-amber-400'
+                  }`} />
+                </div>
+                <div className="text-left flex-1 min-w-0">
+                  <div className="text-sm text-white truncate">{s.name}</div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-slate-500">{s.taskCount ?? '?'} tasks</span>
+                    {s.progress !== undefined && (
+                      <div className="flex items-center gap-1.5">
+                        <div className="w-16 h-1 rounded-full bg-white/[0.06] overflow-hidden">
+                          <div 
+                            className={`h-full rounded-full ${
+                              s.status === 'active' ? 'bg-emerald-500' : 'bg-blue-500'
+                            }`}
+                            style={{ width: `${s.progress}%` }}
+                          />
+                        </div>
+                        <span className="text-[10px] text-slate-600">{s.progress}%</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+                {effectiveSprintId === s.id && <div className="w-1.5 h-1.5 rounded-full bg-purple-400 shrink-0" />}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
 
       {/* Header */}
       <div className="mb-4 sm:mb-6">
