@@ -1,9 +1,11 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
+import { usePollingInterval } from '@/hooks/usePollingInterval'
 import { cn } from '@/lib/utils'
 import { Activity, Filter, CheckCircle2, PlayCircle, GitCommit, AlertCircle, Clock } from 'lucide-react'
 import { AgentAvatar } from '@/components/agents'
+import { formatTimeAgo } from '@/components/common/TimeAgo'
 
 type ActivityType = 'task-completed' | 'task-started' | 'commit' | 'error' | 'message'
 
@@ -30,44 +32,40 @@ export function ActivityStream() {
   const [agentFilter, setAgentFilter] = useState<string | 'all'>('all')
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    const fetchActivities = async () => {
-      try {
-        const res = await fetch('/api/tasks/queue')
-        if (res.ok) {
-          const data = await res.json()
-          const tasks = data.tasks || []
-          
-          // Convert tasks to activities
-          const taskActivities: ActivityItem[] = tasks
-            .filter((t: any) => t.completedAt || t.assignedAt)
-            .map((t: any) => ({
-              id: t.id,
-              type: t.status === 'completed' ? 'task-completed' : 'task-started',
-              agent: t.assignedTo || t.createdBy || 'unknown',
-              agentEmoji: AGENT_EMOJIS[t.assignedTo] || AGENT_EMOJIS[t.createdBy] || '🤖',
-              title: t.status === 'completed' ? 'Completed task' : 'Started task',
-              description: t.title,
-              timestamp: t.completedAt || t.assignedAt
-            }))
-            .sort((a: ActivityItem, b: ActivityItem) => 
-              new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
-            )
-            .slice(0, 50)
-          
-          setActivities(taskActivities)
-        }
-      } catch (err) {
-        console.error('Failed to fetch activities:', err)
-      } finally {
-        setLoading(false)
+  const fetchActivities = async () => {
+    try {
+      const res = await fetch('/api/tasks/queue')
+      if (res.ok) {
+        const data = await res.json()
+        const tasks = data.tasks || []
+
+        // Convert tasks to activities
+        const taskActivities: ActivityItem[] = tasks
+          .filter((t: any) => t.completedAt || t.assignedAt)
+          .map((t: any) => ({
+            id: t.id,
+            type: t.status === 'completed' ? 'task-completed' : 'task-started',
+            agent: t.assignee || t.assignedTo || t.createdBy || 'unknown',
+            agentEmoji: AGENT_EMOJIS[t.assignee] || AGENT_EMOJIS[t.assignedTo] || AGENT_EMOJIS[t.createdBy] || '🤖',
+            title: t.status === 'completed' ? 'Completed task' : 'Started task',
+            description: t.title,
+            timestamp: t.completedAt || t.assignedAt
+          }))
+          .sort((a: ActivityItem, b: ActivityItem) =>
+            new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+          )
+          .slice(0, 50)
+
+        setActivities(taskActivities)
       }
+    } catch (err) {
+      console.error('Failed to fetch activities:', err)
+    } finally {
+      setLoading(false)
     }
-    
-    fetchActivities()
-    const interval = setInterval(fetchActivities, 10000)
-    return () => clearInterval(interval)
-  }, [])
+  }
+
+  usePollingInterval(fetchActivities, 10000)
 
   const getIcon = (type: ActivityType) => {
     switch (type) {
@@ -77,16 +75,6 @@ export function ActivityStream() {
       case 'error': return <AlertCircle className="w-4 h-4 text-red-400" />
       default: return <Activity className="w-4 h-4 text-slate-400" />
     }
-  }
-
-  const formatTime = (timestamp: string) => {
-    const diff = Date.now() - new Date(timestamp).getTime()
-    const mins = Math.floor(diff / 60000)
-    if (mins < 1) return 'just now'
-    if (mins < 60) return `${mins}m ago`
-    const hours = Math.floor(mins / 60)
-    if (hours < 24) return `${hours}h ago`
-    return new Date(timestamp).toLocaleDateString()
   }
 
   const filteredActivities = activities.filter(a => {
@@ -155,7 +143,7 @@ export function ActivityStream() {
                   )}
                   <div className="flex items-center gap-1 mt-1 text-xs text-slate-500">
                     <Clock className="w-3 h-3" />
-                    {formatTime(activity.timestamp)}
+                    {formatTimeAgo(new Date(activity.timestamp))}
                   </div>
                 </div>
               </div>

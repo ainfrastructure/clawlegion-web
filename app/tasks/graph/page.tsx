@@ -105,10 +105,10 @@ export default function TaskGraphPage() {
                   </div>
                 </div>
 
-                {taskDetails.assignedTo && (
+                {(taskDetails.assignee || taskDetails.assignedTo) && (
                   <div style={{ marginBottom: '16px' }}>
                     <label style={{ color: '#6b7280', fontSize: '12px', textTransform: 'uppercase' }}>Assigned To</label>
-                    <div>@{taskDetails.assignedTo}</div>
+                    <div>@{taskDetails.assignee || taskDetails.assignedTo}</div>
                   </div>
                 )}
 

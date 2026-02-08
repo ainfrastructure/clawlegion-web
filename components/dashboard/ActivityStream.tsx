@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { AgentAvatar } from '@/components/agents';
+import { usePollingInterval } from '@/hooks/usePollingInterval';
 
 type ActivityType = 'task_claim' | 'task_complete' | 'task_fail' | 'error' | 'commit' | 'message';
 
@@ -64,7 +65,7 @@ export function ActivityStream({ className = '', limit = 50 }: ActivityStreamPro
           taskActivities.push({
             id: task.id + '-claim',
             type: 'task_claim',
-            agent: task.assignedTo || 'unknown',
+            agent: task.assignee || task.assignedTo || 'unknown',
             title: 'Claimed task',
             description: task.title,
             timestamp: task.assignedAt,
@@ -76,7 +77,7 @@ export function ActivityStream({ className = '', limit = 50 }: ActivityStreamPro
           taskActivities.push({
             id: task.id + '-complete',
             type: task.status === 'failed' ? 'task_fail' : 'task_complete',
-            agent: task.completedBy || task.assignedTo || 'unknown',
+            agent: task.completedBy || task.assignee || task.assignedTo || 'unknown',
             title: task.status === 'failed' ? 'Failed task' : 'Completed task',
             description: task.title,
             timestamp: task.completedAt,
@@ -109,11 +110,7 @@ export function ActivityStream({ className = '', limit = 50 }: ActivityStreamPro
     }
   }, [limit]);
 
-  useEffect(() => {
-    fetchActivities();
-    const interval = setInterval(fetchActivities, 10000); // Refresh every 10s
-    return () => clearInterval(interval);
-  }, [fetchActivities]);
+  usePollingInterval(fetchActivities, 10000);
 
   const agents = useMemo(() => {
     const set = new Set(activities.map(a => a.agent));

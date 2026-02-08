@@ -2,7 +2,8 @@
 import { TaskDetailPanel } from './TaskDetailPanel'
 import { getStatusConfig, normalizeStatus } from './config/status'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
+import { usePollingInterval } from '@/hooks/usePollingInterval'
 import {
   ListTodo, Clock, User, AlertCircle, CheckCircle,
   Circle, Loader2, ChevronRight, Plus, Filter
@@ -35,25 +36,21 @@ export function TaskQueuePanel({ compact = false, maxItems = 10 }: TaskQueuePane
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null)
   const [filter, setFilter] = useState<string>('all')
 
-  useEffect(() => {
-    const fetchTasks = async () => {
-      try {
-        const res = await fetch('/api/tasks/queue')
-        if (res.ok) {
-          const data = await res.json()
-          setTasks(data.tasks || [])
-          setSummary(data.summary || { queued: 0, assigned: 0, inProgress: 0, completed: 0, failed: 0 })
-        }
-      } catch (err) {
-        console.error('Failed to fetch tasks:', err)
+  const fetchTasks = async () => {
+    try {
+      const res = await fetch('/api/tasks/queue')
+      if (res.ok) {
+        const data = await res.json()
+        setTasks(data.tasks || [])
+        setSummary(data.summary || { queued: 0, assigned: 0, inProgress: 0, completed: 0, failed: 0 })
       }
-      setLoading(false)
+    } catch (err) {
+      console.error('Failed to fetch tasks:', err)
     }
+    setLoading(false)
+  }
 
-    fetchTasks()
-    const interval = setInterval(fetchTasks, 3000)
-    return () => clearInterval(interval)
-  }, [])
+  usePollingInterval(fetchTasks, 3000)
 
   const priorityColors: Record<string, string> = {
     urgent: 'text-red-400 bg-red-400/10',
@@ -196,10 +193,10 @@ export function TaskQueuePanel({ compact = false, maxItems = 10 }: TaskQueuePane
                   )}
                 </div>
                 <div className="flex items-center gap-3 mt-1 text-xs text-slate-500">
-                  {task.assignedTo && (
+                  {(task.assignee || task.assignedTo) && (
                     <span className="flex items-center gap-1 text-blue-400/70">
                       <User className="w-3 h-3" />
-                      @{task.assignedTo}
+                      @{task.assignee || task.assignedTo}
                     </span>
                   )}
                   <span className="flex items-center gap-1">

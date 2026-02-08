@@ -196,10 +196,10 @@ export function TaskDetailPanel({ taskId, isOpen, onClose }: TaskDetailPanelProp
                     {new Date(task.createdAt).toLocaleString()}
                   </div>
                 </div>
-                {task.assignedTo && (
+                {(task.assignee || task.assignedTo) && (
                   <div>
                     <div className="text-xs text-slate-500 mb-1">Assigned to</div>
-                    <div className="text-sm text-slate-300">{task.assignedTo}</div>
+                    <div className="text-sm text-slate-300">{task.assignee || task.assignedTo}</div>
                   </div>
                 )}
                 {task.estimatedMinutes && (
@@ -344,7 +344,7 @@ export function TaskDetailPanel({ taskId, isOpen, onClose }: TaskDetailPanelProp
                     <div className="relative">
                       <div className="absolute -left-[22px] w-3 h-3 rounded-full bg-blue-500" />
                       <div className="text-xs text-slate-500">{new Date(task.assignedAt).toLocaleString()}</div>
-                      <div className="text-sm text-slate-300">Assigned to {task.assignedTo}</div>
+                      <div className="text-sm text-slate-300">Assigned to {task.assignee || task.assignedTo}</div>
                     </div>
                   )}
                   {task.completedAt && (
