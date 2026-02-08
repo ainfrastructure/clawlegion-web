@@ -98,6 +98,9 @@ export function normalizeStatus(status: string): TaskStatusKey {
     case 'in-progress':
     case 'assigned':
       return 'building'
+    case 'in_research':
+    case 'researched':
+      return 'researching'
     case 'queued':
       return 'todo'
     case 'completed':
