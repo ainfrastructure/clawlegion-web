@@ -38,7 +38,7 @@ export function RalphLoopSettings({ settings, onChange }: RalphLoopSettingsProps
         <div className="flex items-center gap-3">
           <Settings2 className="w-5 h-5 text-slate-400" />
           <div className="text-left">
-            <h3 className="font-semibold text-slate-100">Ralph Loop Settings</h3>
+            <h3 className="font-semibold text-slate-100">Orchestrator Loop Settings</h3>
             <p className="text-xs text-slate-400">
               Time budget, iterations, and safety thresholds
             </p>

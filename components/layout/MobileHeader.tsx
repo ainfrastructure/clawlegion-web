@@ -37,7 +37,7 @@ function getPageTitle(pathname: string): string {
     }
   }
 
-  return 'Jarvis HQ'
+  return 'ClawLegion'
 }
 
 export function MobileHeader({ onMenuClick }: MobileHeaderProps) {

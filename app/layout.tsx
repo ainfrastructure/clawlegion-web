@@ -25,8 +25,8 @@ const jetbrainsMono = JetBrains_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'Jarvis HQ',
-  description: 'AI Agent Command Center',
+  title: 'ClawLegion',
+  description: 'Command your AI fleet — the control plane for autonomous AI agents.',
 }
 
 export default function RootLayout({
