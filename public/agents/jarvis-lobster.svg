@@ -1,0 +1,111 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+  <!-- Jarvis - Red Mech Lobster (Cosmic Background, Cyan Eyes) -->
+  <defs>
+    <!-- Cosmic background gradient -->
+    <radialGradient id="cosmic-bg" cx="50%" cy="50%" r="70%">
+      <stop offset="0%" style="stop-color:#1a1a2e"/>
+      <stop offset="50%" style="stop-color:#16213e"/>
+      <stop offset="100%" style="stop-color:#0f0f23"/>
+    </radialGradient>
+    <!-- Red mech shell gradient -->
+    <linearGradient id="mech-shell" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#EF4444"/>
+      <stop offset="30%" style="stop-color:#DC2626"/>
+      <stop offset="70%" style="stop-color:#B91C1C"/>
+      <stop offset="100%" style="stop-color:#7F1D1D"/>
+    </linearGradient>
+    <!-- Cyan eye glow -->
+    <linearGradient id="cyan-glow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#22D3EE"/>
+      <stop offset="100%" style="stop-color:#06B6D4"/>
+    </linearGradient>
+    <!-- Metallic highlight -->
+    <linearGradient id="metal-shine" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#FCA5A5"/>
+      <stop offset="30%" style="stop-color:#DC2626"/>
+      <stop offset="100%" style="stop-color:#991B1B"/>
+    </linearGradient>
+    <filter id="neon-glow">
+      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="eye-glow">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Cosmic background circle -->
+  <circle cx="50" cy="50" r="48" fill="url(#cosmic-bg)"/>
+  
+  <!-- Stars -->
+  <circle cx="15" cy="20" r="1" fill="#fff" opacity="0.8"/>
+  <circle cx="82" cy="15" r="1.2" fill="#fff" opacity="0.9"/>
+  <circle cx="25" cy="80" r="0.8" fill="#fff" opacity="0.6"/>
+  <circle cx="78" cy="75" r="1" fill="#fff" opacity="0.7"/>
+  <circle cx="12" cy="55" r="0.7" fill="#22D3EE" opacity="0.5"/>
+  <circle cx="88" cy="45" r="0.9" fill="#22D3EE" opacity="0.4"/>
+  <circle cx="70" cy="88" r="0.6" fill="#fff" opacity="0.5"/>
+  <circle cx="30" cy="12" r="0.8" fill="#fff" opacity="0.6"/>
+  
+  <!-- Main mech lobster body (armored carapace) -->
+  <ellipse cx="50" cy="52" rx="26" ry="30" fill="url(#mech-shell)" stroke="#7F1D1D" stroke-width="1"/>
+  
+  <!-- Armor plating segments -->
+  <path d="M32 40 Q50 32 68 40 L65 52 Q50 44 35 52 Z" fill="url(#metal-shine)" opacity="0.9"/>
+  <path d="M34 56 Q50 50 66 56 L64 68 Q50 62 36 68 Z" fill="#B91C1C" opacity="0.8"/>
+  
+  <!-- Mech joints/rivets -->
+  <circle cx="35" cy="45" r="2" fill="#450A0A" stroke="#DC2626" stroke-width="0.5"/>
+  <circle cx="65" cy="45" r="2" fill="#450A0A" stroke="#DC2626" stroke-width="0.5"/>
+  <circle cx="38" cy="60" r="1.5" fill="#450A0A" stroke="#DC2626" stroke-width="0.5"/>
+  <circle cx="62" cy="60" r="1.5" fill="#450A0A" stroke="#DC2626" stroke-width="0.5"/>
+  
+  <!-- Power core (chest reactor) -->
+  <circle cx="50" cy="58" r="8" fill="#0F172A" stroke="#22D3EE" stroke-width="1.5"/>
+  <circle cx="50" cy="58" r="5" fill="#1E293B" stroke="#06B6D4" stroke-width="1"/>
+  <circle cx="50" cy="58" r="3" fill="url(#cyan-glow)" filter="url(#neon-glow)"/>
+  
+  <!-- Mech claws (armored pincers) -->
+  <path d="M16 38 Q6 28 12 18 Q18 12 26 16 Q32 22 28 34 Q22 40 16 38 Z" fill="url(#mech-shell)" stroke="#7F1D1D" stroke-width="1"/>
+  <path d="M84 38 Q94 28 88 18 Q82 12 74 16 Q68 22 72 34 Q78 40 84 38 Z" fill="url(#mech-shell)" stroke="#7F1D1D" stroke-width="1"/>
+  <!-- Claw details -->
+  <path d="M10 26 Q15 20 22 22" fill="none" stroke="#450A0A" stroke-width="2" stroke-linecap="round"/>
+  <path d="M90 26 Q85 20 78 22" fill="none" stroke="#450A0A" stroke-width="2" stroke-linecap="round"/>
+  <!-- Claw hydraulics -->
+  <circle cx="18" cy="28" r="2" fill="#450A0A" stroke="#DC2626" stroke-width="0.5"/>
+  <circle cx="82" cy="28" r="2" fill="#450A0A" stroke="#DC2626" stroke-width="0.5"/>
+  
+  <!-- Cyan eyes (glowing HUD style) -->
+  <ellipse cx="40" cy="38" rx="7" ry="5" fill="#0F172A" stroke="#22D3EE" stroke-width="1"/>
+  <ellipse cx="60" cy="38" rx="7" ry="5" fill="#0F172A" stroke="#22D3EE" stroke-width="1"/>
+  <ellipse cx="40" cy="38" rx="4" ry="3" fill="url(#cyan-glow)" filter="url(#eye-glow)"/>
+  <ellipse cx="60" cy="38" rx="4" ry="3" fill="url(#cyan-glow)" filter="url(#eye-glow)"/>
+  <!-- Eye pupils/focus points -->
+  <ellipse cx="41" cy="38" rx="1.5" ry="1" fill="#E0F2FE"/>
+  <ellipse cx="61" cy="38" rx="1.5" ry="1" fill="#E0F2FE"/>
+  
+  <!-- Antenna (sensor arrays) -->
+  <line x1="42" y1="26" x2="36" y2="14" stroke="#DC2626" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="58" y1="26" x2="64" y2="14" stroke="#DC2626" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- Antenna tips (cyan sensors) -->
+  <circle cx="34" cy="12" r="3.5" fill="#0F172A" stroke="#22D3EE" stroke-width="1"/>
+  <circle cx="34" cy="12" r="2" fill="url(#cyan-glow)" filter="url(#neon-glow)"/>
+  <circle cx="66" cy="12" r="3.5" fill="#0F172A" stroke="#22D3EE" stroke-width="1"/>
+  <circle cx="66" cy="12" r="2" fill="url(#cyan-glow)" filter="url(#neon-glow)"/>
+  
+  <!-- Tail segments (mech plating) -->
+  <ellipse cx="50" cy="78" rx="14" ry="5" fill="#B91C1C" stroke="#7F1D1D" stroke-width="1"/>
+  <ellipse cx="50" cy="85" rx="10" ry="4" fill="#991B1B" stroke="#7F1D1D" stroke-width="0.5"/>
+  <ellipse cx="50" cy="91" rx="7" ry="3" fill="#7F1D1D"/>
+  
+  <!-- Tail fan -->
+  <path d="M40 92 Q50 98 60 92 L58 95 Q50 100 42 95 Z" fill="#991B1B"/>
+</svg>

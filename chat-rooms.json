@@ -1,0 +1,24 @@
+{
+  "rooms": [
+    {
+      "id": "general",
+      "name": "💬 General",
+      "description": "Main chat for everyone",
+      "type": "persistent",
+      "members": [],
+      "createdBy": "system",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "isDefault": true
+    },
+    {
+      "id": "bot-collab",
+      "name": "🤖 Bot Collaboration",
+      "description": "Where bots share progress and coordinate",
+      "type": "persistent",
+      "members": [],
+      "createdBy": "system",
+      "createdAt": "2026-01-01T00:00:00.000Z"
+    }
+  ],
+  "messages": []
+}

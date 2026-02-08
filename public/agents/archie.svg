@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+  <!-- Archie - Architect/Planner Bot (Blue/Classical) -->
+  <defs>
+    <linearGradient id="archie-body" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3B82F6"/>
+      <stop offset="50%" style="stop-color:#2563EB"/>
+      <stop offset="100%" style="stop-color:#1D4ED8"/>
+    </linearGradient>
+    <linearGradient id="archie-glow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#93C5FD"/>
+      <stop offset="100%" style="stop-color:#60A5FA"/>
+    </linearGradient>
+    <filter id="archie-blueprint">
+      <feGaussianBlur stdDeviation="1" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Main body (classical column shape) -->
+  <rect x="28" y="40" width="44" height="40" rx="4" fill="url(#archie-body)"/>
+  
+  <!-- Column capital (top piece) -->
+  <rect x="22" y="32" width="56" height="10" rx="2" fill="url(#archie-body)"/>
+  <rect x="26" y="28" width="48" height="6" rx="1" fill="#1D4ED8"/>
+  
+  <!-- Triangular pediment (classical architecture) -->
+  <path d="M25 28 L50 12 L75 28 Z" fill="url(#archie-body)" stroke="#1D4ED8" stroke-width="1"/>
+  <path d="M35 28 L50 18 L65 28 Z" fill="#1E293B"/>
+  
+  <!-- Eyes (blueprint style) -->
+  <circle cx="40" cy="52" r="6" fill="#1E293B" stroke="url(#archie-glow)" stroke-width="1.5"/>
+  <circle cx="60" cy="52" r="6" fill="#1E293B" stroke="url(#archie-glow)" stroke-width="1.5"/>
+  <circle cx="40" cy="52" r="3" fill="url(#archie-glow)" filter="url(#archie-blueprint)"/>
+  <circle cx="60" cy="52" r="3" fill="url(#archie-glow)" filter="url(#archie-blueprint)"/>
+  
+  <!-- Blueprint grid lines on body -->
+  <line x1="32" y1="62" x2="68" y2="62" stroke="#60A5FA" stroke-width="0.5" opacity="0.5"/>
+  <line x1="32" y1="68" x2="68" y2="68" stroke="#60A5FA" stroke-width="0.5" opacity="0.5"/>
+  <line x1="32" y1="74" x2="68" y2="74" stroke="#60A5FA" stroke-width="0.5" opacity="0.5"/>
+  <line x1="42" y1="58" x2="42" y2="78" stroke="#60A5FA" stroke-width="0.5" opacity="0.5"/>
+  <line x1="50" y1="58" x2="50" y2="78" stroke="#60A5FA" stroke-width="0.5" opacity="0.5"/>
+  <line x1="58" y1="58" x2="58" y2="78" stroke="#60A5FA" stroke-width="0.5" opacity="0.5"/>
+  
+  <!-- Compass/protractor indicator -->
+  <circle cx="50" cy="68" r="8" fill="none" stroke="url(#archie-glow)" stroke-width="1.5" stroke-dasharray="2 2"/>
+  <line x1="50" y1="68" x2="56" y2="62" stroke="url(#archie-glow)" stroke-width="1.5" stroke-linecap="round"/>
+  
+  <!-- Side scrolls (blueprint rolls) -->
+  <rect x="18" y="42" width="6" height="20" rx="3" fill="url(#archie-body)"/>
+  <rect x="76" y="42" width="6" height="20" rx="3" fill="url(#archie-body)"/>
+  <line x1="21" y1="46" x2="21" y2="58" stroke="#1E293B" stroke-width="1"/>
+  <line x1="79" y1="46" x2="79" y2="58" stroke="#1E293B" stroke-width="1"/>
+  
+  <!-- Base columns -->
+  <rect x="30" y="80" width="12" height="10" rx="1" fill="#1D4ED8"/>
+  <rect x="58" y="80" width="12" height="10" rx="1" fill="#1D4ED8"/>
+  
+  <!-- Antenna (planning beacon) -->
+  <line x1="50" y1="12" x2="50" y2="4" stroke="#2563EB" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="50" cy="3" r="2" fill="url(#archie-glow)" filter="url(#archie-blueprint)"/>
+</svg>

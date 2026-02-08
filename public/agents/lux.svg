@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+  <!-- Lux - Iron Man Lobster Style (Green/Emerald) -->
+  <defs>
+    <linearGradient id="lux-shell" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#10B981"/>
+      <stop offset="50%" style="stop-color:#22C55E"/>
+      <stop offset="100%" style="stop-color:#15803D"/>
+    </linearGradient>
+    <linearGradient id="lux-glow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#86EFAC"/>
+      <stop offset="100%" style="stop-color:#4ADE80"/>
+    </linearGradient>
+    <filter id="lux-neon">
+      <feGaussianBlur stdDeviation="1.5" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Main lobster body (iron man style armor) -->
+  <ellipse cx="50" cy="55" rx="28" ry="32" fill="url(#lux-shell)"/>
+  
+  <!-- Armor segments -->
+  <path d="M30 45 Q50 35 70 45 L65 60 Q50 50 35 60 Z" fill="#16A34A" opacity="0.8"/>
+  <path d="M32 62 Q50 55 68 62 L65 75 Q50 68 35 75 Z" fill="#16A34A" opacity="0.6"/>
+  
+  <!-- Arc reactor (Iron Man style center) -->
+  <circle cx="50" cy="52" r="10" fill="#1E293B" stroke="url(#lux-glow)" stroke-width="2"/>
+  <circle cx="50" cy="52" r="7" fill="#0F172A"/>
+  <circle cx="50" cy="52" r="5" fill="url(#lux-glow)" filter="url(#lux-neon)"/>
+  <circle cx="50" cy="52" r="3" fill="#DCFCE7"/>
+  
+  <!-- Lobster claws (armor style) -->
+  <path d="M18 40 Q8 30 15 22 Q20 18 28 22 Q32 28 28 38 Z" fill="url(#lux-shell)" stroke="#15803D" stroke-width="1"/>
+  <path d="M82 40 Q92 30 85 22 Q80 18 72 22 Q68 28 72 38 Z" fill="url(#lux-shell)" stroke="#15803D" stroke-width="1"/>
+  
+  <!-- Eyes (HUD style with sparkle effect) -->
+  <path d="M38 38 L44 42 L38 46 Z" fill="url(#lux-glow)" filter="url(#lux-neon)"/>
+  <path d="M62 38 L56 42 L62 46 Z" fill="url(#lux-glow)" filter="url(#lux-neon)"/>
+  
+  <!-- Sparkle accents (Lux's signature) -->
+  <path d="M25 55 L27 52 L29 55 L27 58 Z" fill="#86EFAC" filter="url(#lux-neon)"/>
+  <path d="M75 55 L73 52 L71 55 L73 58 Z" fill="#86EFAC" filter="url(#lux-neon)"/>
+  
+  <!-- Antenna (sensors with sparkle tips) -->
+  <line x1="42" y1="28" x2="38" y2="18" stroke="#22C55E" stroke-width="2" stroke-linecap="round"/>
+  <line x1="58" y1="28" x2="62" y2="18" stroke="#22C55E" stroke-width="2" stroke-linecap="round"/>
+  <path d="M38 16 L36 13 L38 10 L40 13 Z" fill="url(#lux-glow)" filter="url(#lux-neon)"/>
+  <path d="M62 16 L60 13 L62 10 L64 13 Z" fill="url(#lux-glow)" filter="url(#lux-neon)"/>
+  
+  <!-- Tail segments -->
+  <ellipse cx="50" cy="82" rx="12" ry="6" fill="#15803D"/>
+  <ellipse cx="50" cy="90" rx="8" ry="4" fill="#166534"/>
+</svg>

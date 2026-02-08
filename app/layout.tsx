@@ -1,0 +1,56 @@
+import type { Metadata } from 'next'
+import { DM_Sans, JetBrains_Mono } from 'next/font/google'
+import './globals.css'
+import { Providers } from './providers'
+// AgentChat moved to AuthenticatedLayout
+import { CommandPalette } from '@/components/ui/CommandPalette'
+import { ToastProvider } from '@/components/ui/Toast'
+import { KeyboardShortcutsHelp } from '@/components/ui/KeyboardShortcutsHelp'
+import { GlobalKeyboardShortcuts } from '@/components/ui/GlobalKeyboardShortcuts'
+import { AuthenticatedLayout } from '@/components/layout'
+import { SessionProvider } from '@/components/auth'
+import { BuildInfo } from '@/components/BuildInfo'
+// HealthStatusBanner removed - info now on /health page
+
+const dmSans = DM_Sans({
+  subsets: ['latin'],
+  variable: '--font-sans',
+  display: 'swap',
+})
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ['latin'],
+  variable: '--font-mono',
+  display: 'swap',
+})
+
+export const metadata: Metadata = {
+  title: 'Jarvis HQ',
+  description: 'AI Agent Command Center',
+}
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  return (
+    <html lang="en" className="dark" suppressHydrationWarning>
+      <body className={`${dmSans.variable} ${jetbrainsMono.variable} font-sans ambient-bg`}>
+        <SessionProvider>
+          <Providers>
+            <ToastProvider>
+              <AuthenticatedLayout>
+                {children}
+              </AuthenticatedLayout>
+              <CommandPalette />
+              <KeyboardShortcutsHelp />
+              <GlobalKeyboardShortcuts />
+              <BuildInfo />
+            </ToastProvider>
+          </Providers>
+        </SessionProvider>
+      </body>
+    </html>
+  )
+}

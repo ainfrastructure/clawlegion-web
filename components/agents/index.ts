@@ -1,0 +1,22 @@
+export { AgentStatusPanel } from './AgentStatusPanel';
+export { PresenceIndicator } from './PresenceIndicator';
+export { AgentControlPanel } from './AgentControlPanel';
+export { QuickActionsBar } from './QuickActionsBar';
+
+// New unified components
+export { AgentCard, type AgentData } from './AgentCard';
+export { StatusBadge, StatusDot, type AgentStatus } from './StatusBadge';
+export { ReachabilityIndicator, ReachabilityDot } from './ReachabilityIndicator';
+
+// Agent avatar component
+export { AgentAvatar, agentAvatars, agentNames, agentColors, type AgentAvatarProps } from './AgentAvatar';
+
+// Fleet page config components
+export { AgentProfilePanel } from './AgentProfilePanel';
+export { SoulEditorModal } from './SoulEditorModal';
+
+// Redesigned agent cards
+export { FleetAgentCard } from './FleetAgentCard';
+export { OrgAgentCard } from './OrgAgentCard';
+export { AgentDetailModal } from './AgentDetailModal';
+export { AddAgentModal } from './AddAgentModal';
