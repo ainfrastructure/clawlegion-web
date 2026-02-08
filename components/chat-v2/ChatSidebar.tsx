@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo, useCallback } from 'react'
 import Image from 'next/image'
 import { cn } from '@/lib/utils'
-import { Hash, Plus, ChevronDown, ChevronRight, MessageSquare } from 'lucide-react'
+import { Hash, Plus, ChevronDown, ChevronRight, MessageSquare, ChevronLeft, ChevronRight as ChevronRightIcon } from 'lucide-react'
 import { ALL_AGENTS, getAgentAvatar, AgentConfig } from './agentConfig'
 import { CreateRoomDialog } from './CreateRoomDialog'
 
@@ -53,6 +53,7 @@ export function ChatSidebar({ activeTarget, onSelectTarget, userId = 'default-us
   const [dmsExpanded, setDmsExpanded] = useState(true)
   const [loading, setLoading] = useState(true)
   const [showCreateRoom, setShowCreateRoom] = useState(false)
+  const [collapsed, setCollapsed] = useState(false)
 
   // Fetch rooms
   const fetchRooms = useCallback(async () => {
@@ -131,25 +132,50 @@ export function ChatSidebar({ activeTarget, onSelectTarget, userId = 'default-us
   }
 
   return (
-    <div className="w-64 h-full bg-slate-900 border-r border-slate-800 flex flex-col">
+    <div 
+      className={cn(
+        "h-full bg-slate-900 border-r border-slate-800 flex flex-col transition-all duration-300 ease-in-out",
+        collapsed ? "w-16" : "w-64"
+      )}
+    >
       {/* Header */}
-      <div className="p-4 border-b border-slate-800">
-        <h2 className="text-lg font-semibold text-white">Chat</h2>
+      <div className="p-4 border-b border-slate-800 flex items-center justify-between">
+        {!collapsed && <h2 className="text-lg font-semibold text-white">Chat</h2>}
+        <button
+          onClick={() => setCollapsed(!collapsed)}
+          className={cn(
+            "p-1.5 rounded-md text-slate-400 hover:text-white hover:bg-slate-800 transition-colors",
+            collapsed && "mx-auto"
+          )}
+          title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+        >
+          {collapsed ? (
+            <ChevronRightIcon className="w-4 h-4" />
+          ) : (
+            <ChevronLeft className="w-4 h-4" />
+          )}
+        </button>
       </div>
 
       <div className="flex-1 overflow-y-auto py-2">
         {/* Rooms Section */}
         <div className="mb-4">
-          <button 
-            onClick={() => setRoomsExpanded(!roomsExpanded)}
-            className="w-full flex items-center gap-1 px-3 py-1.5 text-xs font-semibold text-slate-500 uppercase tracking-wider hover:text-slate-300 transition-colors"
-          >
-            {roomsExpanded ? <ChevronDown className="w-3 h-3" /> : <ChevronRight className="w-3 h-3" />}
-            Rooms
-            <span className="ml-auto text-slate-600">{rooms.length}</span>
-          </button>
+          {!collapsed ? (
+            <button 
+              onClick={() => setRoomsExpanded(!roomsExpanded)}
+              className="w-full flex items-center gap-1 px-3 py-1.5 text-xs font-semibold text-slate-500 uppercase tracking-wider hover:text-slate-300 transition-colors"
+            >
+              {roomsExpanded ? <ChevronDown className="w-3 h-3" /> : <ChevronRight className="w-3 h-3" />}
+              Rooms
+              <span className="ml-auto text-slate-600">{rooms.length}</span>
+            </button>
+          ) : (
+            <div className="px-2 py-1.5 text-center">
+              <Hash className="w-4 h-4 mx-auto text-slate-500" />
+            </div>
+          )}
           
-          {roomsExpanded && (
+          {(collapsed || roomsExpanded) && (
             <div className="mt-1 space-y-0.5 px-2">
               {rooms.map(room => {
                 const target: ChatTarget = { type: 'room', roomId: room.id, roomName: room.name }
@@ -160,24 +186,30 @@ export function ChatSidebar({ activeTarget, onSelectTarget, userId = 'default-us
                     key={room.id}
                     onClick={() => onSelectTarget(target)}
                     className={cn(
-                      'w-full flex items-center gap-2 px-2 py-1.5 rounded-md text-sm transition-colors text-left',
+                      "w-full flex items-center gap-2 px-2 py-1.5 rounded-md text-sm transition-colors text-left",
                       active
-                        ? 'bg-blue-600/20 text-white'
-                        : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200'
+                        ? "bg-blue-600/20 text-white"
+                        : "text-slate-400 hover:bg-slate-800 hover:text-slate-200",
+                      collapsed && "justify-center"
                     )}
+                    title={collapsed ? room.name : undefined}
                   >
                     <Hash className="w-4 h-4 flex-shrink-0 opacity-60" />
-                    <span className="truncate">{room.name}</span>
-                    {room._count && room._count.messages > 0 && (
-                      <span className="ml-auto text-xs text-slate-600">
-                        {room._count.messages}
-                      </span>
+                    {!collapsed && (
+                      <>
+                        <span className="truncate">{room.name}</span>
+                        {room._count && room._count.messages > 0 && (
+                          <span className="ml-auto text-xs text-slate-600">
+                            {room._count.messages}
+                          </span>
+                        )}
+                      </>
                     )}
                   </button>
                 )
               })}
               
-              {rooms.length === 0 && !loading && (
+              {rooms.length === 0 && !loading && !collapsed && (
                 <p className="text-xs text-slate-600 px-2 py-2">No rooms yet</p>
               )}
             </div>
@@ -186,16 +218,22 @@ export function ChatSidebar({ activeTarget, onSelectTarget, userId = 'default-us
 
         {/* DMs Section */}
         <div>
-          <button 
-            onClick={() => setDmsExpanded(!dmsExpanded)}
-            className="w-full flex items-center gap-1 px-3 py-1.5 text-xs font-semibold text-slate-500 uppercase tracking-wider hover:text-slate-300 transition-colors"
-          >
-            {dmsExpanded ? <ChevronDown className="w-3 h-3" /> : <ChevronRight className="w-3 h-3" />}
-            Direct Messages
-            <span className="ml-auto text-slate-600">{ALL_AGENTS.length}</span>
-          </button>
+          {!collapsed ? (
+            <button 
+              onClick={() => setDmsExpanded(!dmsExpanded)}
+              className="w-full flex items-center gap-1 px-3 py-1.5 text-xs font-semibold text-slate-500 uppercase tracking-wider hover:text-slate-300 transition-colors"
+            >
+              {dmsExpanded ? <ChevronDown className="w-3 h-3" /> : <ChevronRight className="w-3 h-3" />}
+              Direct Messages
+              <span className="ml-auto text-slate-600">{ALL_AGENTS.length}</span>
+            </button>
+          ) : (
+            <div className="px-2 py-1.5 text-center">
+              <MessageSquare className="w-4 h-4 mx-auto text-slate-500" />
+            </div>
+          )}
           
-          {dmsExpanded && (
+          {(collapsed || dmsExpanded) && (
             <div className="mt-1 space-y-0.5 px-2">
               {ALL_AGENTS.map((agent: AgentConfig) => {
                 const target: ChatTarget = { type: 'dm', agentId: agent.id, agentName: agent.name }
@@ -208,11 +246,13 @@ export function ChatSidebar({ activeTarget, onSelectTarget, userId = 'default-us
                     key={agent.id}
                     onClick={() => onSelectTarget(target)}
                     className={cn(
-                      'w-full flex items-center gap-2 px-2 py-1.5 rounded-md text-sm transition-colors text-left',
+                      "w-full flex items-center gap-2 px-2 py-1.5 rounded-md text-sm transition-colors text-left",
                       active
-                        ? 'bg-blue-600/20 text-white'
-                        : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200'
+                        ? "bg-blue-600/20 text-white"
+                        : "text-slate-400 hover:bg-slate-800 hover:text-slate-200",
+                      collapsed && "justify-center"
                     )}
+                    title={collapsed ? agent.name : undefined}
                   >
                     {/* Avatar */}
                     <div className="relative flex-shrink-0">
@@ -236,16 +276,20 @@ export function ChatSidebar({ activeTarget, onSelectTarget, userId = 'default-us
                       <div className="absolute -bottom-0.5 -right-0.5 w-2 h-2 bg-green-500 rounded-full border border-slate-900" />
                     </div>
                     
-                    <span className="truncate flex-1">{agent.name}</span>
-                    
-                    {/* Last message time */}
-                    {dmInfo?.lastMessage && (
-                      <span 
-                        className="text-xs text-slate-600 flex-shrink-0"
-                        suppressHydrationWarning
-                      >
-                        {formatTime(dmInfo.lastMessage.createdAt)}
-                      </span>
+                    {!collapsed && (
+                      <>
+                        <span className="truncate flex-1">{agent.name}</span>
+                        
+                        {/* Last message time */}
+                        {dmInfo?.lastMessage && (
+                          <span 
+                            className="text-xs text-slate-600 flex-shrink-0"
+                            suppressHydrationWarning
+                          >
+                            {formatTime(dmInfo.lastMessage.createdAt)}
+                          </span>
+                        )}
+                      </>
                     )}
                   </button>
                 )
@@ -258,11 +302,15 @@ export function ChatSidebar({ activeTarget, onSelectTarget, userId = 'default-us
       {/* Footer - New Room button */}
       <div className="p-2 border-t border-slate-800">
         <button 
-          className="w-full flex items-center justify-center gap-2 px-3 py-2 text-sm text-slate-500 hover:text-slate-300 hover:bg-slate-800 rounded-md transition-colors"
+          className={cn(
+            "w-full flex items-center justify-center gap-2 px-3 py-2 text-sm text-slate-500 hover:text-slate-300 hover:bg-slate-800 rounded-md transition-colors",
+            collapsed && "px-2"
+          )}
           onClick={() => setShowCreateRoom(true)}
+          title={collapsed ? "New Room" : undefined}
         >
           <Plus className="w-4 h-4" />
-          New Room
+          {!collapsed && "New Room"}
         </button>
       </div>
       
