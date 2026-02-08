@@ -124,7 +124,7 @@ const contentSuggestions: ContentSuggestion[] = [
   {
     id: '1',
     platform: 'twitter',
-    content: '🤖 Today we solved the "two AIs talking over each other" problem.\n\nSolution: Turn-based protocol with explicit handoffs.\n\nJarvis leads, Lux supports. No more race conditions.\n\n#AI #MultiAgent #BuildInPublic',
+    content: '🤖 Today we solved the "two AIs talking over each other" problem.\n\nSolution: Turn-based protocol with explicit handoffs.\n\nOne agent leads, the other supports. No more race conditions.\n\n#AI #MultiAgent #BuildInPublic',
     basedOn: 'Multi-agent coordination learning',
     generated: '2026-01-31'
   },
@@ -178,7 +178,7 @@ export default function LearningsPage() {
               AI Research & Learnings
             </h1>
             <p className="text-gray-400 mt-1">
-              Findings from Lux & Jarvis experiments
+              Findings from ClawLegion agent experiments
             </p>
           </div>
           <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors">

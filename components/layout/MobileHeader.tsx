@@ -2,8 +2,8 @@
 
 import { usePathname } from 'next/navigation'
 import { Menu, Bell } from 'lucide-react'
-import Image from 'next/image'
 import Link from 'next/link'
+import { MascotIcon } from '@/components/landing/MascotIcon'
 
 interface MobileHeaderProps {
   onMenuClick: () => void
@@ -58,13 +58,7 @@ export function MobileHeader({ onMenuClick }: MobileHeaderProps) {
 
         {/* Title with logo */}
         <Link href="/" className="flex items-center gap-2">
-          <Image
-            src="/agents/jarvis-lobster.png"
-            alt="Jarvis"
-            width={20}
-            height={20}
-            className="rounded ring-1 ring-white/10"
-          />
+          <MascotIcon size={22} />
           <h1 className="text-base font-semibold text-white">{title}</h1>
         </Link>
 
