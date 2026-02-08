@@ -1,0 +1,80 @@
+import { Bot } from 'lucide-react'
+
+const footerLinks = {
+  Product: [
+    { label: 'Features', href: '#features' },
+    { label: 'Demo', href: '#demo' },
+    { label: 'Pricing', href: '#' },
+    { label: 'Changelog', href: '#' },
+  ],
+  Resources: [
+    { label: 'Documentation', href: '#' },
+    { label: 'API Reference', href: '#' },
+    { label: 'Status', href: '#' },
+    { label: 'Blog', href: '#' },
+  ],
+  Company: [
+    { label: 'About', href: '#' },
+    { label: 'Contact', href: '#' },
+    { label: 'Privacy', href: '#' },
+    { label: 'Terms', href: '#' },
+  ],
+}
+
+export function LandingFooter() {
+  return (
+    <footer className="px-4 sm:px-6 pt-16 pb-8 border-t border-white/[0.04]">
+      <div className="max-w-6xl mx-auto">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
+          {/* Brand column */}
+          <div className="col-span-2 md:col-span-1">
+            <div className="flex items-center gap-2 mb-4">
+              <Bot className="w-6 h-6 text-blue-500" />
+              <span className="font-bold text-white">ClawLegion</span>
+            </div>
+            <p className="text-sm text-slate-500 leading-relaxed">
+              The command center for autonomous AI agent fleets.
+            </p>
+          </div>
+
+          {/* Link columns */}
+          {Object.entries(footerLinks).map(([title, links]) => (
+            <div key={title}>
+              <h3 className="text-sm font-semibold text-white mb-4">{title}</h3>
+              <ul className="space-y-2">
+                {links.map((link) => (
+                  <li key={link.label}>
+                    <a
+                      href={link.href}
+                      className="text-sm text-slate-500 hover:text-slate-300 transition-colors"
+                    >
+                      {link.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+
+        {/* Bottom bar */}
+        <div className="border-t border-white/[0.04] pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p className="text-xs text-slate-600">
+            &copy; {new Date().getFullYear()} ClawLegion. All rights reserved.
+          </p>
+          <div className="flex items-center gap-4">
+            {['Twitter', 'GitHub', 'Discord'].map((social) => (
+              <a
+                key={social}
+                href="#"
+                className="text-xs text-slate-600 hover:text-slate-400 transition-colors"
+              >
+                {social}
+              </a>
+            ))}
+          </div>
+        </div>
+      </div>
+    </footer>
+  )
+}

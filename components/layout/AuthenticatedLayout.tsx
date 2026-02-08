@@ -40,12 +40,12 @@ export function AuthenticatedLayout({ children }: { children: React.ReactNode })
   const isMobile = useMobile()
   const [drawerOpen, setDrawerOpen] = useState(false)
 
-  // Don't show sidebar/chat on login page
-  const isLoginPage = pathname === '/login'
+  // Don't show sidebar/chrome on public pages
+  const isPublicPage = pathname === '/login' || pathname === '/'
   // Check if user is authenticated
   const isAuthenticated = status === "authenticated"
 
-  if (isLoginPage) {
+  if (isPublicPage) {
     // Minimal layout - just the content
     return <>{children}</>
   }

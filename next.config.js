@@ -6,15 +6,8 @@ const clawdbotUrl = process.env.CLAWDBOT_URL || 'http://localhost:18789'
 const nextConfig = {
   eslint: { ignoreDuringBuilds: true },
   reactStrictMode: true,
-  transpilePackages: [],
   async redirects() {
-    return [
-      {
-        source: '/',
-        destination: '/dashboard',
-        permanent: false,
-      },
-    ]
+    return []
   },
   env: {
     NEXT_PUBLIC_API_URL: '', // Use relative URLs, proxy through Next.js

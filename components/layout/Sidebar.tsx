@@ -44,7 +44,7 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   {
-    href: '/',
+    href: '/dashboard',
     icon: <Home className="w-5 h-5" />,
     label: 'Home'
   },
@@ -106,7 +106,7 @@ export function Sidebar() {
   }
 
   const isItemActive = (item: NavItem) => {
-    if (item.href === '/') return pathname === '/'
+    if (item.href === '/dashboard') return pathname === '/dashboard' || pathname === '/'
     return pathname.startsWith(item.href)
   }
 
@@ -125,7 +125,7 @@ export function Sidebar() {
         {collapsed ? (
           <Bot className="w-7 h-7 text-blue-500" />
         ) : (
-          <Link href="/" className="flex items-center gap-2">
+          <Link href="/dashboard" className="flex items-center gap-2">
             <Bot className="w-7 h-7 text-blue-500" />
             <span className="font-bold text-lg">ClawLegion</span>
           </Link>
