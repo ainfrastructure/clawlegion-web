@@ -5,153 +5,72 @@ import * as path from 'path';
 /**
  * E2E Test Setup
  *
- * This script prepares the environment for E2E testing:
- * - Creates test database
- * - Runs migrations
- * - Seeds test data
- * - Sets up test repositories
+ * This script prepares the environment for E2E testing.
+ * 
+ * PREREQUISITES:
+ * - The backend API must be running (port 5001)
+ * - PostgreSQL must be running with ralph_dashboard database
+ * 
+ * The E2E tests run against the live development environment.
+ * For isolated testing, start the backend with TEST_DATABASE_URL pointing
+ * to a separate test database.
  */
 
 async function setup() {
   console.log('🔧 Setting up E2E test environment...\n');
 
   try {
-    // 1. Create test database
-    console.log('1. Setting up test database...');
-    const dbUrl = process.env.TEST_DATABASE_URL ||
-      'postgresql://localhost:5432/ralph_dashboard_test';
-
+    // 1. Check backend is running
+    console.log('1. Checking backend API...');
+    const apiUrl = process.env.API_URL || 'http://localhost:5001';
+    
     try {
-      execSync(`psql postgres -c "DROP DATABASE IF EXISTS ralph_dashboard_test;"`, { stdio: 'ignore' });
-    } catch (e) {
-      // Database might not exist, that's okay
-    }
-
-    try {
-      execSync(`psql postgres -c "CREATE DATABASE ralph_dashboard_test;"`, { stdio: 'inherit' });
-      console.log('   ✅ Test database created');
-    } catch (e) {
-      console.log('   ⚠️  Database might already exist');
-    }
-
-    // 2. Run migrations
-    console.log('\n2. Running database migrations...');
-    execSync('npm run db:migrate --workspace=packages/api', {
-      stdio: 'inherit',
-      env: { ...process.env, DATABASE_URL: dbUrl },
-    });
-    console.log('   ✅ Migrations complete');
-
-    // 3. Create test repository directory
-    console.log('\n3. Setting up test repository...');
-    const testRepoPath = path.join(__dirname, '../test-repos/sample-project');
-
-    if (!fs.existsSync(testRepoPath)) {
-      fs.mkdirSync(testRepoPath, { recursive: true });
-
-      // Initialize git repo
-      execSync('git init', { cwd: testRepoPath });
-
-      // Create sample files
-      fs.writeFileSync(
-        path.join(testRepoPath, 'package.json'),
-        JSON.stringify({
-          name: 'sample-project',
-          version: '1.0.0',
-          scripts: {
-            test: 'echo "Running tests..." && exit 0',
-            lint: 'echo "Linting..." && exit 0',
-          },
-        }, null, 2)
-      );
-
-      fs.writeFileSync(
-        path.join(testRepoPath, 'README.md'),
-        '# Sample Project\n\nThis is a test repository for E2E testing.'
-      );
-
-      // Create .ralph directory
-      const ralphDir = path.join(testRepoPath, '.ralph');
-      fs.mkdirSync(ralphDir, { recursive: true });
-
-      // Create ralph-loop script
-      const ralphLoopScript = `#!/bin/bash
-# Mock Ralph Loop script for testing
-echo "Ralph Loop starting..."
-sleep 2
-echo "Processing tasks..."
-sleep 2
-echo "Task completed successfully"
-exit 0
-`;
-      fs.writeFileSync(path.join(ralphDir, 'ralph-loop'), ralphLoopScript);
-      fs.chmodSync(path.join(ralphDir, 'ralph-loop'), '755');
-
-      // Commit files
-      execSync('git add .', { cwd: testRepoPath });
-      execSync('git commit -m "Initial commit"', { cwd: testRepoPath });
-
-      console.log(`   ✅ Test repository created at: ${testRepoPath}`);
-    } else {
-      console.log('   ✅ Test repository already exists');
-    }
-
-    // 4. Seed test data
-    console.log('\n4. Seeding test data...');
-
-    // Create seed script to add test repository
-    const seedScript = `
-      import { PrismaClient } from '@prisma/client';
-      const prisma = new PrismaClient();
-
-      async function seed() {
-        // Create test repository
-        await prisma.repository.upsert({
-          where: { path: '${testRepoPath}' },
-          update: {},
-          create: {
-            name: 'sample-project',
-            path: '${testRepoPath}',
-            status: 'INITIALIZED',
-            language: 'javascript',
-            framework: 'nodejs',
-          },
-        });
-
-        console.log('✅ Test repository seeded');
+      const response = await fetch(apiUrl);
+      if (response.ok) {
+        console.log('   ✅ Backend API is running');
+      } else {
+        console.log('   ⚠️  Backend API returned non-OK status');
       }
-
-      seed()
-        .catch(console.error)
-        .finally(() => prisma.$disconnect());
-    `;
-
-    const seedPath = path.join(__dirname, '../packages/api/prisma/test-seed.ts');
-    fs.writeFileSync(seedPath, seedScript);
-
-    try {
-      execSync(`npx tsx ${seedPath}`, {
-        stdio: 'inherit',
-        env: { ...process.env, DATABASE_URL: dbUrl },
-        cwd: path.join(__dirname, '../packages/api'),
-      });
-      console.log('   ✅ Test data seeded');
     } catch (e) {
-      console.log('   ⚠️  Seeding might have failed, but continuing...');
+      console.log('   ❌ Backend API is not reachable at', apiUrl);
+      console.log('   Please start the backend with: npm run dev');
+      process.exit(1);
     }
 
-    // Clean up seed script
-    fs.unlinkSync(seedPath);
-
-    // 5. Create screenshots directory
-    const screenshotsDir = path.join(__dirname, '../e2e-screenshots');
-    if (!fs.existsSync(screenshotsDir)) {
-      fs.mkdirSync(screenshotsDir, { recursive: true });
+    // 2. Check frontend can be built
+    console.log('\n2. Checking frontend...');
+    const frontendUrl = process.env.BASE_URL || 'http://localhost:3000';
+    
+    try {
+      const response = await fetch(frontendUrl);
+      if (response.ok || response.status === 307) {
+        console.log('   ✅ Frontend is running');
+      } else {
+        console.log('   ⚠️  Frontend returned status', response.status);
+      }
+    } catch (e) {
+      console.log('   ⚠️  Frontend not running - Playwright will start it');
     }
-    console.log('\n5. Screenshots directory ready');
 
-    console.log('\n✅ ✅ ✅ E2E test environment setup complete! ✅ ✅ ✅\n');
-    console.log('You can now run: npm run test:e2e\n');
+    // 3. Create test output directories
+    console.log('\n3. Creating test directories...');
+    const dirs = [
+      path.join(__dirname, 'test-results'),
+      path.join(__dirname, '../e2e-report'),
+      path.join(__dirname, '../e2e-screenshots'),
+    ];
+    
+    for (const dir of dirs) {
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+        console.log('   Created:', dir);
+      }
+    }
+    console.log('   ✅ Test directories ready');
+
+    console.log('\n✅ E2E test environment ready!\n');
+    console.log('Run tests with: npm run test:e2e\n');
+    console.log('Or with UI: npm run test:e2e:ui\n');
 
   } catch (error) {
     console.error('\n❌ Setup failed:', error);
