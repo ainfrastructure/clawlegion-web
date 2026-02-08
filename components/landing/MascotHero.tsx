@@ -47,12 +47,12 @@ export function MascotHero() {
           animation: mascotBob 4s ease-in-out infinite;
         }
         @keyframes miniLeftBob {
-          0%, 100% { transform: translate(-95px, 70px) scale(0.5); }
-          50% { transform: translate(-95px, 66px) scale(0.5); }
+          0%, 100% { transform: translate(-75px, 70px) scale(0.5); }
+          50% { transform: translate(-75px, 66px) scale(0.5); }
         }
         @keyframes miniRightBob {
-          0%, 100% { transform: translate(300px, 70px) scale(0.5); }
-          50% { transform: translate(300px, 66px) scale(0.5); }
+          0%, 100% { transform: translate(320px, 70px) scale(0.5); }
+          50% { transform: translate(320px, 66px) scale(0.5); }
         }
         .mascot-mini-left {
           animation: miniLeftBob 3.8s ease-in-out infinite;
@@ -151,7 +151,7 @@ export function MascotHero() {
         </defs>
 
         {/* --- Left mini mascot --- */}
-        <g className="mascot-mini-left" transform="translate(-95, 70) scale(0.5)">
+        <g className="mascot-mini-left" transform="translate(-75, 70) scale(0.5)">
           <rect x="185" y="390" width="32" height="50" rx="10" fill="url(#mhLegGrad)"/>
           <ellipse cx="201" cy="440" rx="20" ry="10" fill="url(#mhLegGrad)"/>
           <rect x="283" y="390" width="32" height="50" rx="10" fill="url(#mhLegGrad)"/>
@@ -180,7 +180,7 @@ export function MascotHero() {
         </g>
 
         {/* --- Right mini mascot --- */}
-        <g className="mascot-mini-right" transform="translate(300, 70) scale(0.5)">
+        <g className="mascot-mini-right" transform="translate(320, 70) scale(0.5)">
           <rect x="185" y="390" width="32" height="50" rx="10" fill="url(#mhLegGrad)"/>
           <ellipse cx="201" cy="440" rx="20" ry="10" fill="url(#mhLegGrad)"/>
           <rect x="283" y="390" width="32" height="50" rx="10" fill="url(#mhLegGrad)"/>
