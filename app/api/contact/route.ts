@@ -7,6 +7,8 @@ const schema = z.object({
   message: z.string().min(10, 'Message must be at least 10 characters.').max(2000, 'Message must be under 2000 characters.'),
 })
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://clawlegion-backend-production.up.railway.app'
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
@@ -21,41 +23,17 @@ export async function POST(req: NextRequest) {
 
     const { name, email, message } = result.data
 
-    const webhookUrl = process.env.DISCORD_WEBHOOK_URL
-
-    if (!webhookUrl) {
-      console.error('Missing DISCORD_WEBHOOK_URL')
-      return NextResponse.json(
-        { error: 'Server configuration error. Please try again later.' },
-        { status: 500 }
-      )
-    }
-
-    const discordRes = await fetch(webhookUrl, {
+    const backendRes = await fetch(`${API_URL}/api/contact`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        embeds: [
-          {
-            title: 'New Contact Message',
-            color: 0xf59e0b,
-            fields: [
-              { name: 'Name', value: name, inline: true },
-              { name: 'Email', value: email, inline: true },
-              { name: 'Message', value: message },
-            ],
-            timestamp: new Date().toISOString(),
-          },
-        ],
-      }),
+      body: JSON.stringify({ name, email, message }),
     })
 
-    if (!discordRes.ok) {
-      const err = await discordRes.text()
-      console.error('Discord API error:', err)
+    if (!backendRes.ok) {
+      const err = await backendRes.json().catch(() => ({ error: 'Backend error' }))
       return NextResponse.json(
-        { error: 'Failed to send message. Please try again.' },
-        { status: 502 }
+        { error: err.error || 'Failed to send message.' },
+        { status: backendRes.status }
       )
     }
 
