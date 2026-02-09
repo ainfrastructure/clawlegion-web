@@ -168,7 +168,7 @@ export function NotificationCenter() {
       {/* Dropdown panel */}
       {isOpen && (
         <div
-          className="absolute right-0 top-full mt-2 w-[420px] max-h-[70vh] glass-3 rounded-xl border border-white/[0.06] shadow-2xl shadow-black/40 overflow-hidden flex flex-col z-50"
+          className="absolute right-0 top-full mt-2 w-[420px] max-h-[70vh] bg-slate-900 rounded-xl border border-white/[0.08] shadow-2xl shadow-black/50 overflow-hidden flex flex-col z-50"
           style={{
             animation: 'notificationSlideIn 180ms cubic-bezier(0.16, 1, 0.3, 1)',
           }}

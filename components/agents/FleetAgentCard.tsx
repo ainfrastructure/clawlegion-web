@@ -30,7 +30,7 @@ export function FleetAgentCard({ agent, onClick }: FleetAgentCardProps) {
   const agentColor = agent.color || enriched?.color || '#71717a'
   const description = enriched?.description || agent.role || ''
   const capabilities = enriched?.capabilities || []
-  const role = agent.role || enriched?.role || 'Agent'
+  const role = enriched?.role || agent.role || 'Agent'
 
   return (
     <div

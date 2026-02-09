@@ -89,7 +89,7 @@ export default function AgentFleetPage() {
       name: agent.name,
       emoji: agent.emoji,
       avatar: agent.avatar,
-      role: agent.role || agent.type,
+      role: agent.role || agent.title || agent.type,
       title: agent.title,
       description: agent.description,
       color: agent.color,

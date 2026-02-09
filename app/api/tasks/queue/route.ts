@@ -7,10 +7,10 @@ function buildSummary(tasks: any[]) {
   const statuses = tasks.map((t: any) => t.status)
   return {
     queued: statuses.filter((s: string) => s === 'backlog' || s === 'todo').length,
-    assigned: statuses.filter((s: string) => s === 'researching' || s === 'planning' || s === 'building').length,
-    inProgress: statuses.filter((s: string) => s === 'building' || s === 'verifying').length,
+    assigned: statuses.filter((s: string) => s === 'researching' || s === 'planning').length,
+    inProgress: statuses.filter((s: string) => s === 'building' || s === 'in_progress' || s === 'verifying').length,
     completed: statuses.filter((s: string) => s === 'done').length,
-    failed: statuses.filter((s: string) => s === 'blocked' || s === 'cancelled').length,
+    failed: statuses.filter((s: string) => s === 'failed' || s === 'blocked' || s === 'cancelled').length,
   }
 }
 
