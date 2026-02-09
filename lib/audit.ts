@@ -1,5 +1,4 @@
-import fs from 'fs';
-import path from 'path';
+const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001';
 
 export type AuditAction = 
   | 'task_created' 
@@ -17,7 +16,8 @@ export type AuditAction =
   | 'settings_changed'
   | 'export_requested'
   | 'verification_run'
-  | 'system_event';
+  | 'system_event'
+  | 'task_started';
 
 export interface AuditEntry {
   id: string;
@@ -35,40 +35,8 @@ export interface AuditEntry {
   };
 }
 
-interface AuditLog {
-  entries: AuditEntry[];
-  lastUpdated: string;
-}
-
-const AUDIT_FILE = path.join(process.cwd(), 'data', 'audit-log.json');
-const MAX_ENTRIES = 10000;
-
-function ensureDataDir() {
-  const dir = path.dirname(AUDIT_FILE);
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir, { recursive: true });
-  }
-}
-
-function getAuditLog(): AuditLog {
-  ensureDataDir();
-  if (!fs.existsSync(AUDIT_FILE)) {
-    return { entries: [], lastUpdated: new Date().toISOString() };
-  }
-  try {
-    return JSON.parse(fs.readFileSync(AUDIT_FILE, 'utf-8'));
-  } catch {
-    return { entries: [], lastUpdated: new Date().toISOString() };
-  }
-}
-
-function saveAuditLog(log: AuditLog) {
-  ensureDataDir();
-  fs.writeFileSync(AUDIT_FILE, JSON.stringify(log, null, 2));
-}
-
 /**
- * Log an audit event
+ * Log an audit event by POSTing to the backend
  */
 export function logAudit(
   action: AuditAction,
@@ -84,32 +52,23 @@ export function logAudit(
       sessionId?: string;
     };
   }
-): AuditEntry {
-  const log = getAuditLog();
-  
-  const entry: AuditEntry = {
-    id: `audit-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
-    timestamp: new Date().toISOString(),
-    action,
-    actor,
-    entityType,
-    entityId: options?.entityId,
-    entityName: options?.entityName,
-    details: options?.details,
-    metadata: options?.metadata,
-  };
-  
-  log.entries.push(entry);
-  log.lastUpdated = new Date().toISOString();
-  
-  // Keep only last MAX_ENTRIES to prevent file bloat
-  if (log.entries.length > MAX_ENTRIES) {
-    log.entries = log.entries.slice(-MAX_ENTRIES);
-  }
-  
-  saveAuditLog(log);
-  
-  return entry;
+): void {
+  // Fire-and-forget POST to backend audit endpoint
+  fetch(`${BACKEND_URL}/api/audit`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      action,
+      actor,
+      entityType,
+      entityId: options?.entityId,
+      entityName: options?.entityName,
+      details: options?.details,
+      metadata: options?.metadata,
+    }),
+  }).catch(err => {
+    console.error('Failed to send audit event to backend:', err.message);
+  });
 }
 
 /**
