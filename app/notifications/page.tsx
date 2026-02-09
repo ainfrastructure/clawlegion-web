@@ -1,13 +1,13 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { PageContainer } from '@/components/layout'
 import {
   Bell, CheckCheck, Trash2, Search,
   Info, CheckCircle, AlertTriangle, XCircle,
   Activity, ShieldCheck, MessageSquare,
-  ChevronDown, Loader2,
+  ChevronDown, Loader2, Users,
 } from 'lucide-react'
 import { formatTimeAgo } from '@/components/common/TimeAgo'
 import {
@@ -18,6 +18,8 @@ import {
   useClearRead,
 } from '@/hooks/useNotifications'
 import type { UserNotification } from '@/hooks/useNotifications'
+import { AgentAvatar } from '@/components/agents/AgentAvatar'
+import { ALL_AGENTS, getAgentById, getAgentByName } from '@/components/chat-v2/agentConfig'
 
 const CATEGORIES = [
   { id: 'all', label: 'All', icon: Bell },
@@ -65,6 +67,14 @@ function groupByDate(notifications: UserNotification[]): { label: string; items:
   return Object.entries(groups).map(([label, items]) => ({ label, items }))
 }
 
+function resolveAgentId(actor: string | null): string | null {
+  if (!actor) return null
+  if (getAgentById(actor)) return actor
+  const byName = getAgentByName(actor)
+  if (byName) return byName.id
+  return null
+}
+
 function NotificationCard({ notification, onMarkRead }: { notification: UserNotification; onMarkRead: (id: string) => void }) {
   const router = useRouter()
   const severity = SEVERITY_CONFIG[notification.severity] || SEVERITY_CONFIG.info
@@ -72,7 +82,11 @@ function NotificationCard({ notification, onMarkRead }: { notification: UserNoti
 
   const handleClick = () => {
     if (!notification.read) onMarkRead(notification.id)
-    if (notification.taskId) router.push(`/tasks?selected=${notification.taskId}`)
+    if (notification.taskId) {
+      const isComment = notification.eventType?.includes('comment')
+      const tabParam = isComment ? '&tab=discussion' : ''
+      router.push(`/tasks?taskId=${notification.taskId}${tabParam}`)
+    }
   }
 
   return (
@@ -120,14 +134,21 @@ function NotificationCard({ notification, onMarkRead }: { notification: UserNoti
                 {notification.taskShortId}
               </span>
             )}
-            {notification.actor && (
-              <div className="flex items-center gap-1 ml-auto">
-                <div className="w-4 h-4 rounded-full bg-slate-700 flex items-center justify-center">
-                  <span className="text-[8px] font-bold text-slate-400 uppercase">{notification.actor[0]}</span>
+            {notification.actor && (() => {
+              const agentId = resolveAgentId(notification.actor)
+              return (
+                <div className="flex items-center gap-1 ml-auto">
+                  {agentId ? (
+                    <AgentAvatar agentId={agentId} size="xs" />
+                  ) : (
+                    <div className="w-4 h-4 rounded-full bg-slate-700 flex items-center justify-center">
+                      <span className="text-[8px] font-bold text-slate-400 uppercase">{notification.actor[0]}</span>
+                    </div>
+                  )}
+                  <span className="text-[10px] text-slate-500">{notification.actor}</span>
                 </div>
-                <span className="text-[10px] text-slate-500">{notification.actor}</span>
-              </div>
-            )}
+              )
+            })()}
           </div>
         </div>
       </div>
@@ -140,6 +161,20 @@ export default function NotificationsPage() {
   const [search, setSearch] = useState('')
   const [searchInput, setSearchInput] = useState('')
   const [cursor, setCursor] = useState<string | undefined>()
+  const [agentFilter, setAgentFilter] = useState<string | null>(null)
+  const [agentDropdownOpen, setAgentDropdownOpen] = useState(false)
+  const agentDropdownRef = useRef<HTMLDivElement>(null)
+
+  // Close agent dropdown on click outside
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (agentDropdownRef.current && !agentDropdownRef.current.contains(e.target as Node)) {
+        setAgentDropdownOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [])
 
   const { data, isLoading } = useNotifications({
     category: category === 'all' ? undefined : category,
@@ -154,7 +189,12 @@ export default function NotificationsPage() {
 
   const notifications = data?.notifications || []
   const unreadCount = unreadData?.count || 0
-  const groups = groupByDate(notifications)
+
+  // Apply agent filter client-side
+  const filteredNotifications = agentFilter
+    ? notifications.filter(n => resolveAgentId(n.actor) === agentFilter)
+    : notifications
+  const groups = groupByDate(filteredNotifications)
 
   // Stats
   const failuresToday = notifications.filter(n =>
@@ -268,6 +308,64 @@ export default function NotificationsPage() {
               </button>
             )
           })}
+
+          {/* Agent filter */}
+          <div className="relative" ref={agentDropdownRef}>
+            <button
+              onClick={() => setAgentDropdownOpen(!agentDropdownOpen)}
+              className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium whitespace-nowrap transition-all ${
+                agentFilter
+                  ? 'bg-purple-500/15 text-purple-400 border border-purple-500/20'
+                  : 'glass-2 text-slate-400 hover:text-slate-300 border border-white/[0.06] hover:border-white/[0.10]'
+              }`}
+            >
+              {agentFilter ? (
+                <AgentAvatar agentId={agentFilter} size="xs" />
+              ) : (
+                <Users size={13} />
+              )}
+              {agentFilter ? ALL_AGENTS.find(a => a.id === agentFilter)?.name || 'Agent' : 'Agent'}
+              <ChevronDown size={11} className={`transition-transform ${agentDropdownOpen ? 'rotate-180' : ''}`} />
+            </button>
+
+            {agentDropdownOpen && (
+              <div className="absolute top-full right-0 mt-2 z-50 w-64 rounded-xl border border-white/[0.08] bg-slate-900/95 backdrop-blur-2xl shadow-2xl shadow-black/40 overflow-hidden">
+                {/* Clear filter */}
+                {agentFilter && (
+                  <>
+                    <button
+                      onClick={() => { setAgentFilter(null); setAgentDropdownOpen(false); setCursor(undefined) }}
+                      className="w-full flex items-center gap-2.5 px-3 py-2.5 hover:bg-white/[0.06] transition-colors text-xs text-slate-400"
+                    >
+                      <div className="w-5 h-5 rounded-full bg-slate-700 flex items-center justify-center">
+                        <Users size={10} className="text-slate-400" />
+                      </div>
+                      All Agents
+                    </button>
+                    <div className="h-px bg-white/[0.06] mx-2" />
+                  </>
+                )}
+                {ALL_AGENTS.map(agent => (
+                  <button
+                    key={agent.id}
+                    onClick={() => { setAgentFilter(agent.id); setAgentDropdownOpen(false); setCursor(undefined) }}
+                    className={`w-full flex items-center gap-2.5 px-3 py-2 hover:bg-white/[0.06] transition-colors ${
+                      agentFilter === agent.id ? 'bg-white/[0.04]' : ''
+                    }`}
+                  >
+                    <AgentAvatar agentId={agent.id} size="xs" />
+                    <div className="flex-1 text-left min-w-0">
+                      <div className="text-xs font-medium text-slate-200 truncate">{agent.name}</div>
+                      <div className="text-[10px] text-slate-500 truncate">{agent.role}</div>
+                    </div>
+                    {agentFilter === agent.id && (
+                      <div className="w-1.5 h-1.5 rounded-full bg-purple-400 shrink-0" />
+                    )}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
@@ -278,14 +376,14 @@ export default function NotificationsPage() {
             <Loader2 className="w-6 h-6 text-slate-500 animate-spin" />
             <p className="text-sm text-slate-500 mt-3">Loading notifications...</p>
           </div>
-        ) : notifications.length === 0 ? (
+        ) : filteredNotifications.length === 0 ? (
           <div className="glass-2 rounded-xl border border-white/[0.06] p-12 text-center">
             <div className="w-12 h-12 rounded-xl bg-white/[0.04] flex items-center justify-center mx-auto mb-4">
               <Bell size={22} className="text-slate-600" />
             </div>
             <h3 className="text-base font-medium text-slate-400">No notifications</h3>
             <p className="text-sm text-slate-500 mt-1">
-              {search ? 'No results match your search' : 'Events will appear here as tasks are processed'}
+              {search ? 'No results match your search' : agentFilter ? 'No notifications from this agent' : 'Events will appear here as tasks are processed'}
             </p>
           </div>
         ) : (

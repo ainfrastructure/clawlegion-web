@@ -102,7 +102,7 @@ export function AuthenticatedLayout({ children }: { children: React.ReactNode })
   }
 
   // Desktop layout with sidebar and header
-  const isFullHeight = pathname === '/chat'
+  const isFullHeight = pathname === '/chat' || pathname === '/tasks/graph'
 
   return (
     <SidebarProvider>

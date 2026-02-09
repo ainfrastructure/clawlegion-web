@@ -95,7 +95,7 @@ export function OrgAgentCard({ agent, onClick, variant = 'default' }: OrgAgentCa
 
         {/* Name + Role */}
         <div className="text-center mb-3">
-          <h3 className={`font-bold text-white ${isFeatured ? 'text-xl' : 'text-lg'} leading-tight`}>
+          <h3 className={`font-bold ${isFeatured ? 'text-xl' : 'text-lg'} leading-tight`} style={{ color: agentColor }}>
             {agent.name}
           </h3>
           <span

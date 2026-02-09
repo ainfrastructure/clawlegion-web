@@ -40,23 +40,6 @@ export const COUNCIL_AGENTS: AgentConfig[] = [
     openclawAgentId: 'main',
     port: 18789,
   },
-  {
-    id: 'lux',
-    name: 'Lux',
-    role: 'Council Member',
-    emoji: '\u2728',
-    color: '#22C55E', // Green
-    avatar: '/agents/lux-lobster.png',
-    tier: 'council',
-    borderColor: '#22C55E',
-    description: 'Senior advisor and second-in-command. Handles complex decisions and escalations.',
-    longDescription: 'Lux operates as the council\'s strategic advisor, stepping in for high-stakes decisions, conflict resolution between agents, and quality oversight. When Jarvis needs a second opinion or a task requires executive judgment, Lux is the voice of reason.',
-    capabilities: ['strategic advisory', 'conflict resolution', 'quality oversight', 'escalation handling'],
-    specialty: 'Strategic Advisory',
-    webhookEnvVar: 'LUX_WEBHOOK_URL',
-    openclawAgentId: 'lux',
-    port: 18796,
-  },
 ]
 
 // Bot Army - Worker tier
@@ -122,19 +105,34 @@ export const ARMY_AGENTS: AgentConfig[] = [
     port: 18793,
   },
   {
-    id: 'ralph',
-    name: 'Ralph',
-    role: 'Loop Orchestrator',
-    emoji: '\u{1F504}',
-    color: '#EC4899', // Pink
-    avatar: '/agents/ralph.jpg',
+    id: 'forge',
+    name: 'Forge',
+    role: 'DevOps Engineer',
+    emoji: '\u{1F525}',
+    color: '#FF6B00', // Orange/Flame
+    avatar: '/agents/forge-avatar.jpg',
     tier: 'army',
-    description: 'The loop controller. Manages build-verify cycles, budgets, and iteration limits.',
-    longDescription: 'Ralph manages the iterative build-verify loop that drives task completion. He monitors time budgets, enforces iteration limits, triggers checkpoints for human review, and decides when to escalate or circuit-break a failing task. Ralph ensures the fleet doesn\'t spin its wheels.',
-    capabilities: ['loop management', 'budget enforcement', 'checkpoint coordination', 'circuit breaking'],
-    specialty: 'Iteration Control',
-    openclawAgentId: 'ralph',
-    port: 18794,
+    description: 'The bridge between built and shipped. Handles CI/CD, deployment, infrastructure, and monitoring.',
+    longDescription: 'Forge is the one who takes Mason\'s working code and gets it running in production. From CI/CD pipelines to server provisioning, database migrations to performance tuning, Forge ensures that what works locally works everywhere. When something goes down at 3am, Forge is the first responder.',
+    capabilities: ['ci-cd', 'deployment', 'monitoring', 'infrastructure', 'incident-response', 'database-ops'],
+    specialty: 'DevOps & Infrastructure',
+    openclawAgentId: 'forge',
+    port: 18795,
+  },
+  {
+    id: 'echo',
+    name: 'Echo',
+    role: 'Comms Manager',
+    emoji: '\u{1F4E1}',
+    color: '#3B82F6', // Blue
+    avatar: '/agents/echo-avatar.jpg',
+    tier: 'army',
+    description: 'The voice that reaches the outside world. Handles outreach, support, community, and trend monitoring.',
+    longDescription: 'Echo is the team\'s connection to the outside world. From customer support and outreach emails to community engagement and trend monitoring, Echo ensures the company stays connected with its users and aware of what\'s happening in its space. When someone needs to hear from us, Echo carries the message.',
+    capabilities: ['customer-support', 'outreach', 'community', 'trend-monitoring', 'social-listening', 'stakeholder-reporting'],
+    specialty: 'Communications & Outreach',
+    openclawAgentId: 'echo',
+    port: 18796,
   },
   {
     id: 'quill',
@@ -142,7 +140,7 @@ export const ARMY_AGENTS: AgentConfig[] = [
     role: 'Content Creator',
     emoji: '\u{1FAB6}',
     color: '#F97316', // Orange
-    avatar: '/agents/quill-writer.svg',
+    avatar: '/agents/quill-avatar.jpg',
     tier: 'army',
     description: 'The wordsmith. Crafts blog posts, docs, release notes, social copy, and marketing content.',
     longDescription: 'Quill is the voice of the operation — turning technical complexity into compelling content. From documentation to social media posts, release announcements to marketing copy, Quill ensures every piece of communication is clear, engaging, and on-brand. When the team builds something great, Quill makes sure the world hears about it.',
@@ -157,7 +155,7 @@ export const ARMY_AGENTS: AgentConfig[] = [
     role: 'Creative Director',
     emoji: '\u{1F3A8}',
     color: '#D946EF', // Fuchsia
-    avatar: '/agents/pixel-designer.svg',
+    avatar: '/agents/pixel-avatar.jpg',
     tier: 'army',
     description: 'The visual thinker. Critiques UI/UX, ensures brand consistency, and shapes the look and feel.',
     longDescription: 'Pixel is the creative eye that ensures everything ClawLegion ships looks as good as it works. From UI layouts to color palettes, component design to visual hierarchy, Pixel provides design direction, catches visual inconsistencies, and pushes the team toward interfaces that users actually enjoy using.',
@@ -172,7 +170,7 @@ export const ARMY_AGENTS: AgentConfig[] = [
     role: 'Data Analyst',
     emoji: '\u{1F4CA}',
     color: '#14B8A6', // Teal
-    avatar: '/agents/sage-analyst.svg',
+    avatar: '/agents/sage-avatar.jpg',
     tier: 'army',
     description: 'The numbers whisperer. Tracks metrics, spots trends, and turns raw data into decisions.',
     longDescription: 'Sage sees the story the data is telling before anyone else does. From tracking agent performance metrics to analyzing task completion trends, generating reports to surfacing actionable insights, Sage transforms raw numbers into clear narratives that drive better decisions across the fleet.',

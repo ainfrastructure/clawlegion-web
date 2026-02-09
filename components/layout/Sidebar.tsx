@@ -102,7 +102,7 @@ const POWER_NAV_ITEMS: NavItem[] = [
     label: 'Agents',
     subItems: [
       { href: '/agents/fleet', label: 'Fleet' },
-      { href: '/sessions', label: 'Loops' },
+      { href: '/flows', label: 'Flows' },
       { href: '/agents/org', label: 'Organization' },
     ]
   },

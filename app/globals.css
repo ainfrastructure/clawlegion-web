@@ -405,6 +405,57 @@
     0%, 100% { opacity: 0.4; transform: scale(1); }
     50% { opacity: 1; transform: scale(1.3); }
   }
+
+  /* Flow builder edge dash animation */
+  @keyframes flow-edge-dash {
+    0% { stroke-dashoffset: 24; }
+    100% { stroke-dashoffset: 0; }
+  }
+
+  .flow-edge-animated {
+    stroke-dasharray: 8 4;
+    animation: flow-edge-dash 0.6s linear infinite;
+  }
+
+  /* React Flow dark theme overrides */
+  .react-flow__controls {
+    box-shadow: none !important;
+    border: 1px solid rgb(255 255 255 / 0.06) !important;
+    border-radius: 12px !important;
+    overflow: hidden;
+  }
+
+  .react-flow__controls-button {
+    background: rgb(15 23 42 / 0.9) !important;
+    border-bottom: 1px solid rgb(255 255 255 / 0.06) !important;
+    fill: rgb(148 163 184) !important;
+    width: 32px !important;
+    height: 32px !important;
+  }
+
+  .react-flow__controls-button:hover {
+    background: rgb(30 41 59 / 0.9) !important;
+    fill: rgb(226 232 240) !important;
+  }
+
+  .react-flow__background {
+    background-color: transparent !important;
+  }
+
+  .react-flow__node.selected > div {
+    ring: 2px solid rgb(6 182 212 / 0.5);
+    box-shadow: 0 0 16px -4px rgb(6 182 212 / 0.3);
+  }
+
+  /* Node appear animation */
+  @keyframes node-appear {
+    0% { opacity: 0; transform: scale(0.8); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+
+  .animate-node-appear {
+    animation: node-appear 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  }
 }
 
 /* Line clamp utilities */

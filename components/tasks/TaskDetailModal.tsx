@@ -93,44 +93,6 @@ export function TaskDetailModal({ taskId, task: initialTask, isOpen, onClose, in
     },
   })
 
-  const pingAgentMutation = useMutation({
-    mutationFn: async ({ taskId, message, agent }: { taskId: string; message: string; agent: string }) => {
-      const taskTitle = task?.title || 'Unknown task'
-      const taskShortId = task?.shortId || taskId.slice(0, 8)
-      const taskPriority = task?.priority || 'P2'
-      const pingContent = message
-        ? `@${agent} **Task Ping: ${taskShortId}**\n\n**${taskTitle}** (${taskPriority})\n\n${message}`
-        : `@${agent} **Task Ping: ${taskShortId}**\n\n**${taskTitle}** (${taskPriority})\n\nPlease review and pick up this task when available.`
-
-      const roomResponse = await fetch('/api/coordination/room-messages', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          roomId: 'general',
-          author: 'Dashboard',
-          authorType: 'system',
-          content: pingContent,
-          page: `/tasks/${taskId}`,
-        }),
-      })
-      if (!roomResponse.ok) {
-        const error = await roomResponse.json()
-        throw new Error(error.error || 'Failed to ping agent')
-      }
-
-      const webhookResponse = await api.post(`/agents/${agent}/ping`, {
-        taskId,
-        message: message || undefined,
-        author: 'Sven',
-      })
-
-      return { room: await roomResponse.json(), webhook: webhookResponse.data }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['task-comments', taskId] })
-    },
-  })
-
   const statusMutation = useMutation({
     mutationFn: async ({ status }: { status: string }) => {
       const response = await api.patch(`/task-tracking/tasks/${taskId}/status`, {

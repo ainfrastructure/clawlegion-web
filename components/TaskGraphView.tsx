@@ -17,6 +17,8 @@ import {
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import dagre from '@dagrejs/dagre';
+import { AlertTriangle, RefreshCw } from 'lucide-react';
+import { EmptyState } from '@/components/ui/EmptyState';
 
 // Types
 interface SubtaskData {
@@ -63,8 +65,8 @@ interface GraphData {
   };
 }
 
-// Status colors
-const statusColors: Record<string, { bg: string; border: string; text: string; dot: string }> = {
+// Status colors — exported for reuse in page.tsx sidebar
+export const statusColors: Record<string, { bg: string; border: string; text: string; dot: string }> = {
   backlog:      { bg: '#1e293b', border: '#475569', text: '#f1f5f9', dot: '#64748b' },
   todo:         { bg: '#1e3a5f', border: '#3b82f6', text: '#ffffff', dot: '#3b82f6' },
   in_progress:  { bg: '#422006', border: '#f59e0b', text: '#ffffff', dot: '#f59e0b' },
@@ -100,80 +102,66 @@ function TaskGroupComponent({ data, selected }: NodeProps) {
 
   return (
     <div
+      className="min-w-[260px] max-w-[320px] rounded-xl bg-slate-900 overflow-hidden"
       style={{
-        minWidth: '260px',
-        maxWidth: '320px',
-        borderRadius: '12px',
-        backgroundColor: '#0f172a',
         border: `2px solid ${selected ? '#6366f1' : colors.border}`,
         boxShadow: selected
           ? '0 0 0 3px rgba(99, 102, 241, 0.3)'
           : '0 2px 8px rgba(0,0,0,0.3)',
-        overflow: 'hidden',
       }}
     >
       <Handle type="target" position={Position.Top} style={{ background: colors.border }} />
 
       {/* Header bar */}
       <div
+        className="px-3.5 py-2.5"
         style={{
-          padding: '10px 14px',
           backgroundColor: colors.bg,
           borderBottom: `1px solid ${colors.border}40`,
           borderLeft: `4px solid ${colors.border}`,
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+        <div className="flex items-center gap-2 mb-1">
           {d.shortId && (
-            <span style={{
-              fontSize: '10px', fontFamily: 'monospace', fontWeight: 700,
-              padding: '1px 6px', borderRadius: '4px',
-              backgroundColor: 'rgba(168,85,247,0.2)', color: '#c084fc',
-            }}>
+            <span className="text-[10px] font-mono font-bold px-1.5 py-px rounded bg-purple-500/20 text-purple-400">
               {d.shortId}
             </span>
           )}
-          <span style={{
-            width: '8px', height: '8px', borderRadius: '50%',
-            backgroundColor: prioDot, flexShrink: 0,
-          }} title={d.priority} />
-          <span style={{
-            fontSize: '10px', padding: '1px 6px', borderRadius: '9999px',
-            backgroundColor: colors.border + '40', color: colors.text,
-            textTransform: 'uppercase', fontWeight: 500,
-          }}>
+          <span
+            className="w-2 h-2 rounded-full shrink-0"
+            style={{ backgroundColor: prioDot }}
+            title={d.priority}
+          />
+          <span
+            className="text-[10px] px-1.5 py-px rounded-full uppercase font-medium"
+            style={{ backgroundColor: colors.border + '40', color: colors.text }}
+          >
             {d.status.replace('_', ' ')}
           </span>
           {d.assignedTo && (
-            <span style={{ fontSize: '10px', color: '#94a3b8', marginLeft: 'auto' }}>
+            <span className="text-[10px] text-slate-400 ml-auto">
               @{d.assignedTo}
             </span>
           )}
         </div>
-        <div style={{ fontWeight: 600, color: colors.text, fontSize: '13px' }}>
+        <div className="font-semibold text-[13px]" style={{ color: colors.text }}>
           {d.title}
         </div>
 
         {/* Progress bar */}
-        <div style={{ marginTop: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <div style={{
-            flex: 1, height: '4px', backgroundColor: '#334155',
-            borderRadius: '2px', overflow: 'hidden',
-          }}>
-            <div style={{
-              height: '100%', width: `${d.progress}%`,
-              backgroundColor: '#22c55e', transition: 'width 0.3s ease',
-            }} />
+        <div className="mt-2 flex items-center gap-2">
+          <div className="flex-1 h-1 bg-slate-700 rounded-full overflow-hidden">
+            <div
+              className="h-full bg-green-500 transition-all duration-300"
+              style={{ width: `${d.progress}%` }}
+            />
           </div>
-          <span style={{ fontSize: '10px', color: '#94a3b8' }}>
+          <span className="text-[10px] text-slate-400">
             {d.subtasksDone}/{d.subtaskCount}
           </span>
           <button
             onClick={(e) => { e.stopPropagation(); setExpanded(!expanded); }}
-            style={{
-              background: 'none', border: 'none', cursor: 'pointer',
-              color: '#94a3b8', fontSize: '14px', padding: '0 2px',
-            }}
+            className="bg-transparent border-none cursor-pointer text-slate-400 text-sm px-0.5 hover:text-slate-200"
           >
             {expanded ? '▾' : '▸'}
           </button>
@@ -182,7 +170,7 @@ function TaskGroupComponent({ data, selected }: NodeProps) {
 
       {/* Subtask rows (expandable) */}
       {expanded && d.subtasks && d.subtasks.length > 0 && (
-        <div style={{ padding: '4px 0' }}>
+        <div className="py-1">
           {d.subtasks.map((sub) => {
             const subColors = statusColors[sub.status] || statusColors.backlog;
             const subPrioDot = priorityDots[sub.priority] || priorityDots.P2;
@@ -190,28 +178,27 @@ function TaskGroupComponent({ data, selected }: NodeProps) {
             return (
               <div
                 key={sub.id}
+                className="flex items-center gap-1.5 py-1 px-3.5 text-[11px]"
                 style={{
-                  display: 'flex', alignItems: 'center', gap: '6px',
-                  padding: '5px 14px', fontSize: '11px',
                   borderLeft: `3px solid ${subColors.dot}`,
                   opacity: isDone ? 0.6 : 1,
                 }}
               >
-                <span style={{
-                  width: '6px', height: '6px', borderRadius: '50%',
-                  backgroundColor: subColors.dot, flexShrink: 0,
-                }} />
-                <span style={{
-                  flex: 1, color: '#cbd5e1',
-                  textDecoration: isDone ? 'line-through' : 'none',
-                  overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-                }}>
+                <span
+                  className="w-1.5 h-1.5 rounded-full shrink-0"
+                  style={{ backgroundColor: subColors.dot }}
+                />
+                <span
+                  className="flex-1 text-slate-300 overflow-hidden text-ellipsis whitespace-nowrap"
+                  style={{ textDecoration: isDone ? 'line-through' : 'none' }}
+                >
                   {sub.title}
                 </span>
-                <span style={{
-                  width: '6px', height: '6px', borderRadius: '50%',
-                  backgroundColor: subPrioDot, flexShrink: 0,
-                }} title={sub.priority} />
+                <span
+                  className="w-1.5 h-1.5 rounded-full shrink-0"
+                  style={{ backgroundColor: subPrioDot }}
+                  title={sub.priority}
+                />
               </div>
             );
           })}
@@ -236,50 +223,43 @@ function StandaloneTaskComponent({ data, selected }: NodeProps) {
 
   return (
     <div
+      className="py-3 px-4 rounded-[10px] min-w-[200px] max-w-[260px]"
       style={{
-        padding: '12px 16px',
-        borderRadius: '10px',
         backgroundColor: colors.bg,
         border: `2px solid ${selected ? '#6366f1' : colors.border}`,
         borderLeft: `5px solid ${colors.border}`,
         boxShadow: selected
           ? '0 0 0 3px rgba(99, 102, 241, 0.3)'
           : '0 1px 4px rgba(0,0,0,0.2)',
-        minWidth: '200px',
-        maxWidth: '260px',
       }}
     >
       <Handle type="target" position={Position.Top} style={{ background: colors.border }} />
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px' }}>
+      <div className="flex items-center gap-1.5 mb-1.5">
         {d.shortId && (
-          <span style={{
-            fontSize: '10px', fontFamily: 'monospace', fontWeight: 700,
-            padding: '1px 6px', borderRadius: '4px',
-            backgroundColor: 'rgba(168,85,247,0.2)', color: '#c084fc',
-          }}>
+          <span className="text-[10px] font-mono font-bold px-1.5 py-px rounded bg-purple-500/20 text-purple-400">
             {d.shortId}
           </span>
         )}
-        <span style={{
-          width: '8px', height: '8px', borderRadius: '50%',
-          backgroundColor: prioDot, flexShrink: 0,
-        }} title={d.priority} />
-        <span style={{
-          fontSize: '10px', padding: '1px 6px', borderRadius: '9999px',
-          backgroundColor: colors.border + '40', color: colors.text,
-          textTransform: 'uppercase', fontWeight: 500,
-        }}>
+        <span
+          className="w-2 h-2 rounded-full shrink-0"
+          style={{ backgroundColor: prioDot }}
+          title={d.priority}
+        />
+        <span
+          className="text-[10px] px-1.5 py-px rounded-full uppercase font-medium"
+          style={{ backgroundColor: colors.border + '40', color: colors.text }}
+        >
           {d.status.replace('_', ' ')}
         </span>
       </div>
 
-      <div style={{ fontWeight: 600, color: colors.text, fontSize: '13px', marginBottom: '4px' }}>
+      <div className="font-semibold text-[13px] mb-1" style={{ color: colors.text }}>
         {d.title}
       </div>
 
       {d.assignedTo && (
-        <div style={{ fontSize: '11px', color: '#94a3b8' }}>
+        <div className="text-[11px] text-slate-400">
           @{d.assignedTo}
         </div>
       )}
@@ -302,34 +282,24 @@ function SubtaskNodeComponent({ data, selected }: NodeProps) {
 
   return (
     <div
+      className="py-1.5 px-3 rounded-md bg-slate-800 min-w-[160px] max-w-[220px] flex items-center gap-1.5"
       style={{
-        padding: '6px 12px',
-        borderRadius: '6px',
-        backgroundColor: '#1e293b',
         border: `1px solid ${selected ? '#6366f1' : colors.border}50`,
         borderLeft: `3px solid ${colors.dot}`,
-        minWidth: '160px',
-        maxWidth: '220px',
-        display: 'flex',
-        alignItems: 'center',
-        gap: '6px',
       }}
     >
       <Handle type="target" position={Position.Top} style={{ background: colors.border, width: 6, height: 6 }} />
-      <span style={{
-        width: '6px', height: '6px', borderRadius: '50%',
-        backgroundColor: colors.dot, flexShrink: 0,
-      }} />
-      <span style={{
-        flex: 1, fontSize: '11px', color: '#cbd5e1',
-        overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-      }}>
+      <span
+        className="w-1.5 h-1.5 rounded-full shrink-0"
+        style={{ backgroundColor: colors.dot }}
+      />
+      <span className="flex-1 text-[11px] text-slate-300 overflow-hidden text-ellipsis whitespace-nowrap">
         {d.title}
       </span>
-      <span style={{
-        width: '6px', height: '6px', borderRadius: '50%',
-        backgroundColor: prioDot, flexShrink: 0,
-      }} />
+      <span
+        className="w-1.5 h-1.5 rounded-full shrink-0"
+        style={{ backgroundColor: prioDot }}
+      />
       <Handle type="source" position={Position.Bottom} style={{ background: colors.border, width: 6, height: 6 }} />
     </div>
   );
@@ -355,7 +325,6 @@ function getLayoutedElements(nodes: Node[], edges: Edge[], direction = 'TB') {
   g.setGraph({ rankdir: direction, nodesep: 60, ranksep: 80 });
 
   nodes.forEach((node) => {
-    // Estimate node dimensions based on type
     const width = node.type === 'taskGroup' ? 300 : node.type === 'subtask' ? 200 : 240;
     const height = node.type === 'taskGroup' ? 160 : node.type === 'subtask' ? 40 : 100;
     g.setNode(node.id, { width, height });
@@ -500,10 +469,9 @@ export default function TaskGraphView({
 
     // Build edges (only between root-level nodes, skip parent-child since they're rendered inline)
     const flowEdges: Edge[] = graphData.edges
-      .filter((edge) => edge.type !== 'parent-child') // Skip parent-child, rendered inline
+      .filter((edge) => edge.type !== 'parent-child')
       .filter((edge) => filteredIds.has(edge.from) && filteredIds.has(edge.to))
       .filter((edge) => {
-        // Only include edges between root-level nodes
         const fromNode = graphData.nodes.find((n) => n.id === edge.from);
         const toNode = graphData.nodes.find((n) => n.id === edge.to);
         return fromNode && toNode && !fromNode.parentId && !toNode.parentId;
@@ -553,10 +521,10 @@ export default function TaskGraphView({
 
   if (loading) {
     return (
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '400px' }}>
-        <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: '24px', marginBottom: '8px' }}>...</div>
-          <div style={{ color: '#94a3b8' }}>Loading task graph...</div>
+      <div className="flex items-center justify-center h-full min-h-[400px]">
+        <div className="text-center">
+          <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+          <div className="text-slate-400 text-sm">Loading task graph...</div>
         </div>
       </div>
     );
@@ -564,18 +532,16 @@ export default function TaskGraphView({
 
   if (error) {
     return (
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '400px' }}>
-        <div style={{ textAlign: 'center', color: '#ef4444' }}>
-          <div style={{ fontSize: '24px', marginBottom: '8px' }}>Error</div>
-          <div>{error}</div>
+      <div className="flex items-center justify-center h-full min-h-[400px]">
+        <div className="text-center">
+          <AlertTriangle className="w-10 h-10 text-red-400 mx-auto mb-3" />
+          <div className="text-red-400 font-medium mb-1">Failed to load graph</div>
+          <div className="text-slate-500 text-sm mb-4">{error}</div>
           <button
             onClick={fetchGraph}
-            style={{
-              marginTop: '12px', padding: '8px 16px',
-              backgroundColor: '#3b82f6', color: 'white',
-              border: 'none', borderRadius: '6px', cursor: 'pointer',
-            }}
+            className="inline-flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 border border-white/[0.06] rounded-lg text-sm text-slate-200 transition-colors"
           >
+            <RefreshCw className="w-4 h-4" />
             Retry
           </button>
         </div>
@@ -583,37 +549,32 @@ export default function TaskGraphView({
     );
   }
 
+  if (graphData && graphData.nodes.length === 0) {
+    return (
+      <div className="flex items-center justify-center h-full min-h-[400px]">
+        <EmptyState type="no-tasks" />
+      </div>
+    );
+  }
+
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+    <div className="flex flex-col h-full">
       {/* Summary stats bar */}
       {summary && (
-        <div
-          style={{
-            display: 'flex',
-            gap: '12px',
-            padding: '10px 16px',
-            backgroundColor: '#0f172a',
-            borderBottom: '1px solid #1e293b',
-            fontSize: '12px',
-            flexWrap: 'wrap',
-            alignItems: 'center',
-            color: '#e2e8f0',
-          }}
-        >
+        <div className="flex gap-3 px-4 py-2.5 bg-slate-900 border-b border-slate-800 text-xs flex-wrap items-center text-slate-200">
           <span><strong>{summary.total}</strong> tasks</span>
           <span><strong>{summary.roots}</strong> root</span>
           {summary.subtasks > 0 && <span><strong>{summary.subtasks}</strong> subtasks</span>}
-          <span style={{ marginLeft: '8px', display: 'flex', gap: '8px', alignItems: 'center' }}>
-            {/* Stacked status breakdown */}
+          <span className="ml-2 flex gap-2 items-center">
             {Object.entries(summary.byStatus).map(([status, count]) => {
               if (count === 0) return null;
-              const colors = statusColors[status] || statusColors.backlog;
+              const c = statusColors[status] || statusColors.backlog;
               return (
-                <span key={status} style={{ display: 'flex', alignItems: 'center', gap: '4px', color: colors.border }}>
-                  <span style={{
-                    display: 'inline-block', width: '8px', height: '8px',
-                    borderRadius: '50%', backgroundColor: colors.dot,
-                  }} />
+                <span key={status} className="flex items-center gap-1" style={{ color: c.border }}>
+                  <span
+                    className="inline-block w-2 h-2 rounded-full"
+                    style={{ backgroundColor: c.dot }}
+                  />
                   <strong>{count}</strong> {status.replace('_', ' ')}
                 </span>
               );
@@ -621,20 +582,16 @@ export default function TaskGraphView({
           </span>
           <button
             onClick={() => { fetchGraph(); onRefresh?.(); }}
-            style={{
-              marginLeft: 'auto', padding: '4px 12px',
-              backgroundColor: '#1e293b', color: '#e2e8f0',
-              border: '1px solid #334155', borderRadius: '4px',
-              cursor: 'pointer', fontSize: '11px',
-            }}
+            className="ml-auto inline-flex items-center gap-1.5 px-3 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded text-[11px] transition-colors"
           >
+            <RefreshCw className="w-3 h-3" />
             Refresh
           </button>
         </div>
       )}
 
       {/* Graph view */}
-      <div style={{ flex: 1, minHeight: '400px', backgroundColor: '#020617' }}>
+      <div className="flex-1 min-h-0 bg-slate-950">
         <ReactFlow
           nodes={nodes}
           edges={edges}
@@ -663,34 +620,22 @@ export default function TaskGraphView({
       </div>
 
       {/* Legend */}
-      <div
-        style={{
-          display: 'flex',
-          gap: '16px',
-          padding: '6px 16px',
-          backgroundColor: '#0f172a',
-          borderTop: '1px solid #1e293b',
-          fontSize: '10px',
-          color: '#64748b',
-          flexWrap: 'wrap',
-          alignItems: 'center',
-        }}
-      >
-        <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-          <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#ef4444' }} /> P0
+      <div className="flex gap-4 px-4 py-1.5 bg-slate-900 border-t border-slate-800 text-[10px] text-slate-500 flex-wrap items-center">
+        <span className="flex items-center gap-1">
+          <span className="w-2 h-2 rounded-full bg-red-500" /> P0
         </span>
-        <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-          <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#f97316' }} /> P1
+        <span className="flex items-center gap-1">
+          <span className="w-2 h-2 rounded-full bg-orange-500" /> P1
         </span>
-        <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-          <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#f59e0b' }} /> P2
+        <span className="flex items-center gap-1">
+          <span className="w-2 h-2 rounded-full bg-amber-500" /> P2
         </span>
-        <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-          <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#3b82f6' }} /> P3
+        <span className="flex items-center gap-1">
+          <span className="w-2 h-2 rounded-full bg-blue-500" /> P3
         </span>
-        <span style={{ color: '#ef4444' }}>━━▶ blocks</span>
-        <span style={{ color: '#475569' }}>┄┄┄ parent-child</span>
-        <span style={{ color: '#4ade80' }}>╌╌╌ soft dep</span>
+        <span className="text-red-500">━━▶ blocks</span>
+        <span className="text-slate-600">┄┄┄ parent-child</span>
+        <span className="text-green-400">╌╌╌ soft dep</span>
       </div>
     </div>
   );

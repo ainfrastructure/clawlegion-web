@@ -1,12 +1,25 @@
 'use client'
 
-import { useState, useCallback } from 'react'
-import { Save, Copy, RotateCcw } from 'lucide-react'
-import type { PipelineStep, AgentRole, FlowPreset, RalphLoopSettings as RalphLoopSettingsType } from '@/components/flow-config/types'
-import { AGENT_METADATA, DEFAULT_CHECKPOINTS } from '@/lib/flow-presets'
+import { useState, useCallback, useMemo } from 'react'
+import { Save, Copy, RotateCcw, Layers } from 'lucide-react'
+import {
+  ReactFlow,
+  ReactFlowProvider,
+  Controls,
+  Background,
+  BackgroundVariant,
+  type NodeMouseHandler,
+} from '@xyflow/react'
+import '@xyflow/react/dist/style.css'
+import type { PipelineStep, AgentRole, RalphLoopSettings as RalphLoopSettingsType } from '@/components/flow-config/types'
 import { AgentPalette } from './AgentPalette'
-import { PipelineBuilder } from './PipelineBuilder'
 import { FlowPropertiesPanel } from './FlowPropertiesPanel'
+import { FlowAgentNode } from './FlowAgentNode'
+import { FlowEdge } from './FlowEdge'
+import { useFlowLayout } from './useFlowLayout'
+
+const nodeTypes = { flowAgent: FlowAgentNode }
+const edgeTypes = { flow: FlowEdge }
 
 type FlowCanvasProps = {
   flow: {
@@ -55,6 +68,42 @@ export function FlowCanvas({
     onStepsChange(flow.steps.map(s => s.id === updated.id ? updated : s))
   }, [flow.steps, onStepsChange])
 
+  const handleRemoveStep = useCallback((id: string) => {
+    const remaining = flow.steps.filter(s => s.id !== id)
+    const reordered = remaining
+      .sort((a, b) => a.order - b.order)
+      .map((s, i) => ({ ...s, order: i }))
+    onStepsChange(reordered)
+    if (selectedStepId === id) setSelectedStepId(null)
+  }, [flow.steps, onStepsChange, selectedStepId])
+
+  const handleMoveStep = useCallback((id: string, direction: 'up' | 'down') => {
+    const sorted = [...flow.steps].sort((a, b) => a.order - b.order)
+    const idx = sorted.findIndex(s => s.id === id)
+    if (idx < 0) return
+    const targetIdx = direction === 'up' ? idx - 1 : idx + 1
+    if (targetIdx < 0 || targetIdx >= sorted.length) return
+
+    const reordered = [...sorted]
+    const [moved] = reordered.splice(idx, 1)
+    reordered.splice(targetIdx, 0, moved)
+    onStepsChange(reordered.map((s, i) => ({ ...s, order: i })))
+  }, [flow.steps, onStepsChange])
+
+  const { nodes, edges } = useFlowLayout(flow.steps)
+
+  const onNodeClick: NodeMouseHandler = useCallback((_event, node) => {
+    setSelectedStepId(prev => prev === node.id ? null : node.id)
+  }, [])
+
+  const onKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if ((e.key === 'Delete' || e.key === 'Backspace') && selectedStepId) {
+      handleRemoveStep(selectedStepId)
+    }
+  }, [selectedStepId, handleRemoveStep])
+
+  const proOptions = useMemo(() => ({ hideAttribution: true }), [])
+
   return (
     <div className="flex-1 flex h-full overflow-hidden">
       {/* Main canvas area */}
@@ -89,21 +138,47 @@ export function FlowCanvas({
           />
         </div>
 
-        {/* Pipeline builder — scrollable area with dot grid bg */}
-        <div className="flex-1 overflow-y-auto px-6 pb-6"
+        {/* React Flow canvas */}
+        <div
+          className="flex-1"
+          onKeyDown={onKeyDown}
+          tabIndex={-1}
           style={{
             backgroundImage: 'radial-gradient(circle, rgb(255 255 255 / 0.03) 1px, transparent 1px)',
             backgroundSize: '24px 24px',
           }}
         >
-          <div className="max-w-2xl mx-auto">
-            <PipelineBuilder
-              steps={flow.steps}
-              selectedStepId={selectedStepId}
-              onSelectStep={setSelectedStepId}
-              onStepsChange={onStepsChange}
-            />
-          </div>
+          {flow.steps.length === 0 ? (
+            <div className="flex flex-col items-center justify-center h-full text-center">
+              <div className="w-16 h-16 rounded-2xl glass-2 flex items-center justify-center mb-4">
+                <Layers className="w-7 h-7 text-slate-500" />
+              </div>
+              <p className="text-slate-400 font-medium mb-1">No agents in pipeline</p>
+              <p className="text-sm text-slate-600 max-w-xs">
+                Add agents from the palette above to build your pipeline
+              </p>
+            </div>
+          ) : (
+            <ReactFlowProvider>
+              <ReactFlow
+                nodes={nodes}
+                edges={edges}
+                nodeTypes={nodeTypes}
+                edgeTypes={edgeTypes}
+                onNodeClick={onNodeClick}
+                nodesConnectable={false}
+                nodesDraggable={false}
+                fitView
+                fitViewOptions={{ padding: 0.3 }}
+                proOptions={proOptions}
+                minZoom={0.3}
+                maxZoom={1.5}
+              >
+                <Background variant={BackgroundVariant.Dots} gap={24} size={1} color="rgb(255 255 255 / 0.04)" />
+                <Controls showInteractive={false} />
+              </ReactFlow>
+            </ReactFlowProvider>
+          )}
         </div>
 
         {/* Action bar */}
@@ -152,7 +227,11 @@ export function FlowCanvas({
       {selectedStep && (
         <FlowPropertiesPanel
           step={selectedStep}
+          totalSteps={flow.steps.length}
           onChange={handleStepChange}
+          onRemove={() => handleRemoveStep(selectedStep.id)}
+          onMoveUp={() => handleMoveStep(selectedStep.id, 'up')}
+          onMoveDown={() => handleMoveStep(selectedStep.id, 'down')}
           onClose={() => setSelectedStepId(null)}
         />
       )}

@@ -1,22 +1,20 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import TaskGraphView from '@/components/TaskGraphView';
+import Link from 'next/link';
+import { ArrowLeft, X, Check, GitBranch } from 'lucide-react';
+import TaskGraphView, { statusColors } from '@/components/TaskGraphView';
 import { DecomposeModal } from '@/components/tasks/DecomposeModal';
+import { SearchInput } from '@/components/ui/SearchInput';
+import { FilterChips } from '@/components/ui/FilterChips';
+import { Skeleton } from '@/components/ui/LoadingSkeleton';
 
-const STATUS_CHIPS = [
-  { key: 'backlog', label: 'Backlog', color: '#64748b' },
-  { key: 'todo', label: 'Todo', color: '#3b82f6' },
-  { key: 'in_progress', label: 'In Progress', color: '#f59e0b' },
-  { key: 'verifying', label: 'Verifying', color: '#818cf8' },
-  { key: 'done', label: 'Done', color: '#22c55e' },
-];
-
-const PRIORITY_CHIPS = [
-  { key: 'P0', label: 'P0', color: '#ef4444' },
-  { key: 'P1', label: 'P1', color: '#f97316' },
-  { key: 'P2', label: 'P2', color: '#f59e0b' },
-  { key: 'P3', label: 'P3', color: '#3b82f6' },
+const STATUS_OPTIONS = [
+  { value: 'backlog', label: 'Backlog' },
+  { value: 'todo', label: 'Todo' },
+  { value: 'in_progress', label: 'In Progress' },
+  { value: 'verifying', label: 'Verifying' },
+  { value: 'done', label: 'Done' },
 ];
 
 export default function TaskGraphPage() {
@@ -28,9 +26,9 @@ export default function TaskGraphPage() {
 
   const handleNodeClick = useCallback(async (taskId: string) => {
     setSelectedTask(taskId);
+    setTaskDetails(null);
     try {
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || '';
-      const res = await fetch(`${API_URL}/api/task-tracking/tasks/${taskId}?includeActivities=false`);
+      const res = await fetch(`/api/task-tracking/tasks/${taskId}?includeActivities=false`);
       const data = await res.json();
       setTaskDetails(data.task);
     } catch (err) {
@@ -38,291 +36,103 @@ export default function TaskGraphPage() {
     }
   }, []);
 
-  const toggleStatus = (status: string) => {
-    setStatusFilter(prev =>
-      prev.includes(status) ? prev.filter(s => s !== status) : [...prev, status]
-    );
-  };
+  const closeSidebar = useCallback(() => {
+    setSelectedTask(null);
+    setTaskDetails(null);
+  }, []);
 
   return (
-    <div style={{ display: 'flex', height: 'calc(100vh - 64px)', backgroundColor: '#020617' }}>
+    <div className="flex h-full bg-slate-950">
       {/* Main graph area */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+      <div className="flex-1 flex flex-col min-w-0">
         {/* Header */}
-        <div style={{
-          padding: '12px 20px',
-          borderBottom: '1px solid #1e293b',
-          backgroundColor: '#0f172a',
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-            <div>
-              <h1 style={{ fontSize: '20px', fontWeight: 700, margin: 0, color: '#f1f5f9' }}>Task Graph</h1>
-              <p style={{ color: '#64748b', margin: '2px 0 0', fontSize: '13px' }}>
-                Visual hierarchy of all tasks. Parent tasks show their subtasks inline.
-              </p>
-            </div>
+        <div className="px-5 py-3 border-b border-slate-800 bg-slate-900/80 backdrop-blur-sm">
+          <div className="flex items-center gap-4 mb-2.5">
+            <Link
+              href="/tasks"
+              className="flex items-center gap-1.5 text-sm text-slate-400 hover:text-slate-200 transition-colors"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>Tasks</span>
+            </Link>
+            <div className="w-px h-4 bg-slate-700" />
+            <h1 className="text-lg font-semibold text-slate-100">Task Graph</h1>
+            <span className="text-xs text-slate-500 hidden sm:inline">
+              Visual hierarchy &middot; click a node for details
+            </span>
           </div>
 
           {/* Filter toolbar */}
-          <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
-            {/* Search */}
-            <input
-              type="text"
+          <div className="flex items-center gap-3 flex-wrap">
+            <SearchInput
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={setSearchQuery}
               placeholder="Search tasks..."
-              style={{
-                padding: '5px 12px', fontSize: '12px',
-                backgroundColor: '#1e293b', border: '1px solid #334155',
-                borderRadius: '6px', color: '#e2e8f0', outline: 'none',
-                width: '200px',
-              }}
+              className="w-52"
+              debounceMs={200}
             />
-
-            {/* Status chips */}
-            <div style={{ display: 'flex', gap: '4px' }}>
-              {STATUS_CHIPS.map(({ key, label, color }) => {
-                const active = statusFilter.includes(key);
-                return (
-                  <button
-                    key={key}
-                    onClick={() => toggleStatus(key)}
-                    style={{
-                      padding: '3px 10px', fontSize: '11px', fontWeight: 500,
-                      borderRadius: '9999px', cursor: 'pointer',
-                      border: `1px solid ${active ? color : '#334155'}`,
-                      backgroundColor: active ? color + '20' : 'transparent',
-                      color: active ? color : '#94a3b8',
-                      transition: 'all 0.15s ease',
-                    }}
-                  >
-                    {label}
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* Clear filters */}
-            {(statusFilter.length > 0 || searchQuery) && (
-              <button
-                onClick={() => { setStatusFilter([]); setSearchQuery(''); }}
-                style={{
-                  padding: '3px 10px', fontSize: '11px',
-                  borderRadius: '6px', cursor: 'pointer',
-                  border: '1px solid #334155', backgroundColor: 'transparent',
-                  color: '#94a3b8',
-                }}
-              >
-                Clear
-              </button>
-            )}
+            <FilterChips
+              options={STATUS_OPTIONS}
+              selected={statusFilter}
+              onChange={setStatusFilter}
+            />
           </div>
         </div>
 
         {/* Graph */}
-        <div style={{ flex: 1 }}>
+        <div className="flex-1 min-h-0">
           <TaskGraphView
             onNodeClick={handleNodeClick}
             refreshInterval={5000}
-            showMiniMap={true}
-            showControls={true}
+            showMiniMap
+            showControls
             statusFilter={statusFilter.length > 0 ? statusFilter : undefined}
             searchQuery={searchQuery || undefined}
           />
         </div>
       </div>
 
-      {/* Task details sidebar */}
-      {selectedTask && (
-        <div
-          style={{
-            width: '360px',
-            borderLeft: '1px solid #1e293b',
-            backgroundColor: '#0f172a',
-            overflowY: 'auto',
-          }}
-        >
-          <div style={{ padding: '16px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <h2 style={{ fontSize: '15px', fontWeight: 600, margin: 0, color: '#f1f5f9' }}>Task Details</h2>
+      {/* Animated sidebar */}
+      <div
+        className={`${
+          selectedTask ? 'w-[360px]' : 'w-0'
+        } transition-all duration-300 ease-in-out border-l border-slate-800 bg-slate-900 overflow-hidden shrink-0`}
+      >
+        <div className="min-w-[360px] h-full overflow-y-auto">
+          <div className="p-4">
+            {/* Sidebar header */}
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-sm font-semibold text-slate-100">Task Details</h2>
               <button
-                onClick={() => { setSelectedTask(null); setTaskDetails(null); }}
-                style={{
-                  background: 'none', border: 'none',
-                  fontSize: '18px', cursor: 'pointer', color: '#64748b',
-                  padding: '4px',
-                }}
+                onClick={closeSidebar}
+                className="p-1 rounded-md text-slate-500 hover:text-slate-200 hover:bg-slate-800 transition-colors"
               >
-                ×
+                <X className="w-4 h-4" />
               </button>
             </div>
 
-            {taskDetails ? (
-              <div style={{ fontSize: '13px', color: '#cbd5e1' }}>
-                {/* Parent breadcrumb */}
-                {taskDetails.parent && (
-                  <div style={{
-                    marginBottom: '12px', padding: '6px 10px',
-                    backgroundColor: '#1e293b', borderRadius: '6px',
-                    fontSize: '11px', color: '#94a3b8',
-                    display: 'flex', alignItems: 'center', gap: '6px',
-                  }}>
-                    <span style={{
-                      fontFamily: 'monospace', fontSize: '10px',
-                      padding: '1px 5px', borderRadius: '3px',
-                      backgroundColor: 'rgba(168,85,247,0.15)', color: '#c084fc',
-                    }}>
-                      {taskDetails.parent.shortId || taskDetails.parent.id?.slice(0, 8)}
-                    </span>
-                    <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                      {taskDetails.parent.title}
-                    </span>
-                    <span style={{ color: '#475569' }}>→</span>
-                    <span style={{ color: '#818cf8' }}>subtask</span>
-                  </div>
-                )}
-
-                {/* ShortId + Title */}
-                <div style={{ marginBottom: '12px' }}>
-                  {taskDetails.shortId && (
-                    <span style={{
-                      display: 'inline-block', marginBottom: '4px',
-                      fontFamily: 'monospace', fontSize: '11px', fontWeight: 700,
-                      padding: '2px 8px', borderRadius: '4px',
-                      backgroundColor: 'rgba(168,85,247,0.2)', color: '#c084fc',
-                    }}>
-                      {taskDetails.shortId}
-                    </span>
-                  )}
-                  <div style={{ fontWeight: 600, color: '#f1f5f9', fontSize: '14px' }}>{taskDetails.title}</div>
-                </div>
-
-                {/* Description */}
-                {taskDetails.description && (
-                  <div style={{ marginBottom: '12px' }}>
-                    <label style={{ color: '#64748b', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Description</label>
-                    <div style={{ color: '#94a3b8', fontSize: '12px', marginTop: '4px', lineHeight: '1.5' }}>
-                      {taskDetails.description.length > 200
-                        ? taskDetails.description.slice(0, 200) + '...'
-                        : taskDetails.description
-                      }
-                    </div>
-                  </div>
-                )}
-
-                {/* Status / Priority / Assignee */}
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '12px' }}>
-                  <div>
-                    <label style={{ color: '#64748b', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Status</label>
-                    <div style={{ marginTop: '4px' }}>
-                      <span style={{
-                        padding: '2px 8px', borderRadius: '9999px', fontSize: '11px',
-                        backgroundColor: getStatusColor(taskDetails.status) + '30',
-                        color: getStatusColor(taskDetails.status),
-                        textTransform: 'uppercase', fontWeight: 500,
-                      }}>
-                        {taskDetails.status?.replace('_', ' ')}
-                      </span>
-                    </div>
-                  </div>
-                  <div>
-                    <label style={{ color: '#64748b', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Priority</label>
-                    <div style={{ marginTop: '4px', fontWeight: 600 }}>{taskDetails.priority}</div>
-                  </div>
-                </div>
-
-                {(taskDetails.assignee || taskDetails.assignedTo) && (
-                  <div style={{ marginBottom: '12px' }}>
-                    <label style={{ color: '#64748b', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Assigned To</label>
-                    <div style={{ marginTop: '4px' }}>@{taskDetails.assignee || taskDetails.assignedTo}</div>
-                  </div>
-                )}
-
-                {/* Subtasks list */}
-                {taskDetails.subtasks && taskDetails.subtasks.length > 0 && (
-                  <div style={{ marginBottom: '12px' }}>
-                    <label style={{ color: '#64748b', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                      Subtasks ({taskDetails.subtasks.filter((s: any) => s.status === 'done').length}/{taskDetails.subtasks.length})
-                    </label>
-                    <div style={{ marginTop: '6px' }}>
-                      {taskDetails.subtasks.map((sub: any) => {
-                        const isDone = sub.status === 'done' || sub.status === 'completed';
-                        return (
-                          <div
-                            key={sub.id}
-                            onClick={() => handleNodeClick(sub.id)}
-                            style={{
-                              display: 'flex', alignItems: 'center', gap: '6px',
-                              padding: '4px 8px', borderRadius: '4px', cursor: 'pointer',
-                              fontSize: '12px', opacity: isDone ? 0.5 : 1,
-                              marginBottom: '2px',
-                            }}
-                          >
-                            <span style={{
-                              width: '6px', height: '6px', borderRadius: '50%',
-                              backgroundColor: getStatusColor(sub.status), flexShrink: 0,
-                            }} />
-                            <span style={{
-                              flex: 1, textDecoration: isDone ? 'line-through' : 'none',
-                              overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-                            }}>
-                              {sub.title}
-                            </span>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                )}
-
-                {/* Action buttons */}
-                <div style={{ marginTop: '20px', display: 'flex', gap: '8px' }}>
-                  <button
-                    onClick={async () => {
-                      await fetch('/api/tasks/graph', {
-                        method: 'PATCH',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ taskId: selectedTask, status: 'done' }),
-                      });
-                      handleNodeClick(selectedTask);
-                    }}
-                    style={{
-                      flex: 1, padding: '8px 12px',
-                      backgroundColor: '#059669', color: 'white',
-                      border: 'none', borderRadius: '6px',
-                      cursor: 'pointer', fontSize: '12px', fontWeight: 500,
-                    }}
-                    disabled={taskDetails.status === 'done'}
-                  >
-                    Complete
-                  </button>
-                  <button
-                    onClick={() => setShowDecompose(true)}
-                    style={{
-                      flex: 1, padding: '8px 12px',
-                      backgroundColor: '#4f46e5', color: 'white',
-                      border: 'none', borderRadius: '6px',
-                      cursor: 'pointer', fontSize: '12px', fontWeight: 500,
-                    }}
-                    disabled={!!taskDetails.parentId}
-                  >
-                    Decompose
-                  </button>
-                </div>
-                {taskDetails.parentId && (
-                  <p style={{ fontSize: '10px', color: '#64748b', marginTop: '4px' }}>
-                    Subtasks cannot be further decomposed (single level only).
-                  </p>
-                )}
-              </div>
+            {/* Sidebar content */}
+            {!taskDetails ? (
+              <SidebarSkeleton />
             ) : (
-              <div style={{ color: '#64748b', textAlign: 'center', padding: '24px' }}>
-                Loading...
-              </div>
+              <TaskDetailsContent
+                task={taskDetails}
+                selectedTask={selectedTask!}
+                onSubtaskClick={handleNodeClick}
+                onComplete={async () => {
+                  await fetch('/api/tasks/graph', {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ taskId: selectedTask, status: 'done' }),
+                  });
+                  handleNodeClick(selectedTask!);
+                }}
+                onDecompose={() => setShowDecompose(true)}
+              />
             )}
           </div>
         </div>
-      )}
+      </div>
 
       {/* Decompose Modal */}
       {showDecompose && selectedTask && taskDetails && (
@@ -338,18 +148,177 @@ export default function TaskGraphPage() {
   );
 }
 
-function getStatusColor(status: string): string {
-  const colors: Record<string, string> = {
-    backlog: '#64748b',
-    todo: '#3b82f6',
-    in_progress: '#f59e0b',
-    building: '#f59e0b',
-    researching: '#a855f7',
-    planning: '#a855f7',
-    verifying: '#818cf8',
-    done: '#22c55e',
-    completed: '#22c55e',
-    failed: '#ef4444',
-  };
-  return colors[status] || '#64748b';
+// Skeleton loading state for sidebar
+function SidebarSkeleton() {
+  return (
+    <div className="space-y-4">
+      <Skeleton width="40%" height={14} />
+      <Skeleton width="90%" height={18} />
+      <Skeleton variant="text" lines={2} className="mt-3" />
+      <div className="grid grid-cols-2 gap-3 mt-4">
+        <Skeleton height={32} variant="rectangular" />
+        <Skeleton height={32} variant="rectangular" />
+      </div>
+      <Skeleton width="60%" height={12} className="mt-4" />
+      <div className="space-y-2 mt-2">
+        <Skeleton height={24} variant="rectangular" />
+        <Skeleton height={24} variant="rectangular" />
+        <Skeleton height={24} variant="rectangular" />
+      </div>
+    </div>
+  );
+}
+
+// Task details sidebar content
+function TaskDetailsContent({
+  task,
+  selectedTask,
+  onSubtaskClick,
+  onComplete,
+  onDecompose,
+}: {
+  task: any;
+  selectedTask: string;
+  onSubtaskClick: (id: string) => void;
+  onComplete: () => void;
+  onDecompose: () => void;
+}) {
+  const colors = statusColors[task.status] || statusColors.backlog;
+
+  return (
+    <div className="text-sm text-slate-300 space-y-3">
+      {/* Parent breadcrumb */}
+      {task.parent && (
+        <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-slate-800 rounded-md text-[11px] text-slate-400">
+          <span className="font-mono text-[10px] px-1 py-px rounded bg-purple-500/15 text-purple-400">
+            {task.parent.shortId || task.parent.id?.slice(0, 8)}
+          </span>
+          <span className="truncate">{task.parent.title}</span>
+          <span className="text-slate-600">&rarr;</span>
+          <span className="text-indigo-400">subtask</span>
+        </div>
+      )}
+
+      {/* ShortId + Title */}
+      <div>
+        {task.shortId && (
+          <span className="inline-block mb-1 font-mono text-[11px] font-bold px-2 py-0.5 rounded bg-purple-500/20 text-purple-400">
+            {task.shortId}
+          </span>
+        )}
+        <div className="font-semibold text-slate-100 text-[14px] leading-snug">
+          {task.title}
+        </div>
+      </div>
+
+      {/* Description */}
+      {task.description && (
+        <div>
+          <label className="text-slate-500 text-[10px] uppercase tracking-wider">
+            Description
+          </label>
+          <p className="text-slate-400 text-xs mt-1 leading-relaxed">
+            {task.description.length > 200
+              ? task.description.slice(0, 200) + '...'
+              : task.description}
+          </p>
+        </div>
+      )}
+
+      {/* Status / Priority */}
+      <div className="grid grid-cols-2 gap-2.5">
+        <div>
+          <label className="text-slate-500 text-[10px] uppercase tracking-wider">
+            Status
+          </label>
+          <div className="mt-1">
+            <span
+              className="inline-block px-2 py-0.5 rounded-full text-[11px] uppercase font-medium"
+              style={{
+                backgroundColor: colors.border + '30',
+                color: colors.border,
+              }}
+            >
+              {task.status?.replace('_', ' ')}
+            </span>
+          </div>
+        </div>
+        <div>
+          <label className="text-slate-500 text-[10px] uppercase tracking-wider">
+            Priority
+          </label>
+          <div className="mt-1 font-semibold text-slate-200">{task.priority}</div>
+        </div>
+      </div>
+
+      {/* Assignee */}
+      {(task.assignee || task.assignedTo) && (
+        <div>
+          <label className="text-slate-500 text-[10px] uppercase tracking-wider">
+            Assigned To
+          </label>
+          <div className="mt-1 text-slate-300">@{task.assignee || task.assignedTo}</div>
+        </div>
+      )}
+
+      {/* Subtasks */}
+      {task.subtasks && task.subtasks.length > 0 && (
+        <div>
+          <label className="text-slate-500 text-[10px] uppercase tracking-wider">
+            Subtasks ({task.subtasks.filter((s: any) => s.status === 'done' || s.status === 'completed').length}/{task.subtasks.length})
+          </label>
+          <div className="mt-1.5 space-y-px">
+            {task.subtasks.map((sub: any) => {
+              const isDone = sub.status === 'done' || sub.status === 'completed';
+              const subColors = statusColors[sub.status] || statusColors.backlog;
+              return (
+                <div
+                  key={sub.id}
+                  onClick={() => onSubtaskClick(sub.id)}
+                  className={`flex items-center gap-1.5 px-2 py-1 rounded cursor-pointer text-xs hover:bg-slate-800 transition-colors ${
+                    isDone ? 'opacity-50' : ''
+                  }`}
+                >
+                  <span
+                    className="w-1.5 h-1.5 rounded-full shrink-0"
+                    style={{ backgroundColor: subColors.dot }}
+                  />
+                  <span
+                    className={`flex-1 truncate ${isDone ? 'line-through' : ''}`}
+                  >
+                    {sub.title}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Action buttons */}
+      <div className="flex gap-2 pt-3">
+        <button
+          onClick={onComplete}
+          disabled={task.status === 'done' || task.status === 'completed'}
+          className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-40 disabled:cursor-not-allowed text-white rounded-lg text-xs font-medium transition-colors"
+        >
+          <Check className="w-3.5 h-3.5" />
+          Complete
+        </button>
+        <button
+          onClick={onDecompose}
+          disabled={!!task.parentId}
+          className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-40 disabled:cursor-not-allowed text-white rounded-lg text-xs font-medium transition-colors"
+        >
+          <GitBranch className="w-3.5 h-3.5" />
+          Decompose
+        </button>
+      </div>
+      {task.parentId && (
+        <p className="text-[10px] text-slate-600">
+          Subtasks cannot be further decomposed (single level only).
+        </p>
+      )}
+    </div>
+  );
 }

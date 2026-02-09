@@ -63,6 +63,7 @@ const config: Config = {
         'glow-pulse': 'glow-pulse 2s ease-in-out infinite',
         'fade-in-up': 'fade-in-up 0.6s ease-out forwards',
         'float': 'float 6s ease-in-out infinite',
+        'node-appear': 'node-appear 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards',
       },
       keyframes: {
         shimmer: {
@@ -80,6 +81,10 @@ const config: Config = {
         'float': {
           '0%, 100%': { transform: 'translateY(0)' },
           '50%': { transform: 'translateY(-12px)' },
+        },
+        'node-appear': {
+          '0%': { opacity: '0', transform: 'scale(0.8)' },
+          '100%': { opacity: '1', transform: 'scale(1)' },
         },
       },
     },

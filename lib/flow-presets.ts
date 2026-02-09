@@ -47,7 +47,7 @@ export const AGENT_METADATA: Record<AgentRole, AgentMetadata> = Object.fromEntri
         color: hexToColorName[a.color] ?? 'blue',
         description: a.description,
         defaultEnabled: defaultEnabledAgents.has(a.id),
-        tier: a.id === 'jarvis' || a.id === 'ralph' ? 'orchestrator' as AgentMetadata['tier'] : tierMap[a.tier] ?? 'worker',
+        tier: a.id === 'jarvis' ? 'orchestrator' as AgentMetadata['tier'] : tierMap[a.tier] ?? 'worker',
       } satisfies AgentMetadata,
     ])
 ) as Record<AgentRole, AgentMetadata>
@@ -398,7 +398,7 @@ export function formatTimeBudget(hours: number): string {
 /**
  * Valid agent roles for validation
  */
-const VALID_ROLES: AgentRole[] = ['scout', 'archie', 'mason', 'vex', 'jarvis', 'lux', 'ralph', 'quill', 'pixel', 'sage']
+const VALID_ROLES: AgentRole[] = ['scout', 'archie', 'mason', 'vex', 'jarvis', 'forge', 'echo', 'quill', 'pixel', 'sage']
 
 /**
  * Check if a role is a valid agent role

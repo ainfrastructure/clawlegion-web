@@ -1,7 +1,7 @@
 // Agent Flow Customization & Resource Allocation Types
 
 // Agent role types - expanded agent pool
-export type AgentRole = 'scout' | 'archie' | 'mason' | 'vex' | 'jarvis' | 'lux' | 'ralph' | 'quill' | 'pixel' | 'sage'
+export type AgentRole = 'scout' | 'archie' | 'mason' | 'vex' | 'jarvis' | 'forge' | 'echo' | 'quill' | 'pixel' | 'sage'
 
 // Resource allocation levels
 export type ResourceLevel = 'high' | 'medium' | 'low' | 'local'
@@ -39,6 +39,7 @@ export interface PipelineStep {
   enabled: boolean
   resourceLevel: ResourceLevel
   order: number                     // Position in pipeline (0-based)
+  context?: string                  // Custom instructions for this step
 }
 
 // Complete flow configuration

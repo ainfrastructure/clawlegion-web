@@ -1,8 +1,10 @@
 'use client'
 
-import { Plus } from 'lucide-react'
+import Image from 'next/image'
+import { Plus, Bot } from 'lucide-react'
 import type { AgentRole, AgentTier } from '@/components/flow-config/types'
-import { AGENT_METADATA, getAgentColorClasses } from '@/lib/flow-presets'
+import { AGENT_METADATA } from '@/lib/flow-presets'
+import { getAgentById } from '@/components/chat-v2/agentConfig'
 
 type AgentPaletteProps = {
   onAddAgent: (role: AgentRole) => void
@@ -34,7 +36,9 @@ export function AgentPalette({ onAddAgent, currentStepCount, maxSteps = 12 }: Ag
               {roles
                 .filter(([, meta]) => group.tier.includes(meta.tier))
                 .map(([role, meta]) => {
-                  const colors = getAgentColorClasses(meta.color)
+                  const agent = getAgentById(role)
+                  const avatarSrc = agent?.avatar
+                  const agentColor = agent?.color || '#64748b'
                   return (
                     <button
                       key={role}
@@ -45,11 +49,30 @@ export function AgentPalette({ onAddAgent, currentStepCount, maxSteps = 12 }: Ag
                         transition-all duration-200
                         ${isMaxed
                           ? 'opacity-40 cursor-not-allowed'
-                          : `hover:scale-105 hover:${colors.border} hover:shadow-lg hover:shadow-${meta.color}-500/10`
+                          : 'hover:scale-105 hover:shadow-lg'
                         }
                       `}
+                      style={!isMaxed ? { ['--hover-border' as string]: agentColor } : undefined}
                     >
-                      <span className="text-base">{meta.emoji}</span>
+                      {/* Avatar instead of emoji */}
+                      <div
+                        className="w-7 h-7 rounded-full overflow-hidden ring-1 ring-offset-1 ring-offset-slate-900 flex-shrink-0"
+                        style={{ ['--tw-ring-color' as string]: agentColor }}
+                      >
+                        {avatarSrc ? (
+                          <Image
+                            src={avatarSrc}
+                            alt={meta.name}
+                            width={28}
+                            height={28}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-slate-800 flex items-center justify-center">
+                            <Bot className="w-3.5 h-3.5 text-slate-500" />
+                          </div>
+                        )}
+                      </div>
                       <div className="text-left">
                         <p className="text-xs font-semibold text-slate-200">{meta.name}</p>
                         <p className="text-[10px] text-slate-500 hidden sm:block">{meta.tier}</p>
