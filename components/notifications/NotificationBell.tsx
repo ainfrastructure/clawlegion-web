@@ -45,10 +45,9 @@ export function NotificationBell({ agentId = 'dashboard', className = '' }: Noti
 
   const markAsRead = async (notificationId: string) => {
     try {
-      await fetch('/api/notifications/mark-read', {
-        method: 'POST',
+      await fetch(`/api/notifications/${notificationId}/read`, {
+        method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ notificationId, agent: agentId })
       })
       // Update local state
       setNotifications(prev => 
@@ -61,19 +60,16 @@ export function NotificationBell({ agentId = 'dashboard', className = '' }: Noti
   }
 
   const markAllRead = async () => {
-    const unreadNotifications = notifications.filter(n => !n.read)
-    // Mark all as read in parallel
-    await Promise.all(
-      unreadNotifications.map(n =>
-        fetch('/api/notifications/mark-read', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ notificationId: n.id, agent: agentId })
-        })
-      )
-    )
-    setUnreadCount(0)
-    setNotifications(prev => prev.map(n => ({ ...n, read: true })))
+    try {
+      await fetch(`/api/notifications/mark-all-read?agentId=${agentId}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      })
+      setUnreadCount(0)
+      setNotifications(prev => prev.map(n => ({ ...n, read: true })))
+    } catch (err) {
+      console.error('Failed to mark all as read:', err)
+    }
   }
 
   return (
