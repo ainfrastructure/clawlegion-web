@@ -140,7 +140,7 @@ export function FlowCanvas({
 
         {/* React Flow canvas */}
         <div
-          className="flex-1"
+          className="flex-1 relative min-h-[300px]"
           onKeyDown={onKeyDown}
           tabIndex={-1}
           style={{
@@ -160,23 +160,25 @@ export function FlowCanvas({
             </div>
           ) : (
             <ReactFlowProvider>
-              <ReactFlow
-                nodes={nodes}
-                edges={edges}
-                nodeTypes={nodeTypes}
-                edgeTypes={edgeTypes}
-                onNodeClick={onNodeClick}
-                nodesConnectable={false}
-                nodesDraggable={false}
-                fitView
-                fitViewOptions={{ padding: 0.3 }}
-                proOptions={proOptions}
-                minZoom={0.3}
-                maxZoom={1.5}
-              >
-                <Background variant={BackgroundVariant.Dots} gap={24} size={1} color="rgb(255 255 255 / 0.04)" />
-                <Controls showInteractive={false} />
-              </ReactFlow>
+              <div style={{ width: '100%', height: '100%', position: 'absolute', inset: 0 }}>
+                <ReactFlow
+                  nodes={nodes}
+                  edges={edges}
+                  nodeTypes={nodeTypes}
+                  edgeTypes={edgeTypes}
+                  onNodeClick={onNodeClick}
+                  nodesConnectable={false}
+                  nodesDraggable={false}
+                  fitView
+                  fitViewOptions={{ padding: 0.3 }}
+                  proOptions={proOptions}
+                  minZoom={0.3}
+                  maxZoom={1.5}
+                >
+                  <Background variant={BackgroundVariant.Dots} gap={24} size={1} color="rgb(255 255 255 / 0.04)" />
+                  <Controls showInteractive={false} />
+                </ReactFlow>
+              </div>
             </ReactFlowProvider>
           )}
         </div>
