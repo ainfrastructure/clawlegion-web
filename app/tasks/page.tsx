@@ -142,7 +142,7 @@ function TasksPageContent() {
   // Bulk action mutations
   const bulkCompleteMutation = useMutation({
     mutationFn: (taskIds: string[]) => 
-      Promise.all(taskIds.map(id => api.patch(`/task-tracking/tasks/${id}`, { status: 'completed' }))),
+      Promise.all(taskIds.map(id => api.patch(`/task-tracking/tasks/${id}/status`, { status: 'done' }))),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['task-tracking-tasks'] })
       clearSelection()
@@ -363,9 +363,9 @@ function TasksPageContent() {
 
         {/* Stats Bar */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4 mb-4 sm:mb-6">
-          <StatCard icon={<Clock size={20} />} label="Queued" value={stats.backlog ?? 0} color="slate" />
+          <StatCard icon={<Clock size={20} />} label="Queued" value={(stats.backlog ?? 0) + (stats.todo ?? 0)} color="slate" />
           <StatCard icon={<Zap size={20} />} label="In Progress" value={stats.inProgress ?? 0} color="amber" />
-          <StatCard icon={<CheckCircle2 size={20} />} label="Completed" value={stats.completed ?? 0} color="green" />
+          <StatCard icon={<CheckCircle2 size={20} />} label="Completed" value={stats.done ?? stats.completed ?? 0} color="green" />
           <StatCard icon={<CheckCircle2 size={20} />} label="Verifying" value={stats.verifying ?? 0} color="blue" />
         </div>
 
