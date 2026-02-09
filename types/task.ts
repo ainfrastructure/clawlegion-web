@@ -106,7 +106,7 @@ export interface TaskComment {
   id: string
   content: string
   author: string
-  authorType: 'human' | 'agent'
+  authorType: 'human' | 'agent' | 'system'
   mentions?: string[]
   timestamp: string
 }
