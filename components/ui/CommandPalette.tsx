@@ -148,7 +148,7 @@ export function CommandPalette() {
 
     document.addEventListener('keydown', handleKeyDown)
     return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [isOpen, filteredCommands, selectedIndex])
+  }, [isOpen, filteredCommands, selectedIndex, enabled])
 
   // Focus input when opened
   useEffect(() => {
