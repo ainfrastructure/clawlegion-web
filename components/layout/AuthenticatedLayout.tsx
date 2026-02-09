@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
 import { usePathname } from 'next/navigation'
-import Link from 'next/link'
 import { Sidebar, MainContent } from './Sidebar'
 import { SidebarProvider } from './SidebarContext'
 import { MobileNav } from './MobileNav'
@@ -15,7 +14,8 @@ import { PresenceDots } from '@/components/agents/PresenceIndicator'
 import { CommandPalette } from '@/components/ui/CommandPalette'
 import { KeyboardShortcutsHelp } from '@/components/ui/KeyboardShortcutsHelp'
 import { GlobalKeyboardShortcuts } from '@/components/ui/GlobalKeyboardShortcuts'
-import { Bell } from 'lucide-react'
+import { NotificationCenter } from '@/components/notifications/NotificationCenter'
+import { useNotificationSocket } from '@/hooks/useNotificationSocket'
 
 function LiveClock() {
   const [time, setTime] = useState('')
@@ -42,6 +42,9 @@ export function AuthenticatedLayout({ children }: { children: React.ReactNode })
   const pathname = usePathname()
   const isMobile = useMobile()
   const [drawerOpen, setDrawerOpen] = useState(false)
+
+  // Global real-time notification listener
+  useNotificationSocket()
 
   // Don't show sidebar/chrome on public pages
   const isPublicPage = pathname === '/login' || pathname === '/' || pathname === '/auth/error'
@@ -112,13 +115,7 @@ export function AuthenticatedLayout({ children }: { children: React.ReactNode })
               <div className="flex items-center gap-4">
                 <PresenceDots />
                 <LiveClock />
-                <Link
-                  href="/notifications"
-                  className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/[0.04] transition-colors"
-                  title="Notifications"
-                >
-                  <Bell className="w-4 h-4" />
-                </Link>
+                <NotificationCenter />
               </div>
             </div>
           </div>

@@ -7,6 +7,7 @@ export type IntegrationConfig = {
   linear: { enabled: boolean; teamId: string; syncEnabled: boolean }
   github: { enabled: boolean; repo: string; owner: string; issueCreationEnabled: boolean }
   discord: { enabled: boolean; webhookUrl: string }
+  telegram: { enabled: boolean; botToken: string; chatId: string }
 }
 
 export type AgentDefaultsConfig = {
@@ -18,9 +19,20 @@ export type AgentDefaultsConfig = {
   retryDelaySeconds: number
 }
 
+export type ChannelPreference = {
+  inApp: boolean
+  discord: boolean
+  telegram: boolean
+}
+
+export type NotificationPreferences = {
+  [category: string]: ChannelPreference
+}
+
 export type SystemSettings = {
   integrations: IntegrationConfig
   agentDefaults: AgentDefaultsConfig
+  notificationPreferences: NotificationPreferences
   updatedAt: string
 }
 

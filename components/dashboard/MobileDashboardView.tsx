@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { ArrowRight, CheckCircle2, Clock, Activity, Users, Zap, HeartPulse } from 'lucide-react'
+import { ArrowRight, CheckCircle2, Clock, Activity, Users, Zap } from 'lucide-react'
 import { MobileAgentScroller, type MobileAgentData } from './MobileAgentScroller'
 import { PageContainer } from '@/components/layout'
 import type { AgentStatus } from '@/components/ui/StatusBadge'
@@ -21,11 +21,10 @@ interface MobileDashboardViewProps {
   activeAgents: number
   completedTasks: number
   inProgress: number
-  activities: any[]
   tasks: any[]
 }
 
-function MobileStatusBar({ activeAgents, completedTasks, inProgress }: { 
+function MobileStatusBar({ activeAgents, completedTasks, inProgress }: {
   activeAgents: number
   completedTasks: number
   inProgress: number
@@ -68,7 +67,7 @@ function MobileTaskList({ tasks }: { tasks: any[] }) {
   }
 
   // Filter to in-progress tasks
-  const inProgressTasks = tasks.filter((t: any) => 
+  const inProgressTasks = tasks.filter((t: any) =>
     t.status === 'in_progress' || t.status === 'in-progress' || t.status === 'active'
   )
 
@@ -125,14 +124,13 @@ function SectionHeader({ title, href, icon }: { title: string; href: string; ico
   )
 }
 
-export function MobileDashboardView({ 
+export function MobileDashboardView({
   time,
-  agents, 
+  agents,
   agentsLoading,
   activeAgents,
   completedTasks,
   inProgress,
-  activities,
   tasks,
 }: MobileDashboardViewProps) {
   // Transform agents to MobileAgentData format
@@ -158,19 +156,12 @@ export function MobileDashboardView({
             </p>
           </div>
           <div className="flex gap-2">
-            <Link 
-              href="/command" 
+            <Link
+              href="/agents/fleet"
               className="p-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
               aria-label="Quick Actions"
             >
               <Zap size={18} />
-            </Link>
-            <Link
-              href="/health"
-              className="p-2 bg-slate-700 hover:bg-slate-600 rounded-lg transition-colors"
-              aria-label="Health"
-            >
-              <HeartPulse size={18} />
             </Link>
           </div>
         </div>
@@ -178,18 +169,18 @@ export function MobileDashboardView({
 
       <div className="space-y-4">
         {/* Status Bar */}
-        <MobileStatusBar 
-          activeAgents={activeAgents} 
-          completedTasks={completedTasks} 
-          inProgress={inProgress} 
+        <MobileStatusBar
+          activeAgents={activeAgents}
+          completedTasks={completedTasks}
+          inProgress={inProgress}
         />
 
         {/* Agent Scroller Section */}
         <section>
-          <SectionHeader 
-            title="Agents" 
-            href="/agents" 
-            icon={<Users className="text-blue-400" size={18} />} 
+          <SectionHeader
+            title="Agents"
+            href="/agents"
+            icon={<Users className="text-blue-400" size={18} />}
           />
           <MobileAgentScroller agents={mobileAgents} isLoading={agentsLoading} />
         </section>
@@ -197,41 +188,11 @@ export function MobileDashboardView({
         {/* In-Progress Tasks Section */}
         <section className="glass-2 rounded-xl p-4">
           <SectionHeader
-            title="In Progress" 
-            href="/tasks" 
-            icon={<Activity className="text-amber-400" size={18} />} 
+            title="In Progress"
+            href="/tasks"
+            icon={<Activity className="text-amber-400" size={18} />}
           />
           <MobileTaskList tasks={tasks} />
-        </section>
-
-        {/* Recent Activity */}
-        <section className="glass-2 rounded-xl p-4">
-          <SectionHeader
-            title="Activity" 
-            href="/activity" 
-            icon={<Activity className="text-green-400" size={18} />} 
-          />
-          {activities.length === 0 ? (
-            <div className="text-center text-slate-400 py-4 text-sm">
-              No recent activity
-            </div>
-          ) : (
-            <div className="space-y-2">
-              {activities.slice(0, 3).map((activity: any, i: number) => (
-                <div 
-                  key={activity.id ?? i}
-                  className="flex items-center gap-2 p-2 bg-slate-900/30 rounded-lg text-sm"
-                >
-                  <span className="text-white font-medium truncate">
-                    {activity.agent?.name ?? 'System'}
-                  </span>
-                  <span className="text-slate-400 truncate flex-1">
-                    {activity.action?.replace(/_/g, ' ')}
-                  </span>
-                </div>
-              ))}
-            </div>
-          )}
         </section>
       </div>
     </PageContainer>

@@ -42,6 +42,9 @@ Thumbs.db
 *.swo
 *~
 
+# Generated avatars
+public/agents/generated/
+
 # TypeScript
 *.tsbuildinfo
 next-env.d.ts

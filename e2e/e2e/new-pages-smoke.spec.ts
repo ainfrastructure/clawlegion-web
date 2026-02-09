@@ -33,31 +33,6 @@ test.describe('New Pages Smoke Tests', () => {
     });
   });
 
-  test.describe('Command Center Page', () => {
-    test('loads successfully', async ({ page }) => {
-      await page.goto('/command');
-      await page.waitForLoadState('networkidle');
-      
-      expect(page.url()).toContain('/command');
-      
-      const heading = page.locator('h1, h2').first();
-      await expect(heading).toBeVisible({ timeout: 10000 });
-    });
-
-    test('shows agent controls', async ({ page }) => {
-      await page.goto('/command');
-      await page.waitForLoadState('networkidle');
-      
-      // Command center should have action buttons or agent controls
-      const pageContent = await page.textContent('body');
-      expect(
-        pageContent?.includes('Command') || 
-        pageContent?.includes('Agent') ||
-        pageContent?.includes('Control')
-      ).toBeTruthy();
-    });
-  });
-
   test.describe('Health Page', () => {
     test('loads successfully', async ({ page }) => {
       await page.goto('/health');

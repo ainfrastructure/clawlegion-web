@@ -9,7 +9,6 @@ import {
   MessageSquare,
   Briefcase,
   Bot,
-  HeartPulse,
   Settings,
   ChevronRight,
   User,
@@ -62,12 +61,7 @@ const navItems: NavItem[] = [
     ]
   },
   {
-    href: '/health',
-    icon: HeartPulse,
-    label: 'Health'
-  },
-  { 
-    href: '/settings', 
+    href: '/settings',
     icon: Settings, 
     label: 'Settings' 
   },

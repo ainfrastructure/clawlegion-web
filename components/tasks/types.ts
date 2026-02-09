@@ -12,13 +12,44 @@ export interface Attachment {
 }
 
 /**
+ * Subtask summary for inline display
+ */
+export interface SubtaskSummary {
+  id: string
+  title: string
+  shortId?: string | null
+  status: string
+  priority: string
+  assignee?: string | null
+}
+
+/**
  * Repository with optional Linear project mapping
  */
 export interface Repository {
   id: string
   name: string
   fullName: string
+  type?: string             // workspace type: code, research, content, operations, custom
+  icon?: string | null      // emoji or icon name
   linearProject: {
+    linearId: string
+    name: string
+  } | null
+}
+
+/**
+ * Workspace (extended repository)
+ */
+export interface Workspace {
+  id: string
+  name: string
+  fullName?: string
+  type: 'code' | 'research' | 'content' | 'operations' | 'custom'
+  description?: string | null
+  icon?: string | null
+  settings?: Record<string, unknown>
+  linearProject?: {
     linearId: string
     name: string
   } | null
@@ -41,6 +72,7 @@ export interface Task {
   // Classification
   priority?: string
   status?: string
+  domain?: string
   tags?: string[]
 
   // Repository
@@ -77,6 +109,11 @@ export interface Task {
   lastVerificationNote?: string | null
   verifiedBy?: string | null
   verifiedAt?: string | null
+
+  // Sub-task hierarchy
+  parentId?: string | null
+  parent?: { id: string; title: string; shortId?: string | null } | null
+  subtasks?: SubtaskSummary[]
 }
 
 /**

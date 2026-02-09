@@ -1,22 +1,27 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import Image from 'next/image'
-import { 
-  X, 
-  Save, 
-  Bot, 
-  RefreshCw, 
-  FileText, 
-  Settings, 
+import {
+  X,
+  Save,
+  Bot,
+  RefreshCw,
+  FileText,
+  Settings,
   Brain,
   Loader2,
   Check,
   AlertCircle,
   ChevronRight,
-  BookOpen
+  BookOpen,
+  HelpCircle,
+  Play,
+  Pause,
+  Zap
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   useAgentConfig,
   useSoul,
@@ -24,7 +29,9 @@ import {
   useUpdateAgentConfig,
   useRestartGateway,
 } from '@/hooks/useAgentConfig'
+import { InjectTaskModal } from './InjectTaskModal'
 import { StatusBadge, type AgentStatus } from '@/components/ui/StatusBadge'
+import { Tooltip } from '@/components/ui/Tooltip'
 import { SoulEditorModal } from './SoulEditorModal'
 import { AgentsEditorModal } from './AgentsEditorModal'
 import { getAgentById, getAgentByName } from '@/components/chat-v2/agentConfig'
@@ -54,7 +61,26 @@ export function AgentProfilePanel({ agentId, onClose, agentStatus = 'offline' }:
   const [hasChanges, setHasChanges] = useState(false)
   const [showSoulEditor, setShowSoulEditor] = useState(false)
   const [showAgentsEditor, setShowAgentsEditor] = useState(false)
+  const [showInjectTask, setShowInjectTask] = useState(false)
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle')
+
+  const queryClient = useQueryClient()
+
+  const pauseAgent = useMutation({
+    mutationFn: async () => {
+      const res = await fetch(`/api/agents/${openclawId}/pause`, { method: 'POST' })
+      return res.json()
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['agents'] }),
+  })
+
+  const resumeAgent = useMutation({
+    mutationFn: async () => {
+      const res = await fetch(`/api/agents/${openclawId}/resume`, { method: 'POST' })
+      return res.json()
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['agents'] }),
+  })
 
   // Initialize local state from fetched data
   useEffect(() => {
@@ -242,6 +268,43 @@ export function AgentProfilePanel({ agentId, onClose, agentStatus = 'offline' }:
               </div>
             )}
 
+            {/* Agent Controls */}
+            <div className="glass-2 rounded-xl p-4">
+              <h3 className="font-medium text-white flex items-center gap-2 mb-3">
+                <Zap size={16} className="text-amber-400" />
+                Agent Controls
+              </h3>
+              <div className="flex gap-2">
+                {agentStatus === 'online' || agentStatus === 'busy' ? (
+                  <button
+                    onClick={() => pauseAgent.mutate()}
+                    disabled={pauseAgent.isPending}
+                    className="flex-1 px-3 py-2 bg-yellow-600 hover:bg-yellow-700 rounded-lg text-sm font-medium flex items-center justify-center gap-2 transition-colors disabled:opacity-50"
+                  >
+                    <Pause size={14} />
+                    {pauseAgent.isPending ? 'Pausing...' : 'Pause'}
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => resumeAgent.mutate()}
+                    disabled={resumeAgent.isPending || agentStatus === 'offline'}
+                    className="flex-1 px-3 py-2 bg-green-600 hover:bg-green-700 rounded-lg text-sm font-medium flex items-center justify-center gap-2 transition-colors disabled:opacity-50"
+                  >
+                    <Play size={14} />
+                    {resumeAgent.isPending ? 'Resuming...' : 'Resume'}
+                  </button>
+                )}
+                <button
+                  onClick={() => setShowInjectTask(true)}
+                  disabled={agentStatus === 'offline'}
+                  className="flex-1 px-3 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-sm font-medium flex items-center justify-center gap-2 transition-colors disabled:opacity-50"
+                >
+                  <Zap size={14} />
+                  Inject Task
+                </button>
+              </div>
+            </div>
+
             {/* SOUL Summary */}
             {soulData && (
               <div className="glass-2 rounded-xl p-4">
@@ -249,6 +312,19 @@ export function AgentProfilePanel({ agentId, onClose, agentStatus = 'offline' }:
                   <h3 className="font-medium text-white flex items-center gap-2">
                     <FileText size={16} className="text-purple-400" />
                     SOUL.md
+                    <Tooltip
+                      position="bottom"
+                      content={
+                        <div className="whitespace-normal max-w-[260px] py-0.5">
+                          <p className="font-medium text-white mb-1">Agent Soul</p>
+                          <p className="text-slate-300 text-xs leading-relaxed">
+                            Defines the agent&apos;s personality, communication style, values, and behavioral guidelines. Edit this to shape how the agent thinks and responds.
+                          </p>
+                        </div>
+                      }
+                    >
+                      <HelpCircle size={14} className="text-slate-500 hover:text-purple-400 cursor-help transition-colors" />
+                    </Tooltip>
                   </h3>
                   <button
                     onClick={() => setShowSoulEditor(true)}
@@ -275,6 +351,19 @@ export function AgentProfilePanel({ agentId, onClose, agentStatus = 'offline' }:
                   <h3 className="font-medium text-white flex items-center gap-2">
                     <BookOpen size={16} className="text-blue-400" />
                     AGENTS.md
+                    <Tooltip
+                      position="bottom"
+                      content={
+                        <div className="whitespace-normal max-w-[260px] py-0.5">
+                          <p className="font-medium text-white mb-1">Workspace Rules</p>
+                          <p className="text-slate-300 text-xs leading-relaxed">
+                            Project-specific instructions, coding standards, and workflow guidelines that the agent follows when working in its workspace.
+                          </p>
+                        </div>
+                      }
+                    >
+                      <HelpCircle size={14} className="text-slate-500 hover:text-blue-400 cursor-help transition-colors" />
+                    </Tooltip>
                   </h3>
                   <button
                     onClick={() => setShowAgentsEditor(true)}
@@ -415,6 +504,15 @@ export function AgentProfilePanel({ agentId, onClose, agentStatus = 'offline' }:
           agentId={openclawId}
           agentName={enriched?.name || agent?.name || agentId}
           onClose={() => setShowAgentsEditor(false)}
+        />
+      )}
+
+      {/* Inject Task Modal */}
+      {showInjectTask && openclawId && (
+        <InjectTaskModal
+          agentId={openclawId}
+          agentName={enriched?.name || agent?.name || agentId}
+          onClose={() => setShowInjectTask(false)}
         />
       )}
     </>

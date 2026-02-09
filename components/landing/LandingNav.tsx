@@ -5,6 +5,38 @@ import { Menu, X } from 'lucide-react'
 import { MascotIcon } from './MascotIcon'
 import { LAUNCH_CONFIG } from '@/lib/launch-config'
 
+const PIPELINE_DOTS = [
+  { label: 'Jarvis', color: '#DC2626' },
+  { label: 'Archie', color: '#3B82F6' },
+  { label: 'Scout', color: '#06B6D4' },
+  { label: 'Mason', color: '#F59E0B' },
+  { label: 'Vex', color: '#8B5CF6' },
+]
+
+function MiniAgentFlow() {
+  return (
+    <div className="hidden md:flex items-center gap-0.5 ml-4 group" title="Agent pipeline">
+      {PIPELINE_DOTS.map((dot, i) => (
+        <div key={dot.label} className="flex items-center">
+          <div
+            className="w-[7px] h-[7px] rounded-full"
+            style={{
+              background: dot.color,
+              boxShadow: `0 0 4px ${dot.color}60`,
+              animation: `pipeline-pulse 2s ease-in-out infinite`,
+              animationDelay: `${i * 300}ms`,
+            }}
+            title={dot.label}
+          />
+          {i < PIPELINE_DOTS.length - 1 && (
+            <div className="w-2.5 h-px" style={{ background: `${PIPELINE_DOTS[i + 1].color}40` }} />
+          )}
+        </div>
+      ))}
+    </div>
+  )
+}
+
 type LandingNavProps = {
   bannerVisible?: boolean
   onContactClick?: () => void
@@ -39,11 +71,14 @@ export function LandingNav({ bannerVisible = false, onContactClick }: LandingNav
     >
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <a href="#" className="flex items-center gap-2">
-            <MascotIcon size={28} />
-            <span className="font-bold text-lg text-white">ClawLegion</span>
-          </a>
+          {/* Logo + mini pipeline */}
+          <div className="flex items-center">
+            <a href="#" className="flex items-center gap-2">
+              <MascotIcon size={28} />
+              <span className="font-bold text-lg text-white">ClawLegion</span>
+            </a>
+            <MiniAgentFlow />
+          </div>
 
           {/* Desktop links */}
           <div className="hidden md:flex items-center gap-8">

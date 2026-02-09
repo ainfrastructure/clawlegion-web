@@ -39,10 +39,8 @@ export function HeroSection() {
 
         {/* Headline */}
         <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6 tracking-tight leading-[1.1]">
-          Command Your
-          <br />
           <span className="bg-gradient-to-r from-blue-400 via-blue-500 to-purple-500 bg-clip-text text-transparent">
-            AI Fleet
+            AI Legion
           </span>
         </h1>
 

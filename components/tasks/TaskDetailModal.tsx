@@ -10,8 +10,10 @@ import {
   Shield, Gauge, RotateCcw, Timer, Link2, Trash2, MessageCircle
 } from 'lucide-react'
 import { TaskActivityLog } from './TaskActivityLog'
+import { DeliverableViewer } from '@/components/deliverables/DeliverableViewer'
 import { TaskStatusTimeline } from './TaskStatusTimeline'
 import { TaskHandoffTimeline } from './TaskHandoffTimeline'
+import { SubtaskList } from './SubtaskList'
 import { AgentAvatar } from '@/components/agents'
 import { formatTimeAgo } from '@/components/common/TimeAgo'
 import { WatchdogStatusBadge } from '@/components/watchdog'
@@ -163,6 +165,22 @@ function FormattedText({ text }: { text: string }) {
   flushList()
 
   return <div className="space-y-1.5">{elements}</div>
+}
+
+function DeliverableViewerSection({ taskId }: { taskId: string }) {
+  return (
+    <div className="bg-emerald-950/30 border border-emerald-500/[0.08] rounded-xl overflow-hidden">
+      <div className="px-4 py-3 border-b border-emerald-500/[0.08] bg-emerald-950/40">
+        <h3 className="text-xs font-semibold text-emerald-300/60 uppercase tracking-wider flex items-center gap-2">
+          <FileText className="w-3.5 h-3.5" />
+          Deliverables
+        </h3>
+      </div>
+      <div className="p-4">
+        <DeliverableViewer taskId={taskId} />
+      </div>
+    </div>
+  )
 }
 
 export function TaskDetailModal({ taskId, task: initialTask, isOpen, onClose }: TaskDetailModalProps) {
@@ -391,6 +409,17 @@ export function TaskDetailModal({ taskId, task: initialTask, isOpen, onClose }: 
           <div className="px-4 sm:px-6 py-4 border-b border-blue-500/[0.1] flex-shrink-0 bg-gradient-to-r from-blue-600/[0.08] via-blue-500/[0.04] to-transparent">
             <div className="flex items-start justify-between gap-4">
               <div className="flex-1 min-w-0">
+                {/* Parent breadcrumb if this is a subtask */}
+                {task?.parent && (
+                  <div className="flex items-center gap-1.5 mb-1.5 text-xs text-slate-400">
+                    <span className="font-mono text-purple-400/60 bg-purple-500/10 px-1.5 py-0.5 rounded">
+                      {task.parent.shortId || task.parent.id.slice(0, 8)}
+                    </span>
+                    <span className="truncate max-w-[200px]">{task.parent.title}</span>
+                    <ChevronRight className="w-3 h-3 text-slate-500 flex-shrink-0" />
+                    <span className="text-blue-300">subtask</span>
+                  </div>
+                )}
                 <div className="flex flex-wrap items-center gap-2 mb-2">
                   {task?.shortId && (
                     <span className="text-xs font-mono font-bold text-purple-400 bg-purple-500/20 px-2 py-1 rounded-lg">
@@ -473,6 +502,7 @@ export function TaskDetailModal({ taskId, task: initialTask, isOpen, onClose }: 
                   currentStatus={task?.status || 'backlog'}
                   activities={activitiesData || []}
                   onStatusClick={(status) => statusMutation.mutate({ status })}
+                  domain={task?.domain}
                 />
 
                 {/* Two-Column Body */}
@@ -490,6 +520,18 @@ export function TaskDetailModal({ taskId, task: initialTask, isOpen, onClose }: 
                       </h3>
                       <FormattedText text={task?.description || 'No description provided.'} />
                     </div>
+
+                    {/* Subtasks section */}
+                    {task && !task.parentId && (task.subtasks?.length ?? 0) >= 0 && (
+                      <SubtaskList
+                        parentId={taskId}
+                        subtasks={task.subtasks || []}
+                        onSubtaskClick={(subtaskId) => {
+                          // Could open another modal or navigate
+                          window.open(`/tasks?taskId=${subtaskId}`, '_blank')
+                        }}
+                      />
+                    )}
 
                     {/* Collapsible sections: Specs, Approach, Criteria */}
                     {task?.specs && (
@@ -732,6 +774,9 @@ export function TaskDetailModal({ taskId, task: initialTask, isOpen, onClose }: 
                     </div>
                   </div>
                 </div>
+
+                {/* ─── Deliverables ─── */}
+                <DeliverableViewerSection taskId={taskId} />
 
                 {/* ─── Discussion Thread ─── */}
                 <div className="bg-blue-950/30 border border-blue-500/[0.08] rounded-xl overflow-hidden">

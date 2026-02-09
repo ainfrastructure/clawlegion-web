@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import {
   Clock,
   CheckCircle2,
@@ -11,6 +12,8 @@ import {
   Square,
   CheckSquare,
   MinusSquare,
+  ChevronRight,
+  ChevronDown,
 } from 'lucide-react'
 import { AgentAvatar } from '@/components/agents'
 import type { Task } from '@/types'
@@ -207,12 +210,15 @@ interface TaskCardProps {
 
 function TaskCard({ task, isSelected, onSelect, onClick }: TaskCardProps) {
   const prio = priorityConfig[task.priority] ?? priorityConfig.P2
-  
+  const subtasks = task.subtasks || []
+  const subtaskDone = subtasks.filter(s => s.status === 'done' || s.status === 'completed').length
+  const subtaskTotal = subtasks.length
+
   return (
-    <div 
+    <div
       className={`bg-slate-900/50 rounded-lg p-3 border transition-colors cursor-pointer ${
-        isSelected 
-          ? 'border-amber-500 bg-amber-500/10' 
+        isSelected
+          ? 'border-amber-500 bg-amber-500/10'
           : 'border-white/[0.06] hover:border-slate-600'
       }`}
       onClick={(e) => {
@@ -236,6 +242,20 @@ function TaskCard({ task, isSelected, onSelect, onClick }: TaskCardProps) {
         </div>
         <span className={`${prio.color} flex-shrink-0`}>{prio.icon}</span>
       </div>
+      {/* Subtask progress chip */}
+      {subtaskTotal > 0 && (
+        <div className="mt-2 ml-6 flex items-center gap-2">
+          <div className="flex items-center gap-1.5 px-2 py-0.5 bg-slate-800 rounded-full text-xs text-slate-400">
+            <span>{subtaskDone}/{subtaskTotal} subtasks</span>
+            <div className="w-12 h-1 bg-slate-700 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-emerald-500 rounded-full"
+                style={{ width: `${subtaskTotal > 0 ? (subtaskDone / subtaskTotal) * 100 : 0}%` }}
+              />
+            </div>
+          </div>
+        </div>
+      )}
       {(task.assignee || task.assignedTo) && (
         <div className="mt-2 ml-6 flex items-center gap-1.5 text-xs text-slate-500">
           <AgentAvatar agentId={task.assignee || task.assignedTo || ''} size="xs" />
@@ -301,65 +321,121 @@ function MobileTaskCard({ task, isSelected, onSelect, onClick }: TaskCardProps) 
 }
 
 function TaskRow({ task, isSelected, onSelect, onClick }: TaskCardProps) {
+  const [expanded, setExpanded] = useState(false)
   const prio = priorityConfig[task.priority] ?? priorityConfig.P2
   const status = statusConfig[task.status] ?? statusConfig.queued
-  
+  const subtasks = task.subtasks || []
+  const hasSubtasks = subtasks.length > 0
+
   return (
-    <tr 
-      className={`transition-colors cursor-pointer ${
-        isSelected ? 'bg-amber-500/10' : 'hover:bg-slate-800/50'
-      }`}
-      onClick={(e) => {
-        if ((e.target as HTMLElement).closest('button')) return
-        onClick()
-      }}
-    >
-      <td className="px-4 py-4">
-        <button 
-          onClick={(e) => { e.stopPropagation(); onSelect(e.shiftKey) }}
-          className="p-1 hover:bg-slate-700 rounded transition-colors"
-        >
-          {isSelected ? (
-            <CheckSquare size={18} className="text-amber-400" />
-          ) : (
-            <Square size={18} className="text-slate-500" />
-          )}
-        </button>
-      </td>
-      <td className="px-4 py-4">
-        <span className="text-white font-medium">{task.title}</span>
-      </td>
-      <td className="px-4 py-4">
-        <span className={`inline-flex items-center gap-1 px-2 py-1 rounded text-xs ${prio.bg} ${prio.color}`}>
-          {prio.icon} {task.priority}
-        </span>
-      </td>
-      <td className="px-4 py-4">
-        <span className={`inline-flex items-center px-2 py-1 rounded text-xs ${status.bg} ${status.color}`}>
-          {task.status?.replace('_', ' ')}
-        </span>
-      </td>
-      <td className="px-4 py-4">
-        {(task.assignee || task.assignedTo) ? (
+    <>
+      <tr
+        className={`transition-colors cursor-pointer ${
+          isSelected ? 'bg-amber-500/10' : 'hover:bg-slate-800/50'
+        }`}
+        onClick={(e) => {
+          if ((e.target as HTMLElement).closest('button')) return
+          onClick()
+        }}
+      >
+        <td className="px-4 py-4">
+          <button
+            onClick={(e) => { e.stopPropagation(); onSelect(e.shiftKey) }}
+            className="p-1 hover:bg-slate-700 rounded transition-colors"
+          >
+            {isSelected ? (
+              <CheckSquare size={18} className="text-amber-400" />
+            ) : (
+              <Square size={18} className="text-slate-500" />
+            )}
+          </button>
+        </td>
+        <td className="px-4 py-4">
           <div className="flex items-center gap-2">
-            <AgentAvatar agentId={task.assignee || task.assignedTo || ''} size="sm" />
-            <span className="text-slate-300">{task.assignee || task.assignedTo}</span>
+            {hasSubtasks && (
+              <button
+                onClick={(e) => { e.stopPropagation(); setExpanded(!expanded) }}
+                className="p-0.5 hover:bg-slate-700 rounded transition-colors flex-shrink-0"
+              >
+                {expanded ? (
+                  <ChevronDown size={14} className="text-slate-400" />
+                ) : (
+                  <ChevronRight size={14} className="text-slate-400" />
+                )}
+              </button>
+            )}
+            <span className="text-white font-medium">{task.title}</span>
+            {hasSubtasks && (
+              <span className="text-[10px] text-slate-500 bg-slate-800 px-1.5 py-0.5 rounded-full">
+                {subtasks.filter(s => s.status === 'done' || s.status === 'completed').length}/{subtasks.length}
+              </span>
+            )}
           </div>
-        ) : (
-          <span className="text-slate-500">-</span>
-        )}
-      </td>
-      <td className="px-4 py-4 text-slate-400 text-sm">
-        {new Date(task.createdAt).toLocaleDateString()}
-      </td>
-      <td className="px-4 py-4">
-        <button 
-          className="p-2 hover:bg-slate-700 rounded"
-          onClick={(e) => e.stopPropagation()}
-        >
-          <MoreVertical size={16} className="text-slate-400" />
-        </button>
-      </td>
-    </tr>
+        </td>
+        <td className="px-4 py-4">
+          <span className={`inline-flex items-center gap-1 px-2 py-1 rounded text-xs ${prio.bg} ${prio.color}`}>
+            {prio.icon} {task.priority}
+          </span>
+        </td>
+        <td className="px-4 py-4">
+          <span className={`inline-flex items-center px-2 py-1 rounded text-xs ${status.bg} ${status.color}`}>
+            {task.status?.replace('_', ' ')}
+          </span>
+        </td>
+        <td className="px-4 py-4">
+          {(task.assignee || task.assignedTo) ? (
+            <div className="flex items-center gap-2">
+              <AgentAvatar agentId={task.assignee || task.assignedTo || ''} size="sm" />
+              <span className="text-slate-300">{task.assignee || task.assignedTo}</span>
+            </div>
+          ) : (
+            <span className="text-slate-500">-</span>
+          )}
+        </td>
+        <td className="px-4 py-4 text-slate-400 text-sm">
+          {new Date(task.createdAt).toLocaleDateString()}
+        </td>
+        <td className="px-4 py-4">
+          <button
+            className="p-2 hover:bg-slate-700 rounded"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <MoreVertical size={16} className="text-slate-400" />
+          </button>
+        </td>
+      </tr>
+      {/* Expanded subtask rows */}
+      {expanded && subtasks.map((sub) => {
+        const subPrio = priorityConfig[sub.priority] ?? priorityConfig.P2
+        const subStatus = statusConfig[sub.status] ?? statusConfig.queued
+        return (
+          <tr key={sub.id} className="bg-slate-900/30 hover:bg-slate-800/40 transition-colors cursor-pointer">
+            <td className="px-4 py-2" />
+            <td className="px-4 py-2 pl-12">
+              <span className="text-sm text-slate-400">{sub.title}</span>
+            </td>
+            <td className="px-4 py-2">
+              <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs ${subPrio.bg} ${subPrio.color}`}>
+                {subPrio.icon} {sub.priority}
+              </span>
+            </td>
+            <td className="px-4 py-2">
+              <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs ${subStatus.bg} ${subStatus.color}`}>
+                {sub.status?.replace('_', ' ')}
+              </span>
+            </td>
+            <td className="px-4 py-2">
+              {sub.assignee ? (
+                <span className="text-xs text-slate-400">@{sub.assignee}</span>
+              ) : (
+                <span className="text-slate-500 text-xs">-</span>
+              )}
+            </td>
+            <td className="px-4 py-2" />
+            <td className="px-4 py-2" />
+          </tr>
+        )
+      })}
+    </>
   )
 }

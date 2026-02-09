@@ -1,7 +1,7 @@
 'use client'
 
 import { CheckCircle2, Circle, Clock, User } from 'lucide-react'
-import { STATUS_ORDER as CANONICAL_STATUS_ORDER, STATUS_CONFIG } from './config/status'
+import { STATUS_ORDER as CANONICAL_STATUS_ORDER, STATUS_CONFIG, getWorkflowForDomain, type WorkflowStep } from './config/status'
 import { AgentAvatar } from '@/components/agents'
 
 interface TaskActivity {
@@ -19,9 +19,10 @@ interface TaskStatusTimelineProps {
   currentStatus: string
   activities: TaskActivity[]
   onStatusClick?: (status: string) => void
+  domain?: string
 }
 
-const STATUS_ORDER = CANONICAL_STATUS_ORDER.map(key => ({
+const DEFAULT_STATUS_ORDER = CANONICAL_STATUS_ORDER.map(key => ({
   key,
   label: STATUS_CONFIG[key].label,
   color: STATUS_CONFIG[key].color,
@@ -54,14 +55,15 @@ function getPhaseDuration(
   statusKey: string,
   statusIndex: number,
   activities: TaskActivity[],
-  currentStatus: string
+  currentStatus: string,
+  workflowSteps: WorkflowStep[]
 ): string | null {
   const enteredTs = getStatusTimestamp(statusKey, activities)
   if (!enteredTs) return null
 
   // Normalize currentStatus for comparison
   const normalizedCurrent = currentStatus === 'in_progress' ? 'building' : currentStatus
-  const currentIdx = STATUS_ORDER.findIndex(s => s.key === normalizedCurrent)
+  const currentIdx = workflowSteps.findIndex(s => s.key === normalizedCurrent)
 
   // If this is the current phase, show elapsed time
   if (statusIndex === currentIdx) {
@@ -70,7 +72,7 @@ function getPhaseDuration(
 
   // If this phase is completed, find when the next phase started
   if (statusIndex < currentIdx) {
-    const nextStatus = STATUS_ORDER[statusIndex + 1]
+    const nextStatus = workflowSteps[statusIndex + 1]
     if (nextStatus) {
       const nextTs = getStatusTimestamp(nextStatus.key, activities)
       if (nextTs) {
@@ -96,22 +98,24 @@ function formatDuration(ms: number): string {
 export function TaskStatusTimeline({
   currentStatus,
   activities,
-  onStatusClick
+  onStatusClick,
+  domain,
 }: TaskStatusTimelineProps) {
+  const workflowSteps = domain ? getWorkflowForDomain(domain) : DEFAULT_STATUS_ORDER
   const normalizedStatus = currentStatus === 'in_progress' ? 'building' : currentStatus
-  const currentIndex = STATUS_ORDER.findIndex(s => s.key === normalizedStatus)
+  const currentIndex = workflowSteps.findIndex(s => s.key === normalizedStatus)
   const isCancelled = currentStatus === 'cancelled'
 
   return (
     <div className="py-4">
       {/* Phase cards strip */}
       <div className="flex items-stretch gap-1 relative bg-blue-950/20 border border-blue-500/[0.08] rounded-2xl p-2">
-        {STATUS_ORDER.map((status, index) => {
+        {workflowSteps.map((status, index) => {
           const isComplete = index < currentIndex && !isCancelled
           const isCurrent = index === currentIndex && !isCancelled
           const isPending = index > currentIndex || isCancelled
           const agent = getPhaseAgent(status.key, activities)
-          const duration = getPhaseDuration(status.key, index, activities, currentStatus)
+          const duration = getPhaseDuration(status.key, index, activities, currentStatus, workflowSteps)
 
           return (
             <div key={status.key} className="flex items-stretch flex-1 min-w-0">
@@ -169,7 +173,7 @@ export function TaskStatusTimeline({
               </button>
 
               {/* Connecting line */}
-              {index < STATUS_ORDER.length - 1 && (
+              {index < workflowSteps.length - 1 && (
                 <div className="flex items-center w-2 flex-shrink-0">
                   <div className={`
                     h-px w-full

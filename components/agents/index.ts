@@ -20,3 +20,4 @@ export { FleetAgentCard } from './FleetAgentCard';
 export { OrgAgentCard } from './OrgAgentCard';
 export { AgentDetailModal } from './AgentDetailModal';
 export { AddAgentModal } from './AddAgentModal';
+export { InjectTaskModal } from './InjectTaskModal';

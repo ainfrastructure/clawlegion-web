@@ -24,6 +24,15 @@ export interface TaskAttachment {
   url: string
 }
 
+export interface SubtaskSummary {
+  id: string
+  title: string
+  shortId?: string | null
+  status: TaskStatus
+  priority: Priority
+  assignee?: string | null
+}
+
 export interface Task {
   id: string
   title: string
@@ -41,7 +50,10 @@ export interface Task {
     id: string
     name: string
     fullName: string
+    type?: string
+    icon?: string | null
   }
+  domain?: string  // workspace type: code, research, content, etc.
   verificationAttempts?: number
   lastVerificationNote?: string | null
   verifiedBy?: string | null
@@ -59,6 +71,9 @@ export interface Task {
     name: string
     status: string
   } | null
+  parentId?: string | null
+  parent?: { id: string; title: string; shortId?: string } | null
+  subtasks?: SubtaskSummary[]
 }
 
 export interface Sprint {

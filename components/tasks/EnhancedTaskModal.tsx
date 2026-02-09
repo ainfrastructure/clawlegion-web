@@ -339,20 +339,20 @@ export function EnhancedTaskModal({ isOpen, onClose, onTaskCreated, repositories
                   </p>
                 </div>
 
-                {/* Optional repo selector */}
+                {/* Optional workspace selector */}
                 <div>
                   <label className="block text-sm font-medium text-slate-300 mb-2">
-                    Repository <span className="text-slate-500">(optional, provides context)</span>
+                    Workspace <span className="text-slate-500">(optional, provides context)</span>
                   </label>
                   <select
                     value={promptRepoId}
                     onChange={(e) => setPromptRepoId(e.target.value)}
                     className="w-full px-4 py-3 rounded-lg border border-slate-600 bg-slate-700 text-slate-100 focus:ring-2 focus:ring-amber-500 focus:border-transparent"
                   >
-                    <option value="">No repo selected</option>
+                    <option value="">No workspace selected</option>
                     {repositories.map((repo) => (
                       <option key={repo.id} value={repo.id}>
-                        {repo.name}
+                        {repo.icon ? `${repo.icon} ` : ''}{repo.name}
                       </option>
                     ))}
                   </select>
@@ -481,17 +481,18 @@ export function EnhancedTaskModal({ isOpen, onClose, onTaskCreated, repositories
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-slate-300 mb-2">
-                        Repository *
+                        Workspace *
                       </label>
                       <select
                         value={repositoryId}
                         onChange={(e) => setRepositoryId(e.target.value)}
                         className="w-full px-4 py-3 rounded-lg border border-slate-600 bg-slate-700 text-slate-100 focus:ring-2 focus:ring-amber-500 focus:border-transparent"
                       >
-                        <option value="">Select repo</option>
+                        <option value="">Select workspace</option>
                         {repositories.map((repo) => (
                           <option key={repo.id} value={repo.id}>
-                            {repo.name}
+                            {repo.icon ? `${repo.icon} ` : ''}{repo.name}
+                            {repo.type && repo.type !== 'code' ? ` (${repo.type})` : ''}
                           </option>
                         ))}
                       </select>

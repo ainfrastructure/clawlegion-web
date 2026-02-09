@@ -24,6 +24,7 @@ export type {
   TaskComment,
   TaskAttachment,
   Sprint,
+  SubtaskSummary,
 } from './task'
 
 // Agent types

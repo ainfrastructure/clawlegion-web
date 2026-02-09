@@ -9,7 +9,6 @@ import {
   MessageSquare,
   Bot,
   MoreHorizontal,
-  HeartPulse,
   Settings,
   Users,
   X,
@@ -31,7 +30,6 @@ const mainTabs: NavTab[] = [
 ]
 
 const moreMenuItems = [
-  { href: '/health', icon: HeartPulse, label: 'Health' },
   { href: '/agents/sessions', icon: Users, label: 'Sessions' },
   { href: '/settings', icon: Settings, label: 'Settings' },
 ]

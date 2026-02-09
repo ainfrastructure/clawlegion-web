@@ -7,35 +7,199 @@ import { PageContainer } from '@/components/layout'
 import { AgentCard, type AgentData, type AgentStatus } from '@/components/agents'
 import { MetricCard } from '@/components/ui/MetricCard'
 import { MobileAgentScroller, type MobileAgentData } from '@/components/dashboard'
+import { AlertsFeed } from '@/components/watchdog/AlertsFeed'
+import { useWatchdogAlerts } from '@/hooks/useWatchdog'
 import { useMobile } from '@/hooks/useMobile'
+import { useSidebar } from '@/components/layout/SidebarContext'
 import Link from 'next/link'
-import { 
-  Activity, 
-  Cpu, 
-  CheckCircle2, 
-  Clock, 
+import {
+  Cpu,
+  CheckCircle2,
+  Clock,
   AlertTriangle,
-  Play,
-  Pause,
   RefreshCw,
-  Zap,
-  HeartPulse,
   Users,
   ListTodo,
   ArrowRight,
   ChevronDown,
   ChevronUp,
-  Bot
+  Bot,
+  Shield,
+  ShieldAlert,
+  ShieldX,
+  Bell,
+  Star,
+  Zap,
 } from 'lucide-react'
+import type { DashboardMetrics } from '@/types/common'
 
 // ============================================
 // REDESIGNED DASHBOARD - Command Center Style
 // Mobile-responsive with breakpoints
 // ============================================
 
+function formatUptime(seconds: number): string {
+  const days = Math.floor(seconds / 86400)
+  const hours = Math.floor((seconds % 86400) / 3600)
+  if (days > 0) return `Up ${days}d ${hours}h`
+  const mins = Math.floor((seconds % 3600) / 60)
+  if (hours > 0) return `Up ${hours}h ${mins}m`
+  return `Up ${mins}m`
+}
+
+// ============================================
+// Easy Mode Dashboard
+// ============================================
+
+function EasyModeDashboard() {
+  const { data: boardData } = useQuery({
+    queryKey: ['board'],
+    queryFn: () => api.get('/tasks/board').then(r => r.data),
+    refetchInterval: 10000,
+  })
+
+  const { data: metrics } = useQuery<DashboardMetrics>({
+    queryKey: ['metrics', 'dashboard'],
+    queryFn: async () => {
+      const res = await api.get('/metrics/dashboard')
+      return res.data
+    },
+    refetchInterval: 30000,
+  })
+
+  // Get active and recent tasks from board data
+  const columns = boardData?.columns ?? {}
+  const activeTasks: any[] = [
+    ...(columns['in_progress'] ?? []),
+    ...(columns['building'] ?? []),
+    ...(columns['researching'] ?? []),
+    ...(columns['planning'] ?? []),
+    ...(columns['verifying'] ?? []),
+  ].slice(0, 6)
+
+  const recentlyCompleted: any[] = (columns['done'] ?? []).slice(0, 5)
+
+  const completedCount = metrics?.volume.completedTasks ?? boardData?.stats?.completed ?? 0
+  const qualityScore = metrics?.quality.avgDeliverableScore
+  const hoursSaved = metrics?.roi.estimatedHoursSaved ?? 0
+
+  return (
+    <PageContainer>
+      <div className="space-y-8">
+        {/* Greeting */}
+        <div>
+          <h1 className="text-2xl font-bold text-white">Welcome back</h1>
+          <p className="text-slate-400 mt-1">Here&apos;s what&apos;s happening with your work</p>
+        </div>
+
+        {/* Your Output - 3 key metrics */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <MetricCard
+            icon={<CheckCircle2 className="text-green-400" />}
+            label="Tasks Done"
+            value={completedCount}
+            color="green"
+          />
+          <MetricCard
+            icon={<Star className="text-amber-400" />}
+            label="Quality Score"
+            value={qualityScore != null ? `${qualityScore}/100` : 'N/A'}
+            color="amber"
+          />
+          <MetricCard
+            icon={<Zap className="text-purple-400" />}
+            label="Hours Saved"
+            value={hoursSaved >= 1000 ? `${(hoursSaved / 1000).toFixed(1)}k` : String(hoursSaved)}
+            color="purple"
+          />
+        </div>
+
+        {/* What's happening - active tasks */}
+        <div className="glass-2 rounded-xl p-5">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold text-white">In Progress</h2>
+            <Link href="/tasks" className="text-sm text-blue-400 hover:text-blue-300 flex items-center gap-1">
+              View all <ArrowRight size={14} />
+            </Link>
+          </div>
+          {activeTasks.length === 0 ? (
+            <div className="text-center py-8 text-slate-500">
+              <p>No active tasks right now</p>
+              <Link href="/tasks" className="text-blue-400 hover:text-blue-300 text-sm mt-2 inline-block">
+                Create a task to get started
+              </Link>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {activeTasks.map((task: any) => (
+                <EasyTaskCard key={task.id} task={task} />
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Recently Completed */}
+        {recentlyCompleted.length > 0 && (
+          <div className="glass-2 rounded-xl p-5">
+            <h2 className="text-lg font-semibold text-white mb-4">Recently Completed</h2>
+            <div className="space-y-3">
+              {recentlyCompleted.map((task: any) => (
+                <EasyTaskCard key={task.id} task={task} />
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </PageContainer>
+  )
+}
+
+function EasyTaskCard({ task }: { task: any }) {
+  const statusColors: Record<string, string> = {
+    in_progress: 'bg-amber-500/20 text-amber-400',
+    building: 'bg-amber-500/20 text-amber-400',
+    researching: 'bg-indigo-500/20 text-indigo-400',
+    planning: 'bg-violet-500/20 text-violet-400',
+    verifying: 'bg-cyan-500/20 text-cyan-400',
+    done: 'bg-green-500/20 text-green-400',
+    completed: 'bg-green-500/20 text-green-400',
+  }
+
+  const statusLabels: Record<string, string> = {
+    in_progress: 'In Progress',
+    building: 'Building',
+    researching: 'Researching',
+    planning: 'Planning',
+    verifying: 'Verifying',
+    done: 'Done',
+    completed: 'Done',
+  }
+
+  const badgeClass = statusColors[task.status] ?? 'bg-slate-700 text-slate-300'
+  const label = statusLabels[task.status] ?? task.status
+
+  return (
+    <Link
+      href={`/tasks?taskId=${task.id}`}
+      className="flex items-center justify-between p-3 rounded-lg bg-white/[0.02] hover:bg-white/[0.05] border border-white/[0.04] transition-colors"
+    >
+      <div className="flex-1 min-w-0 mr-3">
+        <p className="text-sm font-medium text-slate-200 truncate">{task.title}</p>
+        {task.assignedTo && (
+          <p className="text-xs text-slate-500 mt-0.5">Assigned to {task.assignedTo}</p>
+        )}
+      </div>
+      <span className={`text-xs px-2 py-0.5 rounded-full whitespace-nowrap ${badgeClass}`}>
+        {label}
+      </span>
+    </Link>
+  )
+}
+
 export default function DashboardPage() {
   const [time, setTime] = useState<Date | null>(null)
   const isMobile = useMobile()
+  const { uiMode } = useSidebar()
 
   // Real-time clock - only run on client to avoid hydration mismatch
   useEffect(() => {
@@ -57,14 +221,14 @@ export default function DashboardPage() {
     queryFn: () => fetch('/api/agents/health').then(r => r.json()),
     refetchInterval: 30000,
   })
-  
+
   // Defensive: ensure agents is always an array
   const rawAgents = Array.isArray(agentsData) ? agentsData : (agentsData?.agents ?? agentsData?.data ?? [])
-  
+
   // Merge agents with health data to derive correct status (like Fleet page does)
   const agents = rawAgents.map((agent: any) => {
     const health = healthData?.agents?.find(h => h.id === agent.id || h.id === agent.name?.toLowerCase())
-    
+
     // Derive status from health check: reachable = online, else use raw status or offline
     let derivedStatus = agent.status || 'offline'
     if (health?.reachable) {
@@ -73,7 +237,7 @@ export default function DashboardPage() {
       // Health check ran but agent not reachable
       derivedStatus = agent.status === 'rate_limited' ? 'rate_limited' : 'offline'
     }
-    
+
     return {
       ...agent,
       status: derivedStatus,
@@ -88,24 +252,33 @@ export default function DashboardPage() {
     refetchInterval: 10000,
   })
 
-  const { data: activityData } = useQuery({
-    queryKey: ['activity'],
-    queryFn: () => api.get('/activity').then(r => r.data),
-    refetchInterval: 5000,
+  // System health status
+  const { data: systemHealth } = useQuery<{
+    status: string
+    uptime?: number
+    error?: string
+  }>({
+    queryKey: ['system-health-status'],
+    queryFn: () => fetch('/api/health/status').then(r => r.json()),
+    refetchInterval: 30000,
   })
 
-  const { data: tasksData } = useQuery({
-    queryKey: ['tasks'],
-    queryFn: () => api.get('/task-tracking/tasks').then(r => r.data),
-    refetchInterval: 10000,
-  })
+  // Watchdog alerts
+  const { data: alertsData, isLoading: alertsLoading } = useWatchdogAlerts(20)
 
   const activeAgents = agents.filter((a: any) => a.status === 'online' || a.status === 'busy').length
   const totalTasks = boardData?.stats?.total ?? 0
   const completedTasks = boardData?.stats?.completed ?? 0
   const inProgress = boardData?.stats?.inProgress ?? 0
-  const activities = activityData?.activities ?? []
-  const tasks = tasksData?.tasks ?? tasksData ?? []
+  const alerts = alertsData?.alerts ?? []
+
+  const systemStatus = systemHealth?.status ?? 'unknown'
+  const systemUptime = systemHealth?.uptime ?? 0
+
+  // Easy mode view
+  if (uiMode === 'easy') {
+    return <EasyModeDashboard />
+  }
 
   // Mobile view
   if (isMobile) {
@@ -117,13 +290,14 @@ export default function DashboardPage() {
         activeAgents={activeAgents}
         completedTasks={completedTasks}
         inProgress={inProgress}
-        activities={activities}
-        tasks={tasks}
+        alerts={alerts}
+        alertsLoading={alertsLoading}
+        systemStatus={systemStatus}
       />
     )
   }
 
-  // Desktop view (existing)
+  // Desktop view
   return (
     <PageContainer>
       {/* Header with live stats */}
@@ -133,50 +307,40 @@ export default function DashboardPage() {
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold text-white">Command Center</h1>
             <p className="text-sm sm:text-base text-slate-400">
-              {time?.toLocaleTimeString() ?? '--:--:--'} UTC • <span className="text-green-400">Online</span>
+              {time?.toLocaleTimeString() ?? '--:--:--'} UTC • <SystemStatusInline status={systemStatus} />
             </p>
           </div>
-          {/* Buttons - full width on mobile, row on larger */}
           <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
-            <Link href="/command" data-testid="btn-quick-actions" className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg flex items-center justify-center gap-2 transition-colors text-sm sm:text-base">
-              <Zap size={18} /> Quick Actions
-            </Link>
-            <Link href="/health" data-testid="btn-health" className="px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg flex items-center justify-center gap-2 transition-colors text-sm sm:text-base">
-              <HeartPulse size={18} /> Health
+            <Link href="/agents/fleet" data-testid="btn-quick-actions" className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg flex items-center justify-center gap-2 transition-colors text-sm sm:text-base">
+              <Bot size={18} /> Quick Actions
             </Link>
           </div>
         </div>
 
         {/* Key Metrics Bar - 1 col mobile, 2 col tablet, 4 col desktop */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-          <MetricCard 
+          <MetricCard
             icon={<Users className="text-blue-400" />}
             label="Active Agents"
             value={activeAgents}
             subtext={`of ${agents.length} total`}
             color="blue"
           />
-          <MetricCard 
+          <MetricCard
             icon={<ListTodo className="text-purple-400" />}
             label="Tasks In Progress"
             value={inProgress}
             subtext={`${totalTasks} total`}
             color="purple"
           />
-          <MetricCard 
+          <MetricCard
             icon={<CheckCircle2 className="text-green-400" />}
             label="Completed Today"
             value={completedTasks}
             subtext={totalTasks > 0 ? `${Math.round(completedTasks/totalTasks*100)}% done` : 'No tasks'}
             color="green"
           />
-          <MetricCard 
-            icon={<Activity className="text-amber-400" />}
-            label="Activity Rate"
-            value={`${activities.length}`}
-            subtext="events last hour"
-            color="amber"
-          />
+          <SystemStatusCard status={systemStatus} uptime={systemUptime} />
         </div>
       </div>
 
@@ -192,7 +356,7 @@ export default function DashboardPage() {
               Manage <ArrowRight size={14} />
             </Link>
           </div>
-          
+
           {agentsLoading ? (
             <div className="text-slate-400">Loading agents...</div>
           ) : agents.length === 0 ? (
@@ -229,19 +393,19 @@ export default function DashboardPage() {
               View All <ArrowRight size={14} />
             </Link>
           </div>
-          
+
           <div className="space-y-3">
             <QueueRow label="Backlog" count={boardData?.stats?.backlog ?? 0} color="slate" />
             <QueueRow label="To Do" count={boardData?.stats?.todo ?? 0} color="blue" />
             <QueueRow label="In Progress" count={boardData?.stats?.inProgress ?? 0} color="amber" />
             <QueueRow label="Completed" count={boardData?.stats?.completed ?? 0} color="green" />
           </div>
-          
+
           <div className="mt-4 pt-4 border-t border-white/[0.06]">
             <div className="text-sm text-slate-400 mb-2">Progress</div>
             <div className="w-full bg-slate-700 rounded-full h-2">
-              <div 
-                className="bg-green-500 h-2 rounded-full transition-all" 
+              <div
+                className="bg-green-500 h-2 rounded-full transition-all"
                 style={{ width: totalTasks > 0 ? `${(completedTasks/totalTasks)*100}%` : '0%' }}
               />
             </div>
@@ -249,26 +413,83 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Activity Stream */}
-      <div className="mt-4 sm:mt-6 glass-2 rounded-xl p-4 sm:p-6">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg sm:text-xl font-semibold text-white flex items-center gap-2">
-            <Activity className="text-green-400" /> Live Activity
-          </h2>
-          <span className="text-xs sm:text-sm text-slate-400">Auto-refreshing</span>
-        </div>
-        
-        <div className="space-y-2 max-h-48 sm:max-h-64 overflow-y-auto">
-          {activities.length === 0 ? (
-            <div className="text-slate-400 text-center py-4">No recent activity</div>
-          ) : (
-            activities.slice(0, 10).map((activity: any, i: number) => (
-              <ActivityRow key={activity.id ?? i} activity={activity} />
-            ))
-          )}
-        </div>
+      {/* Alerts & Issues (replaces Live Activity) */}
+      <div className="mt-4 sm:mt-6">
+        {alerts.length === 0 && !alertsLoading ? (
+          <div className="glass-2 rounded-xl p-6 flex items-center justify-center gap-3 text-slate-400">
+            <CheckCircle2 size={20} className="text-green-500" />
+            <span>All tasks healthy — no alerts</span>
+          </div>
+        ) : (
+          <AlertsFeed
+            alerts={alerts}
+            isLoading={alertsLoading}
+            onViewTask={(taskId) => window.open(`/tasks?taskId=${taskId}`, '_self')}
+          />
+        )}
       </div>
     </PageContainer>
+  )
+}
+
+// ============================================
+// System Status Components
+// ============================================
+
+function SystemStatusCard({ status, uptime }: { status: string; uptime: number }) {
+  const config: Record<string, { icon: React.ReactNode; color: string; label: string }> = {
+    healthy: {
+      icon: <Shield className="text-green-400" />,
+      color: 'green',
+      label: 'Healthy',
+    },
+    degraded: {
+      icon: <ShieldAlert className="text-yellow-400" />,
+      color: 'amber',
+      label: 'Degraded',
+    },
+    unhealthy: {
+      icon: <ShieldX className="text-red-400" />,
+      color: 'red',
+      label: 'Unhealthy',
+    },
+    unknown: {
+      icon: <Shield className="text-slate-400" />,
+      color: 'slate',
+      label: 'Unknown',
+    },
+  }
+
+  const cfg = config[status] ?? config.unknown
+
+  return (
+    <MetricCard
+      icon={cfg.icon}
+      label="System Status"
+      value={cfg.label}
+      subtext={uptime > 0 ? formatUptime(uptime) : 'Checking...'}
+      color={cfg.color}
+    />
+  )
+}
+
+function SystemStatusInline({ status }: { status: string }) {
+  const colors: Record<string, string> = {
+    healthy: 'text-green-400',
+    degraded: 'text-yellow-400',
+    unhealthy: 'text-red-400',
+  }
+
+  const labels: Record<string, string> = {
+    healthy: 'System Healthy',
+    degraded: 'System Degraded',
+    unhealthy: 'System Unhealthy',
+  }
+
+  return (
+    <span className={colors[status] ?? 'text-slate-400'}>
+      {labels[status] ?? 'Connecting...'}
+    </span>
   )
 }
 
@@ -283,8 +504,9 @@ interface MobileDashboardViewProps {
   activeAgents: number
   completedTasks: number
   inProgress: number
-  activities: any[]
-  tasks: any[]
+  alerts: any[]
+  alertsLoading: boolean
+  systemStatus: string
 }
 
 function MobileDashboardView({
@@ -294,12 +516,13 @@ function MobileDashboardView({
   activeAgents,
   completedTasks,
   inProgress,
-  activities,
-  tasks,
+  alerts,
+  alertsLoading,
+  systemStatus,
 }: MobileDashboardViewProps) {
   const [agentsExpanded, setAgentsExpanded] = useState(true)
   const [tasksExpanded, setTasksExpanded] = useState(true)
-  const [activityExpanded, setActivityExpanded] = useState(true)
+  const [alertsExpanded, setAlertsExpanded] = useState(true)
 
   // Transform agents for mobile scroller
   const mobileAgents: MobileAgentData[] = agents.map((a: any) => ({
@@ -312,10 +535,7 @@ function MobileDashboardView({
     color: a.color,
   }))
 
-  // Filter in-progress tasks
-  const inProgressTasks = tasks.filter((t: any) => 
-    t.status === 'in_progress' || t.status === 'in-progress'
-  ).slice(0, 5)
+  const unacknowledgedAlerts = alerts.filter((a: any) => !a.acknowledged)
 
   return (
     <PageContainer>
@@ -332,6 +552,8 @@ function MobileDashboardView({
               <CheckCircle2 size={14} className="text-green-400" />
               <span className="text-sm text-slate-300">{completedTasks} Done</span>
             </div>
+            <span className="text-slate-600">·</span>
+            <SystemStatusInline status={systemStatus} />
           </div>
           <span className="text-xs text-slate-500">
             {time?.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) ?? '--:--'}
@@ -360,32 +582,30 @@ function MobileDashboardView({
         onToggle={() => setTasksExpanded(!tasksExpanded)}
         seeAllHref="/tasks"
       >
-        {inProgressTasks.length === 0 ? (
-          <div className="text-slate-400 text-center py-4 text-sm">No tasks in progress</div>
-        ) : (
-          <div className="space-y-2">
-            {inProgressTasks.map((task: any) => (
-              <MobileTaskRow key={task.id} task={task} />
-            ))}
-          </div>
-        )}
+        <div className="text-slate-400 text-center py-4 text-sm">
+          {inProgress > 0 ? `${inProgress} tasks in progress` : 'No tasks in progress'}
+        </div>
       </MobileSection>
 
-      {/* Activity Section (Collapsible) */}
+      {/* Alerts Section (replaces Activity) */}
       <MobileSection
-        title="Recent Activity"
-        icon={<Activity size={16} className="text-green-400" />}
-        count={activities.length}
-        expanded={activityExpanded}
-        onToggle={() => setActivityExpanded(!activityExpanded)}
-        seeAllHref="/activity"
+        title="Alerts"
+        icon={<Bell size={16} className="text-amber-400" />}
+        count={unacknowledgedAlerts.length}
+        expanded={alertsExpanded}
+        onToggle={() => setAlertsExpanded(!alertsExpanded)}
       >
-        {activities.length === 0 ? (
-          <div className="text-slate-400 text-center py-4 text-sm">No recent activity</div>
+        {alertsLoading ? (
+          <div className="text-slate-400 text-center py-4 text-sm animate-pulse">Loading alerts...</div>
+        ) : unacknowledgedAlerts.length === 0 ? (
+          <div className="flex items-center justify-center gap-2 py-4 text-sm text-slate-400">
+            <CheckCircle2 size={16} className="text-green-500" />
+            All tasks healthy
+          </div>
         ) : (
           <div className="space-y-2">
-            {activities.slice(0, 5).map((activity: any, i: number) => (
-              <MobileActivityRow key={activity.id ?? i} activity={activity} />
+            {unacknowledgedAlerts.slice(0, 5).map((alert: any) => (
+              <MobileAlertRow key={alert.id} alert={alert} />
             ))}
           </div>
         )}
@@ -439,7 +659,7 @@ function MobileSection({ title, icon, count, expanded, onToggle, seeAllHref, chi
           )}
         </div>
       </button>
-      
+
       {expanded && (
         <div className="px-3 pb-3">
           {children}
@@ -450,58 +670,29 @@ function MobileSection({ title, icon, count, expanded, onToggle, seeAllHref, chi
 }
 
 // ============================================
-// Mobile Task Row
+// Mobile Alert Row
 // ============================================
 
-function MobileTaskRow({ task }: { task: any }) {
-  const priorityColors: Record<string, string> = {
-    P0: 'bg-red-500',
-    P1: 'bg-orange-500',
-    P2: 'bg-yellow-500',
-    P3: 'bg-slate-500',
+function MobileAlertRow({ alert }: { alert: any }) {
+  const typeConfig: Record<string, { icon: React.ReactNode; color: string }> = {
+    warning: { icon: <AlertTriangle size={14} className="text-yellow-400" />, color: 'text-yellow-400' },
+    stale: { icon: <Clock size={14} className="text-orange-400" />, color: 'text-orange-400' },
+    failed: { icon: <ShieldX size={14} className="text-red-400" />, color: 'text-red-400' },
+    retry_exhausted: { icon: <RefreshCw size={14} className="text-red-400" />, color: 'text-red-400' },
   }
+  const cfg = typeConfig[alert.alertType] ?? typeConfig.warning
 
   return (
-    <div className="bg-slate-900/50 rounded-lg p-3 flex items-start gap-3">
-      <div className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${priorityColors[task.priority] ?? 'bg-slate-500'}`} />
-      <div className="flex-1 min-w-0">
-        <div className="text-sm text-white font-medium truncate">{task.title}</div>
-        <div className="flex items-center gap-2 mt-1">
-          {task.assignee && (
-            <span className="text-xs text-slate-400">{task.assignee}</span>
-          )}
-          <span className="text-xs px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-400">
-            {task.status?.replace(/_/g, ' ')}
-          </span>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-// ============================================
-// Mobile Activity Row
-// ============================================
-
-function MobileActivityRow({ activity }: { activity: any }) {
-  const actionIcons: Record<string, React.ReactNode> = {
-    task_started: <Play size={12} className="text-blue-400" />,
-    task_completed: <CheckCircle2 size={12} className="text-green-400" />,
-    task_failed: <AlertTriangle size={12} className="text-red-400" />,
-    rate_limited: <Pause size={12} className="text-amber-400" />,
-  }
-  
-  const time = new Date(activity.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-  
-  return (
-    <div className="flex items-center gap-2 py-2 px-2 rounded bg-slate-900/30">
-      <span className="flex-shrink-0">{actionIcons[activity.action] ?? <Activity size={12} className="text-slate-400" />}</span>
+    <Link
+      href={`/tasks?taskId=${alert.taskId}`}
+      className="flex items-center gap-2 py-2 px-2 rounded bg-slate-900/30 active:bg-slate-800/50 transition-colors"
+    >
+      <span className="flex-shrink-0">{cfg.icon}</span>
       <span className="text-xs text-slate-300 flex-1 min-w-0 truncate">
-        <span className="text-white font-medium">{activity.agent?.name ?? 'System'}</span>
-        {' '}{activity.action?.replace(/_/g, ' ')}
+        {alert.message}
       </span>
-      <span className="text-xs text-slate-500 flex-shrink-0">{time}</span>
-    </div>
+      <ArrowRight size={12} className="text-slate-500 flex-shrink-0" />
+    </Link>
   )
 }
 
@@ -516,33 +707,11 @@ function QueueRow({ label, count, color }: { label: string; count: number; color
     amber: 'bg-amber-600',
     green: 'bg-green-600',
   }
-  
+
   return (
     <div className="flex items-center justify-between">
       <span className="text-sm sm:text-base text-slate-300">{label}</span>
       <span className={`px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full text-xs sm:text-sm font-medium ${colors[color]}`}>{count}</span>
-    </div>
-  )
-}
-
-function ActivityRow({ activity }: { activity: any }) {
-  const actionIcons: Record<string, React.ReactNode> = {
-    task_started: <Play size={14} className="text-blue-400" />,
-    task_completed: <CheckCircle2 size={14} className="text-green-400" />,
-    task_failed: <AlertTriangle size={14} className="text-red-400" />,
-    rate_limited: <Pause size={14} className="text-amber-400" />,
-  }
-  
-  const time = new Date(activity.createdAt).toLocaleTimeString()
-  
-  return (
-    <div className="flex items-center gap-2 sm:gap-3 py-2 px-2 sm:px-3 rounded bg-slate-900/30">
-      <span className="flex-shrink-0">{actionIcons[activity.action] ?? <Activity size={14} className="text-slate-400" />}</span>
-      <span className="text-xs sm:text-sm text-slate-300 flex-1 min-w-0 truncate">
-        <span className="text-white font-medium">{activity.agent?.name ?? 'System'}</span>
-        {' '}{activity.action?.replace(/_/g, ' ')}
-      </span>
-      <span className="text-xs text-slate-500 flex-shrink-0">{time}</span>
     </div>
   )
 }

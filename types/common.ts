@@ -59,3 +59,92 @@ export interface Repository {
     name: string
   }
 }
+
+// ============================================
+// Workspace (extends Repository)
+// ============================================
+
+export type WorkspaceType = 'code' | 'research' | 'content' | 'operations' | 'custom'
+
+export interface Workspace {
+  id: string
+  name: string
+  fullName?: string
+  type: WorkspaceType
+  description?: string | null
+  icon?: string | null
+  settings?: Record<string, unknown>
+  githubUrl?: string | null
+  localPath?: string | null
+  isInitialized?: boolean
+  linearProject?: {
+    linearId: string
+    name: string
+  } | null
+  createdAt?: string
+  updatedAt?: string
+}
+
+// ============================================
+// Deliverable
+// ============================================
+
+export type DeliverableType = 'document' | 'code_diff' | 'report' | 'blog_post' | 'artifact'
+export type DeliverableStatus = 'draft' | 'submitted' | 'approved' | 'published'
+
+export interface Deliverable {
+  id: string
+  taskId: string
+  type: DeliverableType
+  title: string
+  content?: string | null
+  contentUrl?: string | null
+  metadata?: Record<string, unknown> | null
+  score?: number | null
+  status: DeliverableStatus
+  createdAt: string
+  updatedAt: string
+}
+
+// ============================================
+// UI Mode
+// ============================================
+
+export type UIMode = 'easy' | 'power'
+
+// ============================================
+// Metrics
+// ============================================
+
+export interface DashboardMetrics {
+  volume: {
+    totalTasks: number
+    completedTasks: number
+    inProgressTasks: number
+    tasksCompletedThisWeek: number
+    tasksCompletedLastWeek: number
+    weeklyThroughput: number[]
+  }
+  quality: {
+    avgVerificationPassRate: number
+    avgDeliverableScore: number | null
+    reworkRate: number
+    totalVerifications: number
+  }
+  efficiency: {
+    avgTimeToCompleteHours: number | null
+    agentUtilizationRate: number
+    activeAgents: number
+    totalAgents: number
+  }
+  roi: {
+    tasksCompleted: number
+    estimatedHoursSaved: number
+    hourlyRate: number
+    estimatedValueSaved: number
+  }
+  workspaces: {
+    total: number
+    byType: Record<string, number>
+  }
+}

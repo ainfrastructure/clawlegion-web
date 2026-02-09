@@ -8,6 +8,7 @@ import {
   SettingsTabs,
   ApiKeysTab,
   IntegrationsTab,
+  NotificationsTab,
   AgentDefaultsTab,
   AppearanceTab,
   KeyboardShortcutsTab,
@@ -37,6 +38,7 @@ function SettingsContent() {
       <SettingsTabs activeTab={activeTab} onTabChange={setTab}>
         {activeTab === 'api-keys' && <ApiKeysTab />}
         {activeTab === 'integrations' && <IntegrationsTab />}
+        {activeTab === 'notifications' && <NotificationsTab />}
         {activeTab === 'agents' && <AgentDefaultsTab />}
         {activeTab === 'appearance' && <AppearanceTab />}
         {activeTab === 'keyboard-shortcuts' && <KeyboardShortcutsTab />}

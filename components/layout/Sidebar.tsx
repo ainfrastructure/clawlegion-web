@@ -15,20 +15,14 @@ import {
   ChevronRight,
   ChevronDown,
   ChevronRight as ChevronRightSm,
-  Kanban,
-  List,
-  GitBranch,
-  Target,
-  Users,
-  Clock,
-  Terminal,
-  ScrollText,
-  LayoutDashboard,
-  Activity,
-  AlertCircle,
   HeartPulse,
   LogOut,
   User,
+  BarChart3,
+  Zap,
+  ScrollText,
+  Eye,
+  Activity,
 } from 'lucide-react'
 import { signOut, useSession } from 'next-auth/react'
 import { PresenceDots } from '@/components/agents/PresenceIndicator'
@@ -46,7 +40,42 @@ interface NavItem {
   subItems?: NavSubItem[]
 }
 
-const navItems: NavItem[] = [
+// Easy mode: 5 simple items
+const EASY_NAV_ITEMS: NavItem[] = [
+  {
+    href: '/dashboard',
+    icon: <Home className="w-5 h-5" />,
+    label: 'Home'
+  },
+  {
+    href: '/tasks',
+    icon: <Briefcase className="w-5 h-5" />,
+    label: 'Work'
+  },
+  {
+    href: '/agents/fleet',
+    icon: <Bot className="w-5 h-5" />,
+    label: 'Team'
+  },
+  {
+    href: '/output',
+    icon: <BarChart3 className="w-5 h-5" />,
+    label: 'Output'
+  },
+  {
+    href: '/notifications',
+    icon: <Activity className="w-5 h-5" />,
+    label: 'Activity'
+  },
+  {
+    href: '/settings',
+    icon: <Settings className="w-5 h-5" />,
+    label: 'Settings'
+  },
+]
+
+// Power mode: all items with sub-nav
+const POWER_NAV_ITEMS: NavItem[] = [
   {
     href: '/dashboard',
     icon: <Home className="w-5 h-5" />,
@@ -73,19 +102,33 @@ const navItems: NavItem[] = [
     label: 'Agents',
     subItems: [
       { href: '/agents/fleet', label: 'Fleet' },
-      { href: '/agents/sessions', label: 'Loops' },
+      { href: '/sessions', label: 'Loops' },
       { href: '/agents/org', label: 'Organization' },
     ]
   },
   {
-    href: '/health',
-    icon: <HeartPulse className="w-5 h-5" />,
-    label: 'Health'
+    href: '/output',
+    icon: <BarChart3 className="w-5 h-5" />,
+    label: 'Output'
   },
   {
-    href: '/watchdog',
+    href: '/health',
+    icon: <HeartPulse className="w-5 h-5" />,
+    label: 'Monitoring',
+    subItems: [
+      { href: '/health', label: 'System' },
+      { href: '/watchdog', label: 'Watchdog' },
+    ]
+  },
+  {
+    href: '/audit',
+    icon: <ScrollText className="w-5 h-5" />,
+    label: 'Audit'
+  },
+  {
+    href: '/notifications',
     icon: <Activity className="w-5 h-5" />,
-    label: 'Watchdog'
+    label: 'Activity'
   },
   {
     href: '/settings',
@@ -95,13 +138,16 @@ const navItems: NavItem[] = [
 ]
 
 export function Sidebar() {
-  const { collapsed, toggleCollapsed } = useSidebar()
+  const { collapsed, toggleCollapsed, uiMode, toggleUIMode } = useSidebar()
   const { data: session } = useSession()
   const pathname = usePathname()
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
     '/tasks': true,
     '/agents': true,
+    '/health': true,
   })
+
+  const navItems = uiMode === 'easy' ? EASY_NAV_ITEMS : POWER_NAV_ITEMS
 
   const toggleSection = (href: string) => {
     setExpandedSections(prev => ({
@@ -112,7 +158,11 @@ export function Sidebar() {
 
   const isItemActive = (item: NavItem) => {
     if (item.href === '/dashboard') return pathname === '/dashboard' || pathname === '/'
-    return pathname.startsWith(item.href)
+    // Check sub-items first — they may have non-prefix paths (e.g., /watchdog under /health, /sessions under /agents)
+    if (item.subItems) {
+      return item.subItems.some(sub => pathname === sub.href || pathname.startsWith(sub.href + '/'))
+    }
+    return pathname === item.href || pathname.startsWith(item.href + '/')
   }
 
   const isSubItemActive = (subItem: NavSubItem) => {
@@ -214,6 +264,40 @@ export function Sidebar() {
           })}
         </div>
       </nav>
+
+      {/* Mode Toggle */}
+      {!collapsed && (
+        <div className="px-3 py-2 border-t border-white/[0.06]">
+          <button
+            onClick={toggleUIMode}
+            className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs transition-colors hover:bg-white/[0.04]"
+          >
+            {uiMode === 'easy' ? (
+              <>
+                <Zap className="w-3.5 h-3.5 text-amber-400" />
+                <span className="text-slate-400">Switch to <span className="text-amber-400 font-medium">Power Mode</span></span>
+              </>
+            ) : (
+              <>
+                <Eye className="w-3.5 h-3.5 text-blue-400" />
+                <span className="text-slate-400">Switch to <span className="text-blue-400 font-medium">Easy Mode</span></span>
+              </>
+            )}
+          </button>
+        </div>
+      )}
+
+      {collapsed && (
+        <div className="px-2 py-2 border-t border-white/[0.06] flex justify-center">
+          <button
+            onClick={toggleUIMode}
+            className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-white/[0.04] transition-colors"
+            title={uiMode === 'easy' ? 'Switch to Power Mode' : 'Switch to Easy Mode'}
+          >
+            {uiMode === 'easy' ? <Zap className="w-4 h-4 text-amber-400" /> : <Eye className="w-4 h-4 text-blue-400" />}
+          </button>
+        </div>
+      )}
 
       {/* Agent Status */}
       <div className={`border-t border-white/[0.06] p-3 ${collapsed ? 'flex justify-center' : ''}`}>

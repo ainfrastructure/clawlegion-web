@@ -1,190 +1,327 @@
 'use client'
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
-import { 
-  Bell, CheckCircle, AlertTriangle, Info,
-  Trash2, CheckCheck, Filter, RefreshCw,
-  Zap, Users, Clock, XCircle
+import { useRouter } from 'next/navigation'
+import { PageContainer } from '@/components/layout'
+import {
+  Bell, CheckCheck, Trash2, Search,
+  Info, CheckCircle, AlertTriangle, XCircle,
+  Activity, ShieldCheck, MessageSquare,
+  ChevronDown, Loader2,
 } from 'lucide-react'
+import { formatTimeAgo } from '@/components/common/TimeAgo'
+import {
+  useNotifications,
+  useUnreadCount,
+  useMarkRead,
+  useMarkAllRead,
+  useClearRead,
+} from '@/hooks/useNotifications'
+import type { UserNotification } from '@/hooks/useNotifications'
 
-interface TaskEvent {
-  id: string
-  type: string
-  taskId: string
-  taskTitle: string
-  agentId?: string
-  timestamp: string
-  metadata?: Record<string, unknown>
+const CATEGORIES = [
+  { id: 'all', label: 'All', icon: Bell },
+  { id: 'lifecycle', label: 'Lifecycle', icon: Activity },
+  { id: 'failure', label: 'Failures', icon: XCircle },
+  { id: 'verification', label: 'Verification', icon: ShieldCheck },
+  { id: 'system', label: 'System', icon: MessageSquare },
+] as const
+
+const SEVERITY_CONFIG: Record<string, { icon: typeof Info; color: string; bg: string; ring: string; label: string }> = {
+  info: { icon: Info, color: 'text-blue-400', bg: 'bg-blue-500/10', ring: 'ring-blue-500/20', label: 'Info' },
+  success: { icon: CheckCircle, color: 'text-emerald-400', bg: 'bg-emerald-500/10', ring: 'ring-emerald-500/20', label: 'Success' },
+  warning: { icon: AlertTriangle, color: 'text-amber-400', bg: 'bg-amber-500/10', ring: 'ring-amber-500/20', label: 'Warning' },
+  error: { icon: XCircle, color: 'text-red-400', bg: 'bg-red-500/10', ring: 'ring-red-500/20', label: 'Error' },
 }
 
-interface EventsData {
-  events: TaskEvent[]
-  total: number
-  lastUpdated: string
+const CATEGORY_COLORS: Record<string, string> = {
+  lifecycle: 'bg-blue-500/10 text-blue-400',
+  failure: 'bg-red-500/10 text-red-400',
+  verification: 'bg-emerald-500/10 text-emerald-400',
+  system: 'bg-slate-500/10 text-slate-400',
 }
 
-function getEventIcon(type: string) {
-  switch (type) {
-    case 'task_completed':
-      return <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-green-400" />
-    case 'task_failed':
-      return <XCircle className="w-4 h-4 sm:w-5 sm:h-5 text-red-400" />
-    case 'task_assigned':
-      return <Users className="w-4 h-4 sm:w-5 sm:h-5 text-blue-400" />
-    case 'task_created':
-      return <Zap className="w-4 h-4 sm:w-5 sm:h-5 text-purple-400" />
-    case 'task_started':
-      return <Clock className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400" />
-    default:
-      return <Info className="w-4 h-4 sm:w-5 sm:h-5 text-slate-400" />
+function groupByDate(notifications: UserNotification[]): { label: string; items: UserNotification[] }[] {
+  const groups: Record<string, UserNotification[]> = {}
+
+  for (const n of notifications) {
+    const date = new Date(n.createdAt)
+    const now = new Date()
+    const diffDays = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24))
+
+    let label: string
+    if (diffDays === 0 && date.getDate() === now.getDate()) {
+      label = 'Today'
+    } else if (diffDays <= 1 && date.getDate() === now.getDate() - 1) {
+      label = 'Yesterday'
+    } else {
+      label = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+    }
+
+    if (!groups[label]) groups[label] = []
+    groups[label].push(n)
   }
+
+  return Object.entries(groups).map(([label, items]) => ({ label, items }))
 }
 
-function getEventColor(type: string) {
-  switch (type) {
-    case 'task_completed':
-      return 'border-green-500/30 bg-green-500/5'
-    case 'task_failed':
-      return 'border-red-500/30 bg-red-500/5'
-    case 'task_assigned':
-      return 'border-blue-500/30 bg-blue-500/5'
-    case 'task_created':
-      return 'border-purple-500/30 bg-purple-500/5'
-    default:
-      return 'border-white/[0.06] bg-slate-800/50'
+function NotificationCard({ notification, onMarkRead }: { notification: UserNotification; onMarkRead: (id: string) => void }) {
+  const router = useRouter()
+  const severity = SEVERITY_CONFIG[notification.severity] || SEVERITY_CONFIG.info
+  const SevIcon = severity.icon
+
+  const handleClick = () => {
+    if (!notification.read) onMarkRead(notification.id)
+    if (notification.taskId) router.push(`/tasks?selected=${notification.taskId}`)
   }
-}
 
-function formatEventType(type: string) {
-  return type.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())
-}
+  return (
+    <button
+      onClick={handleClick}
+      className={`w-full text-left glass-2 rounded-xl p-4 border transition-all duration-150 group relative ${
+        notification.read
+          ? 'border-white/[0.04] opacity-60 hover:opacity-90'
+          : 'border-white/[0.06] hover:border-white/[0.10]'
+      }`}
+    >
+      {/* Unread indicator */}
+      {!notification.read && (
+        <div className="absolute left-0 top-4 bottom-4 w-[2px] bg-blue-400 rounded-r" />
+      )}
 
-function timeAgo(timestamp: string): string {
-  const seconds = Math.floor((Date.now() - new Date(timestamp).getTime()) / 1000)
-  
-  if (seconds < 60) return 'Just now'
-  if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`
-  if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`
-  return `${Math.floor(seconds / 86400)}d ago`
+      <div className="flex gap-3">
+        {/* Severity icon */}
+        <div className={`flex-shrink-0 w-9 h-9 rounded-lg ${severity.bg} ring-1 ${severity.ring} flex items-center justify-center`}>
+          <SevIcon size={18} className={severity.color} />
+        </div>
+
+        <div className="flex-1 min-w-0">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex-1 min-w-0">
+              <p className={`text-sm font-medium leading-snug ${notification.read ? 'text-slate-400' : 'text-white'}`}>
+                {notification.title}
+              </p>
+              <p className="text-xs text-slate-500 mt-1 line-clamp-2 leading-relaxed">
+                {notification.body}
+              </p>
+            </div>
+            <span className="text-[10px] text-slate-500 flex-shrink-0 mt-0.5 tabular-nums">
+              {formatTimeAgo(new Date(notification.createdAt))}
+            </span>
+          </div>
+
+          {/* Meta row */}
+          <div className="flex items-center gap-2 mt-2">
+            <span className={`px-1.5 py-0.5 text-[10px] font-medium rounded ${CATEGORY_COLORS[notification.category] || CATEGORY_COLORS.system}`}>
+              {notification.category}
+            </span>
+            {notification.taskShortId && (
+              <span className="text-[10px] text-slate-500 font-mono">
+                {notification.taskShortId}
+              </span>
+            )}
+            {notification.actor && (
+              <div className="flex items-center gap-1 ml-auto">
+                <div className="w-4 h-4 rounded-full bg-slate-700 flex items-center justify-center">
+                  <span className="text-[8px] font-bold text-slate-400 uppercase">{notification.actor[0]}</span>
+                </div>
+                <span className="text-[10px] text-slate-500">{notification.actor}</span>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </button>
+  )
 }
 
 export default function NotificationsPage() {
-  const [filter, setFilter] = useState<string>('all')
-  const queryClient = useQueryClient()
+  const [category, setCategory] = useState('all')
+  const [search, setSearch] = useState('')
+  const [searchInput, setSearchInput] = useState('')
+  const [cursor, setCursor] = useState<string | undefined>()
 
-  const { data, isLoading, refetch } = useQuery<EventsData>({
-    queryKey: ['task-events', filter],
-    queryFn: async () => {
-      const url = filter === 'all' 
-        ? '/api/tasks/events?limit=50'
-        : `/api/tasks/events?type=${filter}&limit=50`
-      const res = await fetch(url)
-      return res.json()
-    },
-    refetchInterval: 10000,
+  const { data, isLoading } = useNotifications({
+    category: category === 'all' ? undefined : category,
+    search: search || undefined,
+    limit: 40,
+    cursor,
   })
+  const { data: unreadData } = useUnreadCount()
+  const markRead = useMarkRead()
+  const markAllRead = useMarkAllRead()
+  const clearRead = useClearRead()
 
-  const events = data?.events || []
-  const eventTypes = ['all', 'task_created', 'task_assigned', 'task_started', 'task_completed', 'task_failed']
+  const notifications = data?.notifications || []
+  const unreadCount = unreadData?.count || 0
+  const groups = groupByDate(notifications)
+
+  // Stats
+  const failuresToday = notifications.filter(n =>
+    n.category === 'failure' && new Date(n.createdAt).toDateString() === new Date().toDateString()
+  ).length
+  const lastActivity = notifications[0]?.createdAt
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault()
+    setSearch(searchInput)
+    setCursor(undefined)
+  }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white p-4 sm:p-6">
-      {/* Header - stacks on mobile */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 sm:mb-8">
+    <PageContainer>
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold flex items-center gap-3">
-            <Bell className="w-6 h-6 sm:w-8 sm:h-8 text-blue-400" />
-            Notifications
+          <h1 className="text-2xl sm:text-3xl font-bold text-white flex items-center gap-3">
+            <Activity className="w-7 h-7 text-blue-400" />
+            Activity Feed
+            {unreadCount > 0 && (
+              <span className="px-2 py-0.5 text-xs font-medium bg-blue-500/15 text-blue-400 rounded-lg">
+                {unreadCount} unread
+              </span>
+            )}
           </h1>
-          <p className="text-sm sm:text-base text-slate-400 mt-1">Task events and system notifications</p>
+          <p className="text-sm text-slate-400 mt-1">All task events and system notifications</p>
         </div>
-        <button
-          onClick={() => refetch()}
-          className="px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg font-medium flex items-center justify-center gap-2 transition-colors text-sm sm:text-base w-full sm:w-auto"
-        >
-          <RefreshCw className="w-4 h-4" />
-          Refresh
-        </button>
-      </div>
-
-      {/* Filters - horizontal scroll on mobile */}
-      <div className="flex gap-2 mb-4 sm:mb-6 overflow-x-auto pb-2 sm:pb-0 -mx-4 px-4 sm:mx-0 sm:px-0 sm:flex-wrap">
-        {eventTypes.map(type => (
+        <div className="flex items-center gap-2">
+          {unreadCount > 0 && (
+            <button
+              onClick={() => markAllRead.mutate()}
+              disabled={markAllRead.isPending}
+              className="px-3 py-2 glass-2 rounded-lg text-sm text-slate-300 hover:text-white border border-white/[0.06] hover:border-white/[0.10] transition-colors flex items-center gap-2"
+            >
+              <CheckCheck size={14} />
+              Mark All Read
+            </button>
+          )}
           <button
-            key={type}
-            onClick={() => setFilter(type)}
-            className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors flex-shrink-0 ${
-              filter === type
-                ? 'bg-blue-600 text-white'
-                : 'bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white'
-            }`}
+            onClick={() => clearRead.mutate()}
+            disabled={clearRead.isPending}
+            className="px-3 py-2 glass-2 rounded-lg text-sm text-slate-400 hover:text-slate-300 border border-white/[0.06] hover:border-white/[0.10] transition-colors flex items-center gap-2"
           >
-            {type === 'all' ? 'All Events' : formatEventType(type)}
+            <Trash2 size={14} />
+            Clear Read
           </button>
-        ))}
+        </div>
       </div>
 
-      {/* Events List */}
-      <div className="space-y-2 sm:space-y-3">
+      {/* Stats bar */}
+      <div className="glass-2 rounded-xl border border-white/[0.06] p-4 mb-6">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          <div>
+            <p className="text-[10px] uppercase tracking-wider text-slate-500 font-medium">Total</p>
+            <p className="text-xl font-bold text-white mt-0.5 tabular-nums">{notifications.length}</p>
+          </div>
+          <div>
+            <p className="text-[10px] uppercase tracking-wider text-slate-500 font-medium">Unread</p>
+            <p className="text-xl font-bold text-blue-400 mt-0.5 tabular-nums">{unreadCount}</p>
+          </div>
+          <div>
+            <p className="text-[10px] uppercase tracking-wider text-slate-500 font-medium">Failures Today</p>
+            <p className={`text-xl font-bold mt-0.5 tabular-nums ${failuresToday > 0 ? 'text-red-400' : 'text-slate-400'}`}>
+              {failuresToday}
+            </p>
+          </div>
+          <div>
+            <p className="text-[10px] uppercase tracking-wider text-slate-500 font-medium">Last Activity</p>
+            <p className="text-sm font-medium text-slate-300 mt-1">
+              {lastActivity ? formatTimeAgo(new Date(lastActivity)) : 'None'}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Toolbar */}
+      <div className="flex flex-col sm:flex-row gap-3 mb-6">
+        {/* Search */}
+        <form onSubmit={handleSearch} className="flex-1">
+          <div className="relative">
+            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
+            <input
+              type="text"
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              placeholder="Search notifications..."
+              className="w-full pl-9 pr-4 py-2 bg-slate-800/50 border border-white/[0.06] rounded-lg text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-blue-500/50 transition-colors"
+            />
+          </div>
+        </form>
+
+        {/* Category chips */}
+        <div className="flex gap-1 overflow-x-auto scrollbar-hide">
+          {CATEGORIES.map(cat => {
+            const Icon = cat.icon
+            const isActive = category === cat.id
+            return (
+              <button
+                key={cat.id}
+                onClick={() => { setCategory(cat.id); setCursor(undefined) }}
+                className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium whitespace-nowrap transition-all ${
+                  isActive
+                    ? 'bg-blue-500/15 text-blue-400 border border-blue-500/20'
+                    : 'glass-2 text-slate-400 hover:text-slate-300 border border-white/[0.06] hover:border-white/[0.10]'
+                }`}
+              >
+                <Icon size={13} />
+                {cat.label}
+              </button>
+            )
+          })}
+        </div>
+      </div>
+
+      {/* Notification list grouped by date */}
+      <div className="space-y-6">
         {isLoading ? (
-          Array.from({ length: 5 }).map((_, i) => (
-            <div key={i} className="bg-slate-900 rounded-lg p-3 sm:p-4 border border-slate-800 animate-pulse">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-slate-800 rounded-lg" />
-                <div className="flex-1">
-                  <div className="h-4 bg-slate-800 rounded w-1/3 mb-2" />
-                  <div className="h-3 bg-slate-800 rounded w-1/2" />
-                </div>
-              </div>
+          <div className="flex flex-col items-center py-16">
+            <Loader2 className="w-6 h-6 text-slate-500 animate-spin" />
+            <p className="text-sm text-slate-500 mt-3">Loading notifications...</p>
+          </div>
+        ) : notifications.length === 0 ? (
+          <div className="glass-2 rounded-xl border border-white/[0.06] p-12 text-center">
+            <div className="w-12 h-12 rounded-xl bg-white/[0.04] flex items-center justify-center mx-auto mb-4">
+              <Bell size={22} className="text-slate-600" />
             </div>
-          ))
-        ) : events.length === 0 ? (
-          <div className="bg-slate-900 rounded-lg p-8 sm:p-12 border border-slate-800 text-center">
-            <Bell className="w-10 h-10 sm:w-12 sm:h-12 text-slate-600 mx-auto mb-4" />
-            <h3 className="text-base sm:text-lg font-medium text-slate-400">No events yet</h3>
-            <p className="text-slate-500 text-xs sm:text-sm mt-1">Events will appear here as tasks are processed</p>
+            <h3 className="text-base font-medium text-slate-400">No notifications</h3>
+            <p className="text-sm text-slate-500 mt-1">
+              {search ? 'No results match your search' : 'Events will appear here as tasks are processed'}
+            </p>
           </div>
         ) : (
-          events.map((event) => (
-            <div
-              key={event.id}
-              className={`rounded-lg p-3 sm:p-4 border transition-colors ${getEventColor(event.type)}`}
-            >
-              <div className="flex items-start gap-3 sm:gap-4">
-                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-slate-800 flex items-center justify-center flex-shrink-0">
-                  {getEventIcon(event.type)}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-4">
-                    <h3 className="font-medium text-sm sm:text-base truncate">{event.taskTitle}</h3>
-                    <span className="text-xs sm:text-sm text-slate-500 flex-shrink-0">
-                      {timeAgo(event.timestamp)}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2 mt-1 flex-wrap">
-                    <span className="text-xs sm:text-sm px-2 py-0.5 bg-slate-800 rounded text-slate-400">
-                      {formatEventType(event.type)}
-                    </span>
-                    {event.agentId && (
-                      <span className="text-xs sm:text-sm text-slate-500">
-                        by {event.agentId}
-                      </span>
-                    )}
-                  </div>
-                </div>
+          groups.map(group => (
+            <div key={group.label}>
+              <div className="flex items-center gap-3 mb-3">
+                <h3 className="text-xs font-medium text-slate-500 uppercase tracking-wider">{group.label}</h3>
+                <div className="flex-1 h-px bg-white/[0.04]" />
+                <span className="text-[10px] text-slate-600 tabular-nums">{group.items.length}</span>
+              </div>
+              <div className="space-y-2">
+                {group.items.map(n => (
+                  <NotificationCard
+                    key={n.id}
+                    notification={n}
+                    onMarkRead={(id) => markRead.mutate(id)}
+                  />
+                ))}
               </div>
             </div>
           ))
         )}
       </div>
 
-      {/* Summary */}
-      {data && (
-        <p className="text-center text-slate-500 text-xs sm:text-sm mt-4 sm:mt-6">
-          Showing {events.length} of {data.total} events • Last updated: {new Date(data.lastUpdated).toLocaleTimeString()}
-        </p>
+      {/* Load more */}
+      {data?.hasMore && (
+        <div className="flex justify-center mt-6">
+          <button
+            onClick={() => setCursor(data.nextCursor || undefined)}
+            className="px-4 py-2 glass-2 rounded-lg text-sm text-slate-400 hover:text-white border border-white/[0.06] hover:border-white/[0.10] transition-colors flex items-center gap-2"
+          >
+            <ChevronDown size={14} />
+            Load more
+          </button>
+        </div>
       )}
-    </div>
+    </PageContainer>
   )
 }

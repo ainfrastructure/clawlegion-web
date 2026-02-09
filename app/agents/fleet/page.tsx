@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useMutation } from '@tanstack/react-query'
 import api from '@/lib/api'
 import { PageContainer } from '@/components/layout'
 import { AgentProfilePanel, type AgentData, type AgentStatus } from '@/components/agents'
@@ -17,7 +17,8 @@ import {
   Loader2,
   Wifi,
   WifiOff,
-  Plus
+  Plus,
+  Square
 } from 'lucide-react'
 import { ExportButton } from '@/components/ExportButton'
 import { AddAgentModal } from '@/components/agents/AddAgentModal'
@@ -117,6 +118,17 @@ export default function AgentFleetPage() {
   const reachableCount = healthData?.summary?.reachable ?? 0
   const unreachableCount = healthData?.summary?.unreachable ?? 0
 
+  const emergencyStop = useMutation({
+    mutationFn: async () => {
+      const res = await fetch('/api/agents/emergency-stop', { method: 'POST' })
+      return res.json()
+    },
+    onSuccess: () => {
+      refetchAgents()
+      refetchHealth()
+    },
+  })
+
   const handleRefresh = () => {
     refetchAgents()
     refetchHealth()
@@ -159,11 +171,19 @@ export default function AgentFleetPage() {
                 filename="agents"
                 columns={['id', 'name', 'role', 'status', 'currentTask', 'reachable', 'latencyMs', 'tasksCompleted', 'avgResponseTime']}
               />
-              <button 
-                data-testid="btn-resume-all" 
+              <button
+                data-testid="btn-resume-all"
                 className="flex-1 sm:flex-none px-3 sm:px-4 py-2 bg-green-600 hover:bg-green-700 rounded-lg flex items-center justify-center gap-2 transition-colors text-sm"
               >
                 <Play size={16} /> Resume All
+              </button>
+              <button
+                data-testid="btn-emergency-stop"
+                onClick={() => emergencyStop.mutate()}
+                disabled={emergencyStop.isPending}
+                className="flex-1 sm:flex-none px-3 sm:px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg flex items-center justify-center gap-2 transition-colors text-sm font-medium"
+              >
+                <Square size={16} /> Emergency Stop
               </button>
               <button 
                 data-testid="btn-refresh"
