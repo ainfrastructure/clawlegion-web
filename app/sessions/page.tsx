@@ -52,8 +52,8 @@ export default function SessionsPage() {
 
   // Stats
   const totalSessions = sessions.length
-  const activeSessions = sessions.filter(s => s.status === 'running' || s.status === 'active').length
-  const completedSessions = sessions.filter(s => s.status === 'completed').length
+  const activeSessions = sessions.filter(s => s.status === 'RUNNING' || s.status === 'PENDING').length
+  const completedSessions = sessions.filter(s => s.status === 'COMPLETED').length
 
   return (
     <PageContainer>
@@ -98,17 +98,22 @@ export default function SessionsPage() {
           {/* Filter buttons - horizontal scroll on mobile */}
           <div className="flex items-center gap-2 overflow-x-auto pb-2 sm:pb-0">
             <Filter className="text-slate-400 flex-shrink-0" size={18} />
-            {['all', 'running', 'completed', 'failed'].map((status) => (
+            {[
+              { value: 'all', label: 'All' },
+              { value: 'RUNNING', label: 'Running' },
+              { value: 'COMPLETED', label: 'Completed' },
+              { value: 'FAILED', label: 'Failed' },
+            ].map(({ value, label }) => (
               <button
-                key={status}
-                onClick={() => setStatusFilter(status)}
+                key={value}
+                onClick={() => setStatusFilter(value)}
                 className={`px-3 py-1.5 rounded-lg text-xs sm:text-sm transition-colors flex-shrink-0 ${
-                  statusFilter === status 
+                  statusFilter === value 
                     ? 'bg-purple-600 text-white' 
                     : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
                 }`}
               >
-                {status.charAt(0).toUpperCase() + status.slice(1)}
+                {label}
               </button>
             ))}
             
@@ -173,14 +178,15 @@ export default function SessionsPage() {
 
 function SessionRow({ session }: { session: Session }) {
   const statusConfig: Record<string, { bg: string; text: string; icon: React.ReactNode }> = {
-    running: { bg: 'bg-green-500/20', text: 'text-green-400', icon: <Play size={12} /> },
-    active: { bg: 'bg-green-500/20', text: 'text-green-400', icon: <Play size={12} /> },
-    completed: { bg: 'bg-blue-500/20', text: 'text-blue-400', icon: <CheckCircle2 size={12} /> },
-    failed: { bg: 'bg-red-500/20', text: 'text-red-400', icon: <XCircle size={12} /> },
-    pending: { bg: 'bg-amber-500/20', text: 'text-amber-400', icon: <Clock size={12} /> },
+    RUNNING: { bg: 'bg-green-500/20', text: 'text-green-400', icon: <Play size={12} /> },
+    COMPLETED: { bg: 'bg-blue-500/20', text: 'text-blue-400', icon: <CheckCircle2 size={12} /> },
+    FAILED: { bg: 'bg-red-500/20', text: 'text-red-400', icon: <XCircle size={12} /> },
+    PENDING: { bg: 'bg-amber-500/20', text: 'text-amber-400', icon: <Clock size={12} /> },
+    PAUSED: { bg: 'bg-orange-500/20', text: 'text-orange-400', icon: <Clock size={12} /> },
+    STOPPED: { bg: 'bg-slate-500/20', text: 'text-slate-400', icon: <XCircle size={12} /> },
   }
   
-  const config = statusConfig[session.status] ?? statusConfig.pending
+  const config = statusConfig[session.status] ?? statusConfig.PENDING
   const progress = session.taskStats 
     ? Math.round((session.taskStats.completed / session.taskStats.total) * 100) 
     : 0
@@ -196,7 +202,7 @@ function SessionRow({ session }: { session: Session }) {
       <td className="px-4 lg:px-6 py-4">
         <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs ${config.bg} ${config.text}`}>
           {config.icon}
-          <span className="capitalize">{session.status}</span>
+          <span className="capitalize">{session.status.toLowerCase()}</span>
         </span>
       </td>
       <td className="px-4 lg:px-6 py-4">
@@ -237,14 +243,15 @@ function SessionRow({ session }: { session: Session }) {
 // Mobile card view for sessions
 function SessionCard({ session }: { session: Session }) {
   const statusConfig: Record<string, { bg: string; text: string; icon: React.ReactNode }> = {
-    running: { bg: 'bg-green-500/20', text: 'text-green-400', icon: <Play size={12} /> },
-    active: { bg: 'bg-green-500/20', text: 'text-green-400', icon: <Play size={12} /> },
-    completed: { bg: 'bg-blue-500/20', text: 'text-blue-400', icon: <CheckCircle2 size={12} /> },
-    failed: { bg: 'bg-red-500/20', text: 'text-red-400', icon: <XCircle size={12} /> },
-    pending: { bg: 'bg-amber-500/20', text: 'text-amber-400', icon: <Clock size={12} /> },
+    RUNNING: { bg: 'bg-green-500/20', text: 'text-green-400', icon: <Play size={12} /> },
+    COMPLETED: { bg: 'bg-blue-500/20', text: 'text-blue-400', icon: <CheckCircle2 size={12} /> },
+    FAILED: { bg: 'bg-red-500/20', text: 'text-red-400', icon: <XCircle size={12} /> },
+    PENDING: { bg: 'bg-amber-500/20', text: 'text-amber-400', icon: <Clock size={12} /> },
+    PAUSED: { bg: 'bg-orange-500/20', text: 'text-orange-400', icon: <Clock size={12} /> },
+    STOPPED: { bg: 'bg-slate-500/20', text: 'text-slate-400', icon: <XCircle size={12} /> },
   }
   
-  const config = statusConfig[session.status] ?? statusConfig.pending
+  const config = statusConfig[session.status] ?? statusConfig.PENDING
   const progress = session.taskStats 
     ? Math.round((session.taskStats.completed / session.taskStats.total) * 100) 
     : 0
@@ -258,7 +265,7 @@ function SessionCard({ session }: { session: Session }) {
         </Link>
         <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs flex-shrink-0 ${config.bg} ${config.text}`}>
           {config.icon}
-          <span className="capitalize">{session.status}</span>
+          <span className="capitalize">{session.status.toLowerCase()}</span>
         </span>
       </div>
       

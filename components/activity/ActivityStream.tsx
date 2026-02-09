@@ -45,15 +45,15 @@ export function ActivityStream() {
 
         // Convert tasks to activities
         const taskActivities: ActivityItem[] = tasks
-          .filter((t: any) => t.completedAt || t.assignedAt)
+          .filter((t: any) => t.updatedAt || t.startedAt)
           .map((t: any) => ({
             id: t.id,
-            type: t.status === 'completed' ? 'task-completed' : 'task-started',
+            type: t.status === 'done' ? 'task-completed' : 'task-started',
             agent: t.assignee || t.assignedTo || t.createdBy || 'unknown',
             agentEmoji: AGENT_EMOJIS[t.assignee] || AGENT_EMOJIS[t.assignedTo] || AGENT_EMOJIS[t.createdBy] || '🤖',
-            title: t.status === 'completed' ? 'Completed task' : 'Started task',
+            title: t.status === 'done' ? 'Completed task' : 'Started task',
             description: t.title,
-            timestamp: t.completedAt || t.assignedAt
+            timestamp: t.status === 'done' ? t.updatedAt : (t.startedAt || t.updatedAt)
           }))
           .sort((a: ActivityItem, b: ActivityItem) =>
             new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()

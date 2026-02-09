@@ -31,20 +31,20 @@ export function ActivityFeed() {
 
         const recentActivities: ActivityItem[] = tasks
           .filter((t: any) => {
-            if (t.status === 'completed' && t.completedAt) {
-              return new Date(t.completedAt).getTime() > hourAgo
+            if (t.status === 'done' && t.updatedAt) {
+              return new Date(t.updatedAt).getTime() > hourAgo
             }
-            if (t.status === 'in-progress' && t.assignedAt) {
-              return new Date(t.assignedAt).getTime() > hourAgo
+            if (t.status === 'in_progress' && t.startedAt) {
+              return new Date(t.startedAt).getTime() > hourAgo
             }
             return false
           })
           .map((t: any) => ({
             id: t.id,
-            type: t.status === 'completed' ? 'completed' : 'started',
+            type: t.status === 'done' ? 'completed' : 'started',
             title: t.title,
             agent: t.assignee || t.assignedTo,
-            timestamp: t.status === 'completed' ? t.completedAt : t.assignedAt
+            timestamp: t.status === 'done' ? t.updatedAt : (t.startedAt || t.updatedAt)
           }))
           .sort((a: ActivityItem, b: ActivityItem) =>
             new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
