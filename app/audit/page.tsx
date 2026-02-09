@@ -54,6 +54,7 @@ interface AuditResponse {
 
 const actionConfig: Record<string, { icon: React.ReactNode; color: string; label: string }> = {
   task_created: { icon: <FileText size={14} />, color: 'text-blue-400', label: 'Task Created' },
+  task_started: { icon: <Play size={14} />, color: 'text-blue-400', label: 'Task Started' },
   task_updated: { icon: <FileText size={14} />, color: 'text-amber-400', label: 'Task Updated' },
   task_completed: { icon: <CheckCircle2 size={14} />, color: 'text-green-400', label: 'Task Completed' },
   task_failed: { icon: <XCircle size={14} />, color: 'text-red-400', label: 'Task Failed' },
