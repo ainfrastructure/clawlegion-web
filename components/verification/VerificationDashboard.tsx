@@ -59,8 +59,7 @@ export function VerificationDashboard() {
   const runVerification = async () => {
     setRunning(true)
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'
-      const res = await fetch(`${apiUrl}/api/frontend-verifier/run`, { method: 'POST' })
+      const res = await fetch(`/api/frontend-verifier/run`, { method: 'POST' })
       if (res.ok) {
         const data = await res.json()
         setReport(data)

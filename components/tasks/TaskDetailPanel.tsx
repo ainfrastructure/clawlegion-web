@@ -95,8 +95,7 @@ export function TaskDetailPanel({ taskId, isOpen, onClose }: TaskDetailPanelProp
 
         // Fetch verifications if available
         try {
-          const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'
-          const verifyRes = await fetch(`${apiUrl}/api/verifier/verify/history/${taskId}`)
+          const verifyRes = await fetch(`/api/verifier/verify/history/${taskId}`)
           if (verifyRes.ok) {
             const verifyData = await verifyRes.json()
             setVerifications(verifyData.verifications || [])
