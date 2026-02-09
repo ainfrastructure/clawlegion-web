@@ -143,44 +143,42 @@ export function FlowCanvas({
           className="flex-1 relative min-h-[300px]"
           onKeyDown={onKeyDown}
           tabIndex={-1}
-          style={{
-            backgroundImage: 'radial-gradient(circle, rgb(255 255 255 / 0.03) 1px, transparent 1px)',
-            backgroundSize: '24px 24px',
-          }}
         >
-          {flow.steps.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-full text-center">
+          {/* Empty state overlay */}
+          {flow.steps.length === 0 && (
+            <div className="absolute inset-0 flex flex-col items-center justify-center text-center z-10 pointer-events-none">
               <div className="w-16 h-16 rounded-2xl glass-2 flex items-center justify-center mb-4">
                 <Layers className="w-7 h-7 text-slate-500" />
               </div>
               <p className="text-slate-400 font-medium mb-1">No agents in pipeline</p>
               <p className="text-sm text-slate-600 max-w-xs">
-                Add agents from the palette above to build your pipeline
+                Add agents from the palette above or select a preset
               </p>
             </div>
-          ) : (
-            <ReactFlowProvider>
-              <div style={{ width: '100%', height: '100%', position: 'absolute', inset: 0 }}>
-                <ReactFlow
-                  nodes={nodes}
-                  edges={edges}
-                  nodeTypes={nodeTypes}
-                  edgeTypes={edgeTypes}
-                  onNodeClick={onNodeClick}
-                  nodesConnectable={false}
-                  nodesDraggable={false}
-                  fitView
-                  fitViewOptions={{ padding: 0.3 }}
-                  proOptions={proOptions}
-                  minZoom={0.3}
-                  maxZoom={1.5}
-                >
-                  <Background variant={BackgroundVariant.Dots} gap={24} size={1} color="rgb(255 255 255 / 0.04)" />
-                  <Controls showInteractive={false} />
-                </ReactFlow>
-              </div>
-            </ReactFlowProvider>
           )}
+
+          <ReactFlowProvider>
+            <div style={{ width: '100%', height: '100%', position: 'absolute', inset: 0 }}>
+              <ReactFlow
+                nodes={nodes}
+                edges={edges}
+                nodeTypes={nodeTypes}
+                edgeTypes={edgeTypes}
+                onNodeClick={onNodeClick}
+                nodesConnectable={false}
+                nodesDraggable={false}
+                fitView
+                fitViewOptions={{ padding: 0.3 }}
+                proOptions={proOptions}
+                minZoom={0.3}
+                maxZoom={1.5}
+                key={flow.steps.map(s => s.id).join(',')}
+              >
+                <Background variant={BackgroundVariant.Dots} gap={24} size={1} color="rgb(255 255 255 / 0.04)" />
+                <Controls showInteractive={false} />
+              </ReactFlow>
+            </div>
+          </ReactFlowProvider>
         </div>
 
         {/* Action bar */}
