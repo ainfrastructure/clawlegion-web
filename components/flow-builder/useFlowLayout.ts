@@ -1,7 +1,6 @@
 'use client'
 
-import { useMemo } from 'react'
-import dagre from '@dagrejs/dagre'
+import { useMemo, useState, useEffect } from 'react'
 import type { Node, Edge } from '@xyflow/react'
 import type { PipelineStep } from '@/components/flow-config/types'
 import { AGENT_METADATA } from '@/lib/flow-presets'
@@ -14,29 +13,43 @@ const NODE_HEIGHT = 160
 const NODE_SEP = 100
 const RANK_SEP = 100
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let dagreModule: any = null
+
 export function useFlowLayout(steps: PipelineStep[]) {
+  const [dagreReady, setDagreReady] = useState(!!dagreModule)
+
+  useEffect(() => {
+    if (!dagreModule) {
+      import('@dagrejs/dagre').then((mod) => {
+        dagreModule = mod.default || mod
+        setDagreReady(true)
+      })
+    }
+  }, [])
+
   return useMemo(() => {
     const sorted = [...steps].sort((a, b) => a.order - b.order)
 
-    if (sorted.length === 0) {
+    if (sorted.length === 0 || !dagreReady || !dagreModule) {
       return { nodes: [] as Node<FlowAgentNodeData>[], edges: [] as Edge[] }
     }
 
-    const g = new dagre.graphlib.Graph()
+    const g = new dagreModule.graphlib.Graph()
     g.setGraph({ rankdir: 'LR', nodesep: NODE_SEP, ranksep: RANK_SEP })
     g.setDefaultEdgeLabel(() => ({}))
 
-    sorted.forEach((step) => {
+    sorted.forEach((step: PipelineStep) => {
       g.setNode(step.id, { width: NODE_WIDTH, height: NODE_HEIGHT })
     })
 
-    sorted.forEach((step, i) => {
+    sorted.forEach((step: PipelineStep, i: number) => {
       if (i > 0) {
         g.setEdge(sorted[i - 1].id, step.id)
       }
     })
 
-    dagre.layout(g)
+    dagreModule.layout(g)
 
     const nodes: Node<FlowAgentNodeData>[] = sorted.map((step) => {
       const pos = g.node(step.id)
@@ -77,5 +90,5 @@ export function useFlowLayout(steps: PipelineStep[]) {
     })
 
     return { nodes, edges }
-  }, [steps])
+  }, [steps, dagreReady])
 }
