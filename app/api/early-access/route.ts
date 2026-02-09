@@ -6,7 +6,7 @@ const schema = z.object({
   source: z.string().optional(),
 })
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://clawlegion-backend-production.up.railway.app'
+const API_URL = process.env.BACKEND_URL || 'https://clawlegion-backend-production.up.railway.app'
 
 export async function POST(req: NextRequest) {
   try {

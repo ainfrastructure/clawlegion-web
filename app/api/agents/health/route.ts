@@ -79,7 +79,7 @@ async function checkHealth(endpoint: string, timeoutMs = 5000): Promise<{ reacha
 async function fetchAgentsFromConfig(): Promise<AgentConfig[]> {
   try {
     // Try to fetch from OpenClaw config API
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'
+    const baseUrl = process.env.BACKEND_URL || 'http://localhost:5001'
     const response = await fetch(`${baseUrl}/api/agent-config`, {
       cache: 'no-store',
     })

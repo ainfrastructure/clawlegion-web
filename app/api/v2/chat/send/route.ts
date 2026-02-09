@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'
+const API_URL = process.env.BACKEND_URL || 'http://localhost:5001'
 
 // POST /api/v2/chat/send
 // Proxy to Express backend for reliable message sending with webhooks

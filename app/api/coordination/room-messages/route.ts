@@ -5,7 +5,7 @@ import {
   ChatMessage,
 } from '../chat-utils'
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'
+const API_URL = process.env.BACKEND_URL || 'http://localhost:5001'
 
 // GET /api/coordination/room-messages?roomId=xxx
 export async function GET(request: Request) {

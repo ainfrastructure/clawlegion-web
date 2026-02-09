@@ -36,7 +36,7 @@ async function checkService(name: string, url: string): Promise<ServiceStatus> {
 // GET: Combined health check
 export async function GET(request: NextRequest) {
   const baseUrl = process.env.NEXT_PUBLIC_FRONTEND_URL || 'http://localhost:3000'
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'
+  const apiUrl = process.env.BACKEND_URL || 'http://localhost:5001'
   
   const checks = await Promise.all([
     checkService('web-server', `${baseUrl}/api/health`),

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'
+const API_URL = process.env.BACKEND_URL || 'http://localhost:5001'
 
 // GET /api/v2/chat/dms?userId=xxx - List all DMs for a user
 export async function GET(request: NextRequest) {

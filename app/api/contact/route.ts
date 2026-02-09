@@ -7,7 +7,7 @@ const schema = z.object({
   message: z.string().min(10, 'Message must be at least 10 characters.').max(2000, 'Message must be under 2000 characters.'),
 })
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://clawlegion-backend-production.up.railway.app'
+const API_URL = process.env.BACKEND_URL || 'https://clawlegion-backend-production.up.railway.app'
 
 export async function POST(req: NextRequest) {
   try {

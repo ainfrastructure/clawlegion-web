@@ -58,7 +58,7 @@ export const AGENT_NAMES: Record<string, string> = {
 
 // Post a system message to a room via the Express backend
 export async function postSystemMessage(roomId: string, content: string, conversationId?: string) {
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'
+  const API_URL = process.env.BACKEND_URL || 'http://localhost:5001'
   try {
     const message: ChatMessage = {
       id: randomUUID(),

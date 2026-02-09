@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'
+const API_URL = process.env.BACKEND_URL || 'http://localhost:5001'
 
 // Compute subtask progress for a parent task
 function computeProgress(subtasks: any[]): number {

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'
+const API_URL = process.env.BACKEND_URL || 'http://localhost:5001'
 
 // POST: Claim next available task — proxy to Express
 export async function POST(request: NextRequest) {

@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
 
   try {
     // Proxy to the backend API
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'
+    const apiUrl = process.env.BACKEND_URL || 'http://localhost:5001'
     const response = await fetch(`${apiUrl}/api/files/serve?path=${encodeURIComponent(path)}`)
     
     if (!response.ok) {
