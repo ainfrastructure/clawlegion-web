@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server'
 import { randomUUID } from 'crypto'
 import {
-  publishToRedis,
   notifyMentionedAgents,
   ChatMessage,
 } from '../chat-utils'
@@ -26,8 +25,9 @@ export async function GET(request: Request) {
     const data = await res.json()
 
     return NextResponse.json(data)
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 })
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error)
+    return NextResponse.json({ error: message }, { status: 500 })
   }
 }
 
@@ -52,7 +52,7 @@ export async function POST(request: Request) {
       turnCount: 1
     }
 
-    // Save via Express backend (Prisma)
+    // Save via Express backend (Prisma) - it broadcasts via WebSocket automatically
     const saveRes = await fetch(`${API_URL}/api/coordination/room-messages`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -63,9 +63,6 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: err }, { status: saveRes.status })
     }
 
-    // Publish to Redis for real-time agent notifications
-    await publishToRedis(message)
-
     // Notify @mentioned agents via OpenClaw webhook
     await notifyMentionedAgents(message, {
       conversationId: message.id,
@@ -73,8 +70,9 @@ export async function POST(request: Request) {
     })
 
     return NextResponse.json({ message })
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 })
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error)
+    return NextResponse.json({ error: message }, { status: 500 })
   }
 }
 
@@ -94,7 +92,8 @@ export async function DELETE(request: Request) {
     const data = await res.json()
 
     return NextResponse.json(data)
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 })
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error)
+    return NextResponse.json({ error: message }, { status: 500 })
   }
 }

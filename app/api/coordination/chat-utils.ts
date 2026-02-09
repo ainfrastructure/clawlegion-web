@@ -1,7 +1,5 @@
 import { randomUUID } from 'crypto'
-import { createClient } from 'redis'
 
-export const REDIS_CHANNEL = 'dashboard:chat:messages'
 export const WEBHOOK_TOKEN = process.env.OPENCLAW_WEBHOOK_TOKEN || ''
 export const MAX_TURNS = 10
 
@@ -58,17 +56,6 @@ export const AGENT_NAMES: Record<string, string> = {
   'researcher': 'scout',
 }
 
-export async function publishToRedis(message: ChatMessage) {
-  try {
-    const client = createClient({ url: process.env.REDIS_URL || 'redis://localhost:6379' })
-    await client.connect()
-    await client.publish(REDIS_CHANNEL, JSON.stringify(message))
-    await client.disconnect()
-  } catch (err) {
-    console.error('Redis publish failed:', err)
-  }
-}
-
 // Post a system message to a room via the Express backend
 export async function postSystemMessage(roomId: string, content: string, conversationId?: string) {
   const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'
@@ -83,13 +70,12 @@ export async function postSystemMessage(roomId: string, content: string, convers
       conversationId
     }
 
+    // Post to backend - it will broadcast via WebSocket
     await fetch(`${API_URL}/api/coordination/room-messages`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(message),
     })
-
-    await publishToRedis(message)
 
     console.log(`[System] Posted to #${roomId}: ${content}`)
   } catch (err) {

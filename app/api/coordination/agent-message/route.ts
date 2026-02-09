@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server'
 import { randomUUID } from 'crypto'
 import {
-  publishToRedis,
   notifyMentionedAgents,
   ChatMessage,
   AGENT_NAMES
@@ -53,15 +52,12 @@ export async function POST(request: Request) {
       turnCount
     }
 
-    // Save via Express backend (Prisma)
+    // Save via Express backend (Prisma) - it broadcasts via WebSocket automatically
     await fetch(`${API_URL}/api/coordination/room-messages`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(message),
     })
-
-    // Publish to Redis for real-time updates
-    await publishToRedis(message)
 
     console.log(`[Agent] ${author} posted to #${roomId} (turn ${turnCount}): ${content.slice(0, 50)}...`)
 
@@ -82,9 +78,10 @@ export async function POST(request: Request) {
       turnCount,
       note: 'Message posted to dashboard chat. @mentions will trigger webhooks to other agents.'
     })
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const errMsg = error instanceof Error ? error.message : String(error)
     console.error('[Agent] Error posting message:', error)
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    return NextResponse.json({ error: errMsg }, { status: 500 })
   }
 }
 
@@ -108,7 +105,8 @@ export async function GET(request: Request) {
     const data = await res.json()
 
     return NextResponse.json(data)
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 })
+  } catch (error: unknown) {
+    const errMsg = error instanceof Error ? error.message : String(error)
+    return NextResponse.json({ error: errMsg }, { status: 500 })
   }
 }
