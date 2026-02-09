@@ -15,11 +15,11 @@ export async function GET(request: NextRequest) {
       throw new Error(`Backend returned ${response.status}`)
     }
     
-    const allRooms = await response.json()
-    // Backend returns array, frontend expects { rooms: [...] }
+    const data = await response.json()
+    // Backend now returns { rooms: [...] } format
     // Filter to only show 'general' type rooms (exclude DMs which are shown separately)
-    const rooms = Array.isArray(allRooms) 
-      ? allRooms.filter((r: any) => r.type === 'general')
+    const rooms = Array.isArray(data.rooms) 
+      ? data.rooms.filter((r: any) => r.type === 'general')
       : []
     return NextResponse.json({ rooms })
   } catch (error: any) {
