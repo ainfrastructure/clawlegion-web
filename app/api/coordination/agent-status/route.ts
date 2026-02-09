@@ -15,7 +15,7 @@ const globalForStatus = globalThis as unknown as {
 if (!globalForStatus.agentStatuses) {
   globalForStatus.agentStatuses = new Map()
   // Initialize with default online status for current agents
-  for (const agentId of ['jarvis', 'lux', 'archie', 'mason', 'vex', 'scout', 'ralph', 'sven']) {
+  for (const agentId of ['jarvis', 'lux', 'archie', 'mason', 'vex', 'scout', 'ralph', 'quill', 'pixel', 'sage']) {
     globalForStatus.agentStatuses.set(agentId, {
       status: 'online',
       lastSeen: new Date().toISOString(),

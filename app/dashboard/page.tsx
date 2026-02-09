@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query'
 import api from '@/lib/api'
 import { useState, useEffect } from 'react'
 import { PageContainer } from '@/components/layout'
-import { AgentCard, type AgentData, type AgentStatus } from '@/components/agents'
+import { AgentCard, AgentCardWithActivity, type AgentData, type AgentStatus } from '@/components/agents'
 import { MetricCard } from '@/components/ui/MetricCard'
 import { MobileAgentScroller, type MobileAgentData } from '@/components/dashboard'
 import { AlertsFeed } from '@/components/watchdog/AlertsFeed'
@@ -377,7 +377,7 @@ export default function DashboardPage() {
                   currentTask: agent.currentTask || agent.currentTaskId,
                   healthEndpoint: agent.healthEndpoint,
                 }
-                return <AgentCard key={agent.id} agent={agentData} variant="compact" />
+                return <AgentCardWithActivity key={agent.id} agent={agentData} variant="compact" />
               })}
             </div>
           )}

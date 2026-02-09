@@ -134,6 +134,7 @@ export interface TaskDetailModalProps {
   task?: Partial<Task>
   isOpen: boolean
   onClose: () => void
+  initialTab?: 'overview' | 'timeline' | 'discussion' | 'deliverables'
 }
 
 /**

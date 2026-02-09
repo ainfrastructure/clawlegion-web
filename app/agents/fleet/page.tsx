@@ -6,7 +6,8 @@ import api from '@/lib/api'
 import { PageContainer } from '@/components/layout'
 import { AgentProfilePanel, type AgentData, type AgentStatus } from '@/components/agents'
 import { FleetAgentCard } from '@/components/agents/FleetAgentCard'
-import { getAgentByName } from '@/components/chat-v2/agentConfig'
+import { FleetAgentCardWithActivity } from '@/components/agents/FleetAgentCardWithActivity'
+import { getAgentByName, ALL_AGENTS } from '@/components/chat-v2/agentConfig'
 import {
   Bot,
   Play,
@@ -107,8 +108,36 @@ export default function AgentFleetPage() {
     }
   })
 
-  // Filter out Sven (decommissioned)
-  const visibleAgents = agents.filter(a => a.id !== 'sven')
+  // Filter out agents not in canonical config (e.g. decommissioned Sven still in backend DB)
+  const canonicalIds = new Set(ALL_AGENTS.map(a => a.id))
+  const knownAgents = agents.filter(a => {
+    const friendlyId = a.name?.toLowerCase() || a.id
+    return canonicalIds.has(friendlyId) || canonicalIds.has(a.id)
+  })
+
+  // Ensure all canonical agents appear, even if backend doesn't know about them yet
+  const seenIds = new Set(knownAgents.map(a => a.name?.toLowerCase() || a.id))
+  const missingAgents: AgentData[] = ALL_AGENTS
+    .filter(a => !seenIds.has(a.id))
+    .map(a => {
+      const health = healthData?.agents?.find(h => h.id === a.id)
+      return {
+        id: a.id,
+        name: a.name,
+        emoji: a.emoji,
+        avatar: a.avatar,
+        role: a.role,
+        title: a.role,
+        description: a.description,
+        color: a.color,
+        status: (health?.reachable ? 'online' : 'offline') as AgentStatus,
+        reachable: health?.reachable,
+        latencyMs: health?.latencyMs,
+        capabilities: a.capabilities,
+      }
+    })
+
+  const visibleAgents = [...knownAgents, ...missingAgents]
 
   // Stats
   const totalAgents = visibleAgents.length
@@ -226,7 +255,7 @@ export default function AgentFleetPage() {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {visibleAgents.map((agent) => (
-                <FleetAgentCard
+                <FleetAgentCardWithActivity
                   key={agent.id}
                   agent={agent}
                   onClick={() => {

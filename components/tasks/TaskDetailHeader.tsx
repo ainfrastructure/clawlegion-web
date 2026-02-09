@@ -1,8 +1,9 @@
 'use client'
 
 import { useState } from 'react'
-import { X, CheckCircle, Trash2, Loader2 } from 'lucide-react'
+import { X, CheckCircle, Trash2, ChevronRight } from 'lucide-react'
 import { WatchdogStatusBadge, type WatchdogStatus } from '@/components/watchdog'
+import { TaskCompactMetadata } from './TaskCompactMetadata'
 import { getPriorityConfig, getStatusConfig } from './config'
 import type { Task } from './types'
 
@@ -35,6 +36,17 @@ export function TaskDetailHeader({
     <div className="px-4 sm:px-6 py-4 border-b border-blue-500/[0.1] flex-shrink-0 bg-gradient-to-r from-blue-600/[0.08] via-blue-500/[0.04] to-transparent">
       <div className="flex items-start justify-between gap-4">
         <div className="flex-1 min-w-0">
+          {/* Parent breadcrumb if this is a subtask */}
+          {task?.parent && (
+            <div className="flex items-center gap-1.5 mb-1.5 text-xs text-slate-400">
+              <span className="font-mono text-purple-400/60 bg-purple-500/10 px-1.5 py-0.5 rounded">
+                {task.parent.shortId || task.parent.id.slice(0, 8)}
+              </span>
+              <span className="truncate max-w-[200px]">{task.parent.title}</span>
+              <ChevronRight className="w-3 h-3 text-slate-500 flex-shrink-0" />
+              <span className="text-blue-300">subtask</span>
+            </div>
+          )}
           <div className="flex flex-wrap items-center gap-2 mb-2">
             {task?.shortId && (
               <span className="text-xs font-mono font-bold text-purple-400 bg-purple-500/20 px-2 py-1 rounded-lg">
@@ -67,6 +79,11 @@ export function TaskDetailHeader({
           ) : (
             <h2 className="text-lg sm:text-xl font-bold text-white line-clamp-2">{task?.title}</h2>
           )}
+
+          {/* Compact metadata row */}
+          <div className="mt-2">
+            <TaskCompactMetadata task={task} />
+          </div>
         </div>
         <div className="flex items-center gap-2 flex-shrink-0">
           {!showDeleteConfirm ? (

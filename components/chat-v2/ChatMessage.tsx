@@ -68,8 +68,10 @@ const AGENT_AVATARS: Record<string, string> = {
   'mason': '/agents/mason-builder.png',
   'vex': '/agents/vex-verifier.png',
   'scout': '/agents/scout-researcher.png',
-  'sven': '/agents/sven-ceo.png',
   'ralph': '/agents/ralph.png',
+  'quill': '/agents/quill-writer.svg',
+  'pixel': '/agents/pixel-designer.svg',
+  'sage': '/agents/sage-analyst.svg',
 }
 
 // Default colors for agents
@@ -81,8 +83,10 @@ const AGENT_COLORS: Record<string, string> = {
   'mason': '#F59E0B',
   'vex': '#8B5CF6',
   'scout': '#06B6D4',
-  'sven': '#9333EA',
   'ralph': '#EC4899',
+  'quill': '#F97316',
+  'pixel': '#D946EF',
+  'sage': '#14B8A6',
 }
 
 function getAgentAvatar(senderId: string): string | undefined {
@@ -114,8 +118,10 @@ function getSenderIcon(senderType: 'human' | 'agent', senderId: string): string 
     'mason': '🔨',
     'vex': '🧪',
     'scout': '🔭',
-    'sven': '👑',
     'ralph': '🔄',
+    'quill': '🪶',
+    'pixel': '🎨',
+    'sage': '📊',
   }
   return agentIcons[senderId.toLowerCase()] || '🤖'
 }

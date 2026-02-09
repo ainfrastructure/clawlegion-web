@@ -16,6 +16,8 @@ import {
   useMarkAllRead,
 } from '@/hooks/useNotifications'
 import type { UserNotification } from '@/hooks/useNotifications'
+import { AgentAvatar } from '@/components/agents/AgentAvatar'
+import { getAgentById, getAgentByName } from '@/components/chat-v2/agentConfig'
 
 const CATEGORIES = [
   { id: 'all', label: 'All', icon: Bell },
@@ -42,6 +44,14 @@ function SeverityIcon({ severity, size = 16 }: { severity: string; size?: number
   )
 }
 
+function resolveAgentId(actor: string | null): string | null {
+  if (!actor) return null
+  if (getAgentById(actor)) return actor
+  const byName = getAgentByName(actor)
+  if (byName) return byName.id
+  return null
+}
+
 function NotificationItem({ notification, onMarkRead }: { notification: UserNotification; onMarkRead: (id: string) => void }) {
   const router = useRouter()
 
@@ -50,7 +60,9 @@ function NotificationItem({ notification, onMarkRead }: { notification: UserNoti
       onMarkRead(notification.id)
     }
     if (notification.taskId) {
-      router.push(`/tasks?selected=${notification.taskId}`)
+      const isComment = notification.eventType?.includes('comment')
+      const tabParam = isComment ? '&tab=discussion' : ''
+      router.push(`/tasks?taskId=${notification.taskId}${tabParam}`)
     }
   }
 
@@ -83,14 +95,21 @@ function NotificationItem({ notification, onMarkRead }: { notification: UserNoti
         <p className="text-xs text-slate-500 mt-0.5 line-clamp-2 leading-relaxed">
           {notification.body}
         </p>
-        {notification.actor && (
-          <div className="flex items-center gap-1.5 mt-1">
-            <div className="w-3.5 h-3.5 rounded-full bg-slate-700 flex items-center justify-center">
-              <span className="text-[8px] font-bold text-slate-400 uppercase">{notification.actor[0]}</span>
+        {notification.actor && (() => {
+          const agentId = resolveAgentId(notification.actor)
+          return (
+            <div className="flex items-center gap-1.5 mt-1">
+              {agentId ? (
+                <AgentAvatar agentId={agentId} size="xs" />
+              ) : (
+                <div className="w-3.5 h-3.5 rounded-full bg-slate-700 flex items-center justify-center">
+                  <span className="text-[8px] font-bold text-slate-400 uppercase">{notification.actor[0]}</span>
+                </div>
+              )}
+              <span className="text-[10px] text-slate-500">{notification.actor}</span>
             </div>
-            <span className="text-[10px] text-slate-500">{notification.actor}</span>
-          </div>
-        )}
+          )
+        })()}
       </div>
     </button>
   )

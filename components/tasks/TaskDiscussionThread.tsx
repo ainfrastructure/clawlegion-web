@@ -2,6 +2,8 @@
 
 import { useRef, useEffect, useCallback } from 'react'
 import { MessageCircle, Loader2, Send } from 'lucide-react'
+import { AgentAvatar } from '@/components/agents'
+import { FormattedText } from './shared/FormattedText'
 import { formatTimeAgo } from '@/components/common/TimeAgo'
 
 type Comment = {
@@ -56,15 +58,17 @@ export function TaskDiscussionThread({
           comments.map((comment) => (
             <div key={comment.id} className="flex gap-3 group">
               <div className="flex-shrink-0 mt-0.5">
-                <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${
-                  comment.authorType === 'agent'
-                    ? 'bg-blue-500/20 text-blue-300 border border-blue-500/30'
-                    : comment.authorType === 'system'
+                {comment.authorType === 'agent' ? (
+                  <AgentAvatar agentId={comment.author} size="sm" />
+                ) : (
+                  <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${
+                    comment.authorType === 'system'
                       ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
                       : 'bg-purple-500/20 text-purple-300 border border-purple-500/30'
-                }`}>
-                  {comment.author.charAt(0).toUpperCase()}
-                </div>
+                  }`}>
+                    {comment.author.charAt(0).toUpperCase()}
+                  </div>
+                )}
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-baseline gap-2">
@@ -80,9 +84,9 @@ export function TaskDiscussionThread({
                     </span>
                   )}
                 </div>
-                <p className="text-sm text-slate-300 mt-0.5 break-words whitespace-pre-wrap">
-                  {comment.content}
-                </p>
+                <div className="mt-0.5 break-words">
+                  <FormattedText text={comment.content} />
+                </div>
               </div>
             </div>
           ))

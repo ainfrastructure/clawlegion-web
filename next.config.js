@@ -4,6 +4,11 @@ const backendUrl = `http://localhost:${backendPort}`
 const clawdbotUrl = process.env.CLAWDBOT_URL || 'http://localhost:18789'
 
 const nextConfig = {
+  images: {
+    dangerouslyAllowSVG: true,
+    contentDispositionType: 'attachment',
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
+  },
   devIndicators: false,
   eslint: { ignoreDuringBuilds: true },
   reactStrictMode: true,

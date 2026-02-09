@@ -35,7 +35,9 @@ export const AGENT_WEBHOOKS: Record<string, string> = {
   'vex': process.env.AGENT_WEBHOOK_VEX || 'http://localhost:18792',
   'scout': process.env.AGENT_WEBHOOK_SCOUT || 'http://localhost:18793',
   'ralph': process.env.AGENT_WEBHOOK_RALPH || 'http://localhost:18794',
-  'sven': process.env.AGENT_WEBHOOK_SVEN || 'http://localhost:18795',
+  'quill': process.env.AGENT_WEBHOOK_QUILL || 'http://localhost:18797',
+  'pixel': process.env.AGENT_WEBHOOK_PIXEL || 'http://localhost:18798',
+  'sage': process.env.AGENT_WEBHOOK_SAGE || 'http://localhost:18799',
 }
 
 // Canonical agent names (for self-mention detection and alias resolution)
@@ -47,7 +49,9 @@ export const AGENT_NAMES: Record<string, string> = {
   'vex': 'vex',
   'scout': 'scout',
   'ralph': 'ralph',
-  'sven': 'sven',
+  'quill': 'quill',
+  'pixel': 'pixel',
+  'sage': 'sage',
   // Legacy aliases
   'verifier': 'vex',
   'tester': 'vex',
@@ -92,7 +96,7 @@ export async function notifyMentionedAgents(
     fromAgent?: string
   } = {}
 ) {
-  const mentions = message.content.match(/@(jarvis|lux|archie|mason|vex|scout|ralph|sven|verifier|tester|planner|builder|researcher|all)/gi)
+  const mentions = message.content.match(/@(jarvis|lux|archie|mason|vex|scout|ralph|quill|pixel|sage|verifier|tester|planner|builder|researcher|all)/gi)
   if (!mentions || mentions.length === 0) return
 
   const uniqueAgents = Array.from(new Set(mentions.map(m => m.substring(1).toLowerCase())))

@@ -30,7 +30,6 @@ interface HealthCheckResponse {
 // Default agents with health endpoints (OpenClaw ports)
 // Configure via AGENT_HEALTH_<NAME> environment variables (e.g. AGENT_HEALTH_JARVIS=http://localhost:18789/health)
 const DEFAULT_AGENTS: AgentConfig[] = [
-  { id: 'sven', name: 'Sven', healthEndpoint: process.env.AGENT_HEALTH_SVEN || 'http://localhost:18795/health' },
   { id: 'jarvis', name: 'Jarvis', healthEndpoint: process.env.AGENT_HEALTH_JARVIS || 'http://localhost:18789/health' },
   { id: 'lux', name: 'Lux', healthEndpoint: process.env.AGENT_HEALTH_LUX || 'http://localhost:18796/health' },
   { id: 'archie', name: 'Archie', healthEndpoint: process.env.AGENT_HEALTH_ARCHIE || 'http://localhost:18790/health' },
@@ -38,6 +37,9 @@ const DEFAULT_AGENTS: AgentConfig[] = [
   { id: 'vex', name: 'Vex', healthEndpoint: process.env.AGENT_HEALTH_VEX || 'http://localhost:18792/health' },
   { id: 'scout', name: 'Scout', healthEndpoint: process.env.AGENT_HEALTH_SCOUT || 'http://localhost:18793/health' },
   { id: 'ralph', name: 'Ralph', healthEndpoint: process.env.AGENT_HEALTH_RALPH || 'http://localhost:18794/health' },
+  { id: 'quill', name: 'Quill', healthEndpoint: process.env.AGENT_HEALTH_QUILL || 'http://localhost:18797/health' },
+  { id: 'pixel', name: 'Pixel', healthEndpoint: process.env.AGENT_HEALTH_PIXEL || 'http://localhost:18798/health' },
+  { id: 'sage', name: 'Sage', healthEndpoint: process.env.AGENT_HEALTH_SAGE || 'http://localhost:18799/health' },
 ]
 
 // Simple in-memory cache with 30s TTL

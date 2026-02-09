@@ -75,10 +75,15 @@ function TasksPageContent() {
   // Sprint filtering from URL params
   const sprintId = searchParams.get('sprintId')
 
-  // Data fetching
+  // Data fetching — pass sprintId so backend returns sprint-filtered stats
   const { data, isLoading, refetch } = useQuery({
-    queryKey: ['task-tracking-tasks'],
-    queryFn: () => api.get('/task-tracking/tasks').then(r => r.data),
+    queryKey: ['task-tracking-tasks', sprintId],
+    queryFn: () => {
+      const params = new URLSearchParams()
+      if (sprintId) params.set('sprintId', sprintId)
+      const qs = params.toString()
+      return api.get(`/task-tracking/tasks${qs ? `?${qs}` : ''}`).then(r => r.data)
+    },
     refetchInterval: 10000,
   })
 
@@ -195,6 +200,7 @@ function TasksPageContent() {
     setSelectedTaskForModal(null)
     const params = new URLSearchParams(searchParams.toString())
     params.delete('taskId')
+    params.delete('tab')
     const newUrl = params.toString() ? `${pathname}?${params.toString()}` : pathname
     router.push(newUrl, { scroll: false })
   }, [searchParams, router, pathname])
@@ -218,13 +224,14 @@ function TasksPageContent() {
     }
   }
 
-  // Stats from API or calculated
-  const stats = data?.stats ?? {
+  // Compute stats from sprint-filtered tasks (not from API which may include all tasks)
+  const stats = {
     total: tasks.length,
-    backlog: columns.todo.length,
-    inProgress: columns.building.length,
-    verifying: columns.verifying.length,
-    completed: columns.done.length,
+    backlog: tasks.filter(t => t.status === 'backlog').length,
+    todo: tasks.filter(t => t.status === 'todo').length,
+    inProgress: tasks.filter(t => t.status === 'in_progress').length,
+    verifying: tasks.filter(t => t.status === 'verifying').length,
+    done: tasks.filter(t => t.status === 'done').length,
   }
 
   return (
@@ -365,7 +372,7 @@ function TasksPageContent() {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4 mb-4 sm:mb-6">
           <StatCard icon={<Clock size={20} />} label="Queued" value={(stats.backlog ?? 0) + (stats.todo ?? 0)} color="slate" />
           <StatCard icon={<Zap size={20} />} label="In Progress" value={stats.inProgress ?? 0} color="amber" />
-          <StatCard icon={<CheckCircle2 size={20} />} label="Completed" value={stats.done ?? stats.completed ?? 0} color="green" />
+          <StatCard icon={<CheckCircle2 size={20} />} label="Completed" value={stats.done ?? 0} color="green" />
           <StatCard icon={<CheckCircle2 size={20} />} label="Verifying" value={stats.verifying ?? 0} color="blue" />
         </div>
 
@@ -408,6 +415,7 @@ function TasksPageContent() {
           task={selectedTaskForModal}
           isOpen={!!selectedTaskForModal}
           onClose={closeTaskModal}
+          initialTab={searchParams.get('tab') as 'overview' | 'timeline' | 'discussion' | 'deliverables' | undefined}
         />
       )}
 

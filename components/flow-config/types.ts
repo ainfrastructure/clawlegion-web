@@ -1,7 +1,7 @@
 // Agent Flow Customization & Resource Allocation Types
 
 // Agent role types - expanded agent pool
-export type AgentRole = 'scout' | 'archie' | 'mason' | 'vex' | 'jarvis' | 'lux' | 'ralph'
+export type AgentRole = 'scout' | 'archie' | 'mason' | 'vex' | 'jarvis' | 'lux' | 'ralph' | 'quill' | 'pixel' | 'sage'
 
 // Resource allocation levels
 export type ResourceLevel = 'high' | 'medium' | 'low' | 'local'

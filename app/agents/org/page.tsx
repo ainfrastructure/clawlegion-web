@@ -9,7 +9,7 @@ import { AgentDetailModal } from '@/components/agents/AgentDetailModal'
 import { FlowConfigPanel } from '@/components/flow-config/FlowConfigPanel'
 import { DEFAULT_CONFIG } from '@/lib/flow-presets'
 import type { FlowConfiguration } from '@/components/flow-config/types'
-import { getAgentByName } from '@/components/chat-v2/agentConfig'
+import { getAgentByName, ALL_AGENTS } from '@/components/chat-v2/agentConfig'
 import {
   Users,
   GitBranch,
@@ -90,9 +90,13 @@ export default function AgentOrgPage() {
     refetchInterval: 30000,
   })
 
-  // Merge agent data with health, filter out Sven
-  const allAgents: AgentData[] = (agents || [])
-    .filter((a) => a.name?.toLowerCase() !== 'sven')
+  // Merge agent data with health, filter to canonical roster only
+  const canonicalIds = new Set(ALL_AGENTS.map(a => a.id))
+  const backendAgents: AgentData[] = (agents || [])
+    .filter((agent) => {
+      const friendlyId = agent.name?.toLowerCase() || agent.id
+      return canonicalIds.has(friendlyId) || canonicalIds.has(agent.id)
+    })
     .map((agent) => {
       const health = healthData?.agents?.find((h) => h.id === agent.id || h.id === agent.name?.toLowerCase())
       return {
@@ -102,6 +106,30 @@ export default function AgentOrgPage() {
         latencyMs: health?.latencyMs,
       }
     })
+
+  // Ensure all canonical agents appear, even if backend doesn't know about them yet
+  const seenIds = new Set(backendAgents.map(a => a.name?.toLowerCase() || a.id))
+  const missingAgents: AgentData[] = ALL_AGENTS
+    .filter(a => !seenIds.has(a.id))
+    .map(a => {
+      const health = healthData?.agents?.find(h => h.id === a.id)
+      return {
+        id: a.id,
+        name: a.name,
+        emoji: a.emoji,
+        avatar: a.avatar,
+        role: a.role,
+        title: a.role,
+        description: a.description,
+        color: a.color,
+        status: (health?.reachable ? 'online' : 'offline') as AgentData['status'],
+        reachable: health?.reachable,
+        latencyMs: health?.latencyMs,
+        capabilities: a.capabilities,
+      }
+    })
+
+  const allAgents: AgentData[] = [...backendAgents, ...missingAgents]
 
   // Two-tier split — match by name since DB IDs are CUIDs
   const isLeadership = (a: AgentData) => LEADERSHIP_NAMES.includes(a.name?.toLowerCase() || '')

@@ -20,7 +20,9 @@ const hexToColorName: Record<string, AgentMetadata['color']> = {
   '#8B5CF6': 'purple',
   '#06B6D4': 'cyan',
   '#EC4899': 'pink',
-  '#9333EA': 'purple',
+  '#F97316': 'amber',   // Orange → closest Tailwind match
+  '#D946EF': 'purple',  // Fuchsia → closest Tailwind match
+  '#14B8A6': 'emerald', // Teal → closest Tailwind match
 }
 
 // Map agentConfig tiers to flow-config tiers
@@ -37,7 +39,6 @@ const defaultEnabledAgents = new Set(['archie', 'mason', 'vex'])
  */
 export const AGENT_METADATA: Record<AgentRole, AgentMetadata> = Object.fromEntries(
   ALL_AGENTS
-    .filter(a => a.id !== 'sven') // Sven is decommissioned, not in flow presets
     .map(a => [
       a.id as AgentRole,
       {
@@ -397,7 +398,7 @@ export function formatTimeBudget(hours: number): string {
 /**
  * Valid agent roles for validation
  */
-const VALID_ROLES: AgentRole[] = ['scout', 'archie', 'mason', 'vex', 'jarvis', 'lux', 'ralph']
+const VALID_ROLES: AgentRole[] = ['scout', 'archie', 'mason', 'vex', 'jarvis', 'lux', 'ralph', 'quill', 'pixel', 'sage']
 
 /**
  * Check if a role is a valid agent role

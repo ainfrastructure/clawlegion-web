@@ -27,7 +27,9 @@ const AGENT_EMOJIS: Record<string, string> = {
   vex: '🧪',
   scout: '🔭',
   ralph: '🔄',
-  sven: '👑',
+  quill: '🪶',
+  pixel: '🎨',
+  sage: '📊',
 }
 
 export function ActivityStream() {

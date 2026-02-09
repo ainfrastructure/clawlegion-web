@@ -24,22 +24,6 @@ export interface AgentConfig {
 // Council Members - Leadership tier
 export const COUNCIL_AGENTS: AgentConfig[] = [
   {
-    id: 'sven',
-    name: 'Sven',
-    role: 'CEO',
-    emoji: '\u{1F451}',
-    color: '#9333EA', // Purple
-    avatar: '/agents/sven-ceo.png',
-    tier: 'council',
-    borderColor: '#F59E0B', // Gold border for CEO
-    description: 'Former executive officer. Currently decommissioned.',
-    longDescription: 'Sven served as the original CEO agent overseeing high-level strategy and organizational decisions. Now retired from active duty.',
-    capabilities: ['strategic planning', 'executive decisions'],
-    specialty: 'Executive Leadership',
-    openclawAgentId: 'sven',
-    port: 18795,
-  },
-  {
     id: 'jarvis',
     name: 'Jarvis',
     role: 'Orchestrator',
@@ -151,6 +135,51 @@ export const ARMY_AGENTS: AgentConfig[] = [
     specialty: 'Iteration Control',
     openclawAgentId: 'ralph',
     port: 18794,
+  },
+  {
+    id: 'quill',
+    name: 'Quill',
+    role: 'Content Creator',
+    emoji: '\u{1FAB6}',
+    color: '#F97316', // Orange
+    avatar: '/agents/quill-writer.svg',
+    tier: 'army',
+    description: 'The wordsmith. Crafts blog posts, docs, release notes, social copy, and marketing content.',
+    longDescription: 'Quill is the voice of the operation — turning technical complexity into compelling content. From documentation to social media posts, release announcements to marketing copy, Quill ensures every piece of communication is clear, engaging, and on-brand. When the team builds something great, Quill makes sure the world hears about it.',
+    capabilities: ['blog writing', 'documentation', 'social media copy', 'release notes', 'marketing content'],
+    specialty: 'Content Creation',
+    openclawAgentId: 'quill',
+    port: 18797,
+  },
+  {
+    id: 'pixel',
+    name: 'Pixel',
+    role: 'Creative Director',
+    emoji: '\u{1F3A8}',
+    color: '#D946EF', // Fuchsia
+    avatar: '/agents/pixel-designer.svg',
+    tier: 'army',
+    description: 'The visual thinker. Critiques UI/UX, ensures brand consistency, and shapes the look and feel.',
+    longDescription: 'Pixel is the creative eye that ensures everything ClawLegion ships looks as good as it works. From UI layouts to color palettes, component design to visual hierarchy, Pixel provides design direction, catches visual inconsistencies, and pushes the team toward interfaces that users actually enjoy using.',
+    capabilities: ['UI/UX critique', 'visual design direction', 'brand consistency', 'layout review', 'design systems'],
+    specialty: 'Visual Design',
+    openclawAgentId: 'pixel',
+    port: 18798,
+  },
+  {
+    id: 'sage',
+    name: 'Sage',
+    role: 'Data Analyst',
+    emoji: '\u{1F4CA}',
+    color: '#14B8A6', // Teal
+    avatar: '/agents/sage-analyst.svg',
+    tier: 'army',
+    description: 'The numbers whisperer. Tracks metrics, spots trends, and turns raw data into decisions.',
+    longDescription: 'Sage sees the story the data is telling before anyone else does. From tracking agent performance metrics to analyzing task completion trends, generating reports to surfacing actionable insights, Sage transforms raw numbers into clear narratives that drive better decisions across the fleet.',
+    capabilities: ['metrics tracking', 'trend analysis', 'report generation', 'data visualization', 'performance insights'],
+    specialty: 'Data Analysis',
+    openclawAgentId: 'sage',
+    port: 18799,
   },
 ]
 

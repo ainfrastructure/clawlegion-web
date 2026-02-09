@@ -16,14 +16,6 @@ export interface BotMember {
 // Council - Top tier leadership
 export const COUNCIL_MEMBERS: BotMember[] = [
   {
-    id: 'sven',
-    name: 'Sven',
-    role: 'CEO',
-    emoji: '👑',
-    color: '#9333EA', // Purple
-    avatar: '/agents/sven-ceo.png',
-  },
-  {
     id: 'jarvis',
     name: 'Jarvis',
     role: 'Orchestrator',
@@ -82,6 +74,30 @@ export const BOT_ARMY: BotMember[] = [
     emoji: '🔄',
     color: '#EC4899', // Pink
     avatar: '/agents/ralph.jpg',
+  },
+  {
+    id: 'quill',
+    name: 'Quill',
+    role: 'Content Creator',
+    emoji: '🪶',
+    color: '#F97316', // Orange
+    avatar: '/agents/quill-writer.svg',
+  },
+  {
+    id: 'pixel',
+    name: 'Pixel',
+    role: 'Creative Director',
+    emoji: '🎨',
+    color: '#D946EF', // Fuchsia
+    avatar: '/agents/pixel-designer.svg',
+  },
+  {
+    id: 'sage',
+    name: 'Sage',
+    role: 'Data Analyst',
+    emoji: '📊',
+    color: '#14B8A6', // Teal
+    avatar: '/agents/sage-analyst.svg',
   },
 ]
 

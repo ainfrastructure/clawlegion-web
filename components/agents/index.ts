@@ -21,3 +21,8 @@ export { OrgAgentCard } from './OrgAgentCard';
 export { AgentDetailModal } from './AgentDetailModal';
 export { AddAgentModal } from './AddAgentModal';
 export { InjectTaskModal } from './InjectTaskModal';
+
+// Activity streaming
+export { AgentCardWithActivity } from './AgentCardWithActivity';
+export { FleetAgentCardWithActivity } from './FleetAgentCardWithActivity';
+export { AgentActivityPopover } from './AgentActivityPopover';
