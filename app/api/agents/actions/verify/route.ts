@@ -7,7 +7,8 @@ export async function POST(request: NextRequest) {
     console.log(`Force verifying task: ${taskId}`);
     
     // Call the verification endpoint
-    const verifyRes = await fetch('http://localhost:3000/api/tasks/force-verify', {
+    const baseUrl = process.env.NEXT_PUBLIC_FRONTEND_URL || 'http://localhost:3000'
+    const verifyRes = await fetch(`${baseUrl}/api/tasks/force-verify`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ taskId }),

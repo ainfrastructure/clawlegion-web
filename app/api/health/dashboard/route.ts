@@ -15,7 +15,8 @@ interface ServiceHealth {
 async function checkWebServer(): Promise<ServiceHealth> {
   const start = Date.now()
   try {
-    const res = await fetch('http://localhost:3000/api/health', {
+    const baseUrl = process.env.NEXT_PUBLIC_FRONTEND_URL || 'http://localhost:3000'
+    const res = await fetch(`${baseUrl}/api/health`, {
       signal: AbortSignal.timeout(3000),
     })
     return {
