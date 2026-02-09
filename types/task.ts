@@ -54,6 +54,7 @@ export interface Task {
     icon?: string | null
   }
   domain?: string  // workspace type: code, research, content, etc.
+  attemptCount?: number
   verificationAttempts?: number
   lastVerificationNote?: string | null
   verifiedBy?: string | null

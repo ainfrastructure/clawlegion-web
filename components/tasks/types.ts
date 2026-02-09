@@ -73,6 +73,7 @@ export interface Task {
   priority?: string
   status?: string
   domain?: string
+  attemptCount?: number
   tags?: string[]
 
   // Repository
