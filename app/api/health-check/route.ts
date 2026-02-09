@@ -42,8 +42,8 @@ export async function GET(request: NextRequest) {
     checkService('web-server', `${baseUrl}/api/health`),
     checkService('task-queue', `${baseUrl}/api/tasks/queue`),
     checkService('coordination', `${baseUrl}/api/coordination/rooms`),
-    checkService('notifications', `${baseUrl}/api/notifications?agent=health-check`),
-    checkService('api-server', `${apiUrl}/api/health`),
+    checkService('notifications', `${baseUrl}/api/notifications?agentId=health-check`),
+    checkService('api-server', `${apiUrl}/health`),
   ])
   
   const healthy = checks.filter(c => c.status === 'healthy').length
