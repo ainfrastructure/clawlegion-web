@@ -5,6 +5,7 @@ import api from '@/lib/api'
 import { useState, useEffect } from 'react'
 import { PageContainer } from '@/components/layout'
 import { AgentCard, AgentCardWithActivity, type AgentData, type AgentStatus } from '@/components/agents'
+import { getAgentByName } from '@/components/chat-v2/agentConfig'
 import { MetricCard } from '@/components/ui/MetricCard'
 import { MobileAgentScroller, type MobileAgentData } from '@/components/dashboard'
 import { useMobile } from '@/hooks/useMobile'
@@ -374,15 +375,17 @@ export default function DashboardPage() {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
               {agents.map((agent: any) => {
+                // Enrich from agentConfig for colors/avatars/emojis
+                const config = getAgentByName(agent.name)
                 const agentData: AgentData = {
                   id: agent.id,
                   name: agent.name,
-                  emoji: agent.emoji,
-                  avatar: agent.avatar,
-                  role: agent.role || agent.type,
-                  title: agent.title,
-                  description: agent.description,
-                  color: agent.color,
+                  emoji: config?.emoji || agent.emoji,
+                  avatar: config?.avatar || agent.avatar,
+                  role: config?.role || agent.role || agent.type,
+                  title: config?.role || agent.title,
+                  description: config?.description || agent.description,
+                  color: config?.color || agent.color,
                   status: (agent.status as AgentStatus) || 'offline',
                   currentTask: agent.currentTask || agent.currentTaskId,
                   healthEndpoint: agent.healthEndpoint,

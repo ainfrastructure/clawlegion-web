@@ -171,11 +171,15 @@ function FullCard({ agent, showStats, showHealth, showActions, onPause, onConfig
 
 // Compact variant - medium-sized card for lists
 function CompactCard({ agent, showHealth, onClick }: AgentCardProps) {
-  const colors = colorMap[agent.color ?? 'slate'] ?? colorMap.slate
+  // Use agent hex color for border, or fall back to generic
+  const agentHexColor = agent.color && agent.color.startsWith('#') ? agent.color : undefined
   
   return (
     <div 
-      className={`bg-slate-900/50 rounded-xl border border-white/[0.06] p-4 hover:border-slate-600 transition-colors ${onClick ? 'cursor-pointer hover:bg-slate-800/50' : ''}`}
+      className={`bg-slate-900/50 rounded-xl border p-4 transition-colors ${onClick ? 'cursor-pointer hover:bg-slate-800/50' : ''}`}
+      style={{
+        borderColor: agentHexColor ? `${agentHexColor}40` : 'rgba(255,255,255,0.06)',
+      }}
       onClick={onClick}
       role={onClick ? 'button' : undefined}
       tabIndex={onClick ? 0 : undefined}
@@ -186,7 +190,7 @@ function CompactCard({ agent, showHealth, onClick }: AgentCardProps) {
           <AgentAvatar agent={agent} size="md" />
           <div className="min-w-0">
             <div className="font-semibold text-white text-sm sm:text-base truncate">{agent.name}</div>
-            <div className="text-xs sm:text-sm text-slate-500 truncate">{agent.title || agent.role}</div>
+            <div className="text-xs sm:text-sm truncate" style={{ color: agentHexColor || '#94a3b8' }}>{agent.title || agent.role}</div>
           </div>
         </div>
         <StatusBadge status={agent.status} size="sm" />
