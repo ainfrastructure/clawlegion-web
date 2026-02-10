@@ -163,32 +163,30 @@ export default function AgentOrgPage() {
   return (
     <PageContainer>
       {/* Header */}
-      <div className="mb-8">
-        <div className="flex flex-col gap-4 sm:gap-6">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div>
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white flex items-center gap-2 sm:gap-3">
-                <Users className="text-blue-400" size={28} /> Agent Organization
-              </h1>
-              <p className="text-sm sm:text-base text-slate-400 mt-1">
-                Team structure and flow presets
-              </p>
-            </div>
-            <div className="flex gap-2 sm:gap-3">
-              <button
-                data-testid="btn-add-agent"
-                onClick={() => setShowAddAgent(true)}
-                className="flex-1 sm:flex-none min-h-[44px] px-4 sm:px-5 py-3 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 rounded-xl flex items-center justify-center gap-2 transition-colors text-sm sm:text-base font-medium touch-manipulation"
-              >
-                <Plus size={18} /> Add Agent
-              </button>
-              <button
-                onClick={handleRefresh}
-                className="flex-1 sm:flex-none min-h-[44px] px-4 sm:px-5 py-3 glass-2 rounded-xl text-sm sm:text-base text-white hover:bg-slate-700/50 active:bg-slate-700/70 transition-colors font-medium touch-manipulation flex items-center justify-center gap-2"
-              >
-                <RefreshCw size={18} /> Refresh
-              </button>
-            </div>
+      <div className="mb-6 sm:mb-8">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-bold text-white flex items-center gap-2 sm:gap-3">
+              <Users className="text-blue-400" size={28} /> Agent Organization
+            </h1>
+            <p className="text-sm sm:text-base text-slate-400 mt-1">
+              Team structure and flow presets
+            </p>
+          </div>
+          <div className="flex gap-2 sm:gap-3">
+            <button
+              data-testid="btn-add-agent"
+              onClick={() => setShowAddAgent(true)}
+              className="px-3 sm:px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg flex items-center justify-center gap-2 transition-colors text-sm font-medium"
+            >
+              <Plus size={16} /> Add Agent
+            </button>
+            <button
+              onClick={handleRefresh}
+              className="flex items-center gap-2 px-4 py-2 glass-2 rounded-lg text-sm text-white hover:bg-slate-700/50 transition-colors"
+            >
+              <RefreshCw size={16} /> Refresh
+            </button>
           </div>
         </div>
       </div>
@@ -240,8 +238,8 @@ export default function AgentOrgPage() {
             {/* Specialists grid */}
             {specialistAgents.length > 0 && (
               <div>
-                <p className="text-xs font-semibold uppercase tracking-widest text-slate-500 mb-4">Specialists</p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5">
+                <p className="text-xs font-semibold uppercase tracking-widest text-slate-500 mb-3">Specialists</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
                   {specialistAgents.map((agent) => (
                     <OrgAgentCard
                       key={agent.id}
@@ -274,7 +272,7 @@ export default function AgentOrgPage() {
             Open Flow Builder <ArrowRight size={14} />
           </Link>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
           {DEFAULT_PRESETS.map((preset) => {
             const enabledAgents = preset.agents.filter(a => a.enabled)
             const primaryAgent = enabledAgents[0]

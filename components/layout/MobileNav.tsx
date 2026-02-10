@@ -83,51 +83,49 @@ export function MobileNav() {
       )}
 
       {/* Bottom navigation bar */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-slate-900/95 backdrop-blur-sm border-t border-slate-800 z-40 md:hidden">
-        <div className="pb-safe-area-inset-bottom">
-          <div className="flex items-center justify-around h-16 px-2">
-            {mainTabs.map((tab) => {
-              const Icon = tab.icon
-              const active = tab.isMenu ? showMore : isActive(tab.href)
+      <nav className="fixed bottom-0 left-0 right-0 h-16 bg-slate-900 border-t border-slate-800 z-40 md:hidden safe-area-bottom">
+        <div className="flex items-center justify-around h-full px-2">
+          {mainTabs.map((tab) => {
+            const Icon = tab.icon
+            const active = tab.isMenu ? showMore : isActive(tab.href)
 
-              if (tab.isMenu) {
-                return (
-                  <button
-                    key={tab.href}
-                    onClick={() => setShowMore(!showMore)}
-                    className={`flex flex-col items-center justify-center min-w-[64px] min-h-[52px] px-3 py-2 rounded-xl transition-all duration-200 touch-manipulation ${
-                      active
-                        ? 'text-blue-400 bg-blue-400/10'
-                        : 'text-slate-400 hover:text-white active:bg-slate-800/50'
-                    }`}
-                  >
-                    <Icon className="w-6 h-6" />
-                    <span className="text-xs mt-1 font-medium">{tab.label}</span>
-                  </button>
-                )
-              }
-
+            if (tab.isMenu) {
               return (
-                <Link
+                <button
                   key={tab.href}
-                  href={tab.href}
-                  className={`flex flex-col items-center justify-center min-w-[64px] min-h-[52px] px-3 py-2 rounded-xl transition-all duration-200 touch-manipulation ${
+                  onClick={() => setShowMore(!showMore)}
+                  className={`flex flex-col items-center justify-center min-w-[64px] min-h-[48px] px-3 py-2 rounded-lg transition-colors ${
                     active
-                      ? 'text-blue-400 bg-blue-400/10'
-                      : 'text-slate-400 hover:text-white active:bg-slate-800/50'
+                      ? 'text-blue-400'
+                      : 'text-slate-400 hover:text-white'
                   }`}
                 >
-                  <div className="relative">
-                    <Icon className="w-6 h-6" />
-                    {active && (
-                      <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-blue-400 rounded-full" />
-                    )}
-                  </div>
+                  <Icon className="w-6 h-6" />
                   <span className="text-xs mt-1 font-medium">{tab.label}</span>
-                </Link>
+                </button>
               )
-            })}
-          </div>
+            }
+
+            return (
+              <Link
+                key={tab.href}
+                href={tab.href}
+                className={`flex flex-col items-center justify-center min-w-[64px] min-h-[48px] px-3 py-2 rounded-lg transition-colors ${
+                  active
+                    ? 'text-blue-400'
+                    : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                <div className="relative">
+                  <Icon className="w-6 h-6" />
+                  {active && (
+                    <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-blue-400 rounded-full" />
+                  )}
+                </div>
+                <span className="text-xs mt-1 font-medium">{tab.label}</span>
+              </Link>
+            )
+          })}
         </div>
       </nav>
     </>

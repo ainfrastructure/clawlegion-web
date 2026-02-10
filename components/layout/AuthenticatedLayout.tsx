@@ -88,8 +88,8 @@ export function AuthenticatedLayout({ children }: { children: React.ReactNode })
             onClose={() => setDrawerOpen(false)}
           />
 
-          {/* Main content with proper safe areas and spacing */}
-          <main className="pt-[calc(3.5rem+env(safe-area-inset-top))] pb-[calc(4rem+env(safe-area-inset-bottom))] px-4">
+          {/* Main content with padding for header and nav */}
+          <main className="pt-14 pb-20 px-4">
             {children}
           </main>
 
