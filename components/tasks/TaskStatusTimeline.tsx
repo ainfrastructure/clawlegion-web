@@ -152,8 +152,9 @@ export function TaskStatusTimeline({
       {/* Phase cards strip */}
       <div className="flex items-stretch gap-1 relative bg-blue-950/20 border border-blue-500/[0.08] rounded-2xl p-2">
         {workflowSteps.map((status, index) => {
-          const isComplete = index < currentIndex && !isCancelled
-          const isCurrent = index === currentIndex && !isCancelled
+          const isDoneStatus = normalizedStatus === 'done' || normalizedStatus === 'completed'
+          const isComplete = (index < currentIndex || (isDoneStatus && index === currentIndex)) && !isCancelled
+          const isCurrent = index === currentIndex && !isDoneStatus && !isCancelled
           const isPending = index > currentIndex || isCancelled
           const agent = getPhaseAgent(status.key, activities)
           const agentColor = agent ? AGENT_COLOR_MAP[agent] : null
