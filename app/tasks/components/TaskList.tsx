@@ -16,8 +16,35 @@ import {
   ChevronDown,
 } from 'lucide-react'
 import { AgentAvatar } from '@/components/agents'
+import { ALL_AGENTS } from '@/components/chat-v2/agentConfig'
 import type { Task } from '@/types'
 import type { TaskColumns } from './useTaskFilters'
+
+// Helper functions for time formatting
+function formatTimeAgo(dateStr: string): string {
+  const diff = Date.now() - new Date(dateStr).getTime()
+  const mins = Math.floor(diff / 60000)
+  if (mins < 1) return 'just now'
+  if (mins < 60) return mins + 'm ago'
+  const hrs = Math.floor(mins / 60)
+  if (hrs < 24) return hrs + 'h ago'
+  return Math.floor(hrs / 24) + 'd ago'
+}
+
+function formatDuration(start: string, end: string): string {
+  const diff = new Date(end).getTime() - new Date(start).getTime()
+  const mins = Math.floor(diff / 60000)
+  if (mins < 60) return mins + 'm'
+  const hrs = Math.floor(mins / 60)
+  const remainMins = mins % 60
+  return hrs + 'h ' + remainMins + 'm'
+}
+
+// Build agent color lookup map
+const agentColorMap: Record<string, string> = {}
+ALL_AGENTS.forEach(a => {
+  agentColorMap[a.id] = a.color
+})
 
 // ============================================
 // Kanban View - horizontal scroll on mobile
@@ -46,8 +73,15 @@ export function KanbanView({
   ]
   
   return (
-    <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
-      <div className="flex gap-3 sm:gap-4 min-w-[900px] sm:min-w-0 sm:grid sm:grid-cols-4 h-[calc(100vh-380px)] sm:h-[calc(100vh-320px)]">
+    <>
+      <style>{`
+        @keyframes taskPulse {
+          0%, 100% { box-shadow: 0 0 8px var(--pulse-color, rgba(255,255,255,0.05)); }
+          50% { box-shadow: 0 0 16px var(--pulse-color, rgba(255,255,255,0.1)); }
+        }
+      `}</style>
+      <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
+        <div className="flex gap-3 sm:gap-4 min-w-[900px] sm:min-w-0 sm:grid sm:grid-cols-4 h-[calc(100vh-380px)] sm:h-[calc(100vh-320px)]">
         {columnConfig.map(({ key, label, color, icon }) => (
           <div key={key} className="flex-1 min-w-[220px] sm:min-w-0 bg-slate-800/30 rounded-xl border border-white/[0.06] flex flex-col">
             <div className="p-3 sm:p-4 border-b border-white/[0.06] flex items-center justify-between">
@@ -78,8 +112,9 @@ export function KanbanView({
             </div>
           </div>
         ))}
+        </div>
       </div>
-    </div>
+    </>
   )
 }
 
@@ -213,6 +248,13 @@ function TaskCard({ task, isSelected, onSelect, onClick }: TaskCardProps) {
   const subtasks = task.subtasks || []
   const subtaskDone = subtasks.filter(s => s.status === 'done' || s.status === 'completed').length
   const subtaskTotal = subtasks.length
+  
+  // Get agent color for border
+  const agentId = task.assignee || task.assignedTo || ''
+  const agentColor = agentColorMap[agentId]
+  
+  // Check if card should be animated (active states)
+  const isActive = task.status === 'in_progress' || task.status === 'verifying'
 
   return (
     <div
@@ -221,6 +263,14 @@ function TaskCard({ task, isSelected, onSelect, onClick }: TaskCardProps) {
           ? 'border-amber-500 bg-amber-500/10'
           : 'border-white/[0.06] hover:border-slate-600'
       }`}
+      style={{
+        borderLeftColor: agentColor || undefined,
+        borderLeftWidth: agentColor ? '3px' : undefined,
+        ...(isActive && agentColor ? {
+          animation: 'taskPulse 2s ease-in-out infinite',
+          boxShadow: `0 0 12px ${agentColor}20`,
+        } : {}),
+      }}
       onClick={(e) => {
         if ((e.target as HTMLElement).closest('button')) return
         onClick()
@@ -256,12 +306,42 @@ function TaskCard({ task, isSelected, onSelect, onClick }: TaskCardProps) {
           </div>
         </div>
       )}
+      
+      {/* Domain tag */}
+      {task.domain && (
+        <div className="mt-2 ml-6">
+          <span className="px-1.5 py-0.5 bg-slate-800 rounded text-[10px] text-slate-500 uppercase tracking-wide">
+            {task.domain}
+          </span>
+        </div>
+      )}
+      
+      {/* Agent assignment with timestamp */}
       {(task.assignee || task.assignedTo) && (
         <div className="mt-2 ml-6 flex items-center gap-1.5 text-xs text-slate-500">
           <AgentAvatar agentId={task.assignee || task.assignedTo || ''} size="xs" />
           <span>{task.assignee || task.assignedTo}</span>
+          {/* Timestamp for active tasks */}
+          {task.startedAt && (task.status === 'in_progress' || task.status === 'building') && (
+            <span className="text-[10px] text-slate-500 ml-1">
+              · started {formatTimeAgo(task.startedAt)}
+            </span>
+          )}
+          {/* Completion time for done tasks */}
+          {task.status === 'done' && task.verifiedAt && (
+            <span className="text-[10px] text-slate-500 ml-1">
+              · completed {formatTimeAgo(task.verifiedAt)}
+            </span>
+          )}
+          {/* Duration for done tasks */}
+          {task.status === 'done' && task.startedAt && task.verifiedAt && (
+            <span className="text-[10px] text-emerald-400/70 ml-1">
+              took {formatDuration(task.startedAt, task.verifiedAt)}
+            </span>
+          )}
         </div>
       )}
+      
       {task.tags && task.tags.length > 0 && (
         <div className="mt-2 ml-6 flex gap-1 flex-wrap">
           {task.tags.slice(0, 2).map((tag) => (
@@ -277,11 +357,26 @@ function MobileTaskCard({ task, isSelected, onSelect, onClick }: TaskCardProps) 
   const prio = priorityConfig[task.priority] ?? priorityConfig.P2
   const status = statusConfig[task.status] ?? statusConfig.queued
   
+  // Get agent color for border
+  const agentId = task.assignee || task.assignedTo || ''
+  const agentColor = agentColorMap[agentId]
+  
+  // Check if card should be animated (active states)
+  const isActive = task.status === 'in_progress' || task.status === 'verifying'
+  
   return (
     <div 
       className={`bg-slate-800/50 rounded-xl border p-4 transition-colors cursor-pointer ${
         isSelected ? 'border-amber-500 bg-amber-500/10' : 'border-white/[0.06]'
       }`}
+      style={{
+        borderLeftColor: agentColor || undefined,
+        borderLeftWidth: agentColor ? '3px' : undefined,
+        ...(isActive && agentColor ? {
+          animation: 'taskPulse 2s ease-in-out infinite',
+          boxShadow: `0 0 12px ${agentColor}20`,
+        } : {}),
+      }}
       onClick={(e) => {
         if ((e.target as HTMLElement).closest('button')) return
         onClick()
@@ -307,11 +402,37 @@ function MobileTaskCard({ task, isSelected, onSelect, onClick }: TaskCardProps) 
             <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs ${status.bg} ${status.color}`}>
               {task.status?.replace('_', ' ')}
             </span>
+            {/* Domain tag */}
+            {task.domain && (
+              <span className="px-1.5 py-0.5 bg-slate-800 rounded text-[10px] text-slate-500 uppercase tracking-wide">
+                {task.domain}
+              </span>
+            )}
           </div>
           {(task.assignee || task.assignedTo) && (
             <div className="mt-2 flex items-center gap-1.5 text-xs text-slate-400">
               <AgentAvatar agentId={task.assignee || task.assignedTo || ''} size="xs" />
               <span>{task.assignee || task.assignedTo}</span>
+              {/* Timestamp for active tasks */}
+              {task.startedAt && (task.status === 'in_progress' || task.status === 'building') && (
+                <span className="text-[10px] text-slate-500 ml-1">
+                  · started {formatTimeAgo(task.startedAt)}
+                </span>
+              )}
+              {/* Completion time for done tasks */}
+              {task.status === 'done' && task.verifiedAt && (
+                <span className="text-[10px] text-slate-500 ml-1">
+                  · completed {formatTimeAgo(task.verifiedAt)}
+                </span>
+              )}
+            </div>
+          )}
+          {/* Duration for done tasks */}
+          {task.status === 'done' && task.startedAt && task.verifiedAt && (
+            <div className="mt-1 text-xs">
+              <span className="text-emerald-400/70">
+                took {formatDuration(task.startedAt, task.verifiedAt)}
+              </span>
             </div>
           )}
         </div>

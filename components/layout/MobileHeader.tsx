@@ -11,7 +11,6 @@ interface MobileHeaderProps {
 
 const pageTitles: Record<string, string> = {
   '/': 'Dashboard',
-  '/chat': 'Chat',
   '/tasks': 'Tasks',
   '/tasks/graph': 'Task Graph',
   '/sprint': 'Sprint',

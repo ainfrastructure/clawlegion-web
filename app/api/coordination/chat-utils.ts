@@ -1,4 +1,9 @@
 import { randomUUID } from 'crypto'
+import {
+  ALL_AGENTS,
+  getAgentNames,
+  getAgentWebhookUrl,
+} from '@/components/chat-v2/agentConfig'
 
 export const WEBHOOK_TOKEN = process.env.OPENCLAW_WEBHOOK_TOKEN || ''
 export const MAX_TURNS = 10
@@ -25,40 +30,25 @@ export interface ChatRoom {
   createdAt?: string
 }
 
-// Map agent names to their OpenClaw webhook URLs
-// Configure via AGENT_WEBHOOK_<NAME> environment variables (e.g. AGENT_WEBHOOK_JARVIS=http://localhost:18789)
-export const AGENT_WEBHOOKS: Record<string, string> = {
-  'caesar': process.env.AGENT_WEBHOOK_CAESAR || 'http://localhost:18789',
-  'lux': process.env.AGENT_WEBHOOK_LUX || 'http://localhost:18796',
-  'athena': process.env.AGENT_WEBHOOK_ATHENA || 'http://localhost:18790',
-  'vulcan': process.env.AGENT_WEBHOOK_VULCAN || 'http://localhost:18791',
-  'janus': process.env.AGENT_WEBHOOK_VEX || 'http://localhost:18792',
-  'minerva': process.env.AGENT_WEBHOOK_SCOUT || 'http://localhost:18793',
-  'ralph': process.env.AGENT_WEBHOOK_RALPH || 'http://localhost:18794',
-  'cicero': process.env.AGENT_WEBHOOK_QUILL || 'http://localhost:18797',
-  'apollo': process.env.AGENT_WEBHOOK_PIXEL || 'http://localhost:18798',
-  'oracle': process.env.AGENT_WEBHOOK_SAGE || 'http://localhost:18799',
-}
+// Derived from agentConfig — maps agent ID to webhook base URL
+// Env var overrides: AGENT_WEBHOOK_<UPPERCASE_ID> (e.g. AGENT_WEBHOOK_CAESAR=http://host:18789)
+export const AGENT_WEBHOOKS: Record<string, string> = Object.fromEntries(
+  ALL_AGENTS
+    .filter(a => a.port)
+    .map(a => [
+      a.id,
+      process.env[`AGENT_WEBHOOK_${a.id.toUpperCase()}`] || `http://localhost:${a.port}`,
+    ])
+)
 
-// Canonical agent names (for self-mention detection and alias resolution)
-export const AGENT_NAMES: Record<string, string> = {
-  'caesar': 'caesar',
-  'lux': 'lux',
-  'athena': 'athena',
-  'vulcan': 'vulcan',
-  'janus': 'janus',
-  'minerva': 'minerva',
-  'ralph': 'ralph',
-  'cicero': 'cicero',
-  'apollo': 'apollo',
-  'oracle': 'oracle',
-  // Legacy aliases
-  'verifier': 'janus',
-  'tester': 'janus',
-  'planner': 'athena',
-  'builder': 'vulcan',
-  'researcher': 'minerva',
-}
+// Derived from agentConfig — canonical names + legacy aliases
+export const AGENT_NAMES: Record<string, string> = getAgentNames()
+
+// Dynamically built regex pattern for @mention detection
+const MENTION_PATTERN = new RegExp(
+  `@(${Object.keys(AGENT_NAMES).join('|')}|all)`,
+  'gi'
+)
 
 // Post a system message to a room via the Express backend
 export async function postSystemMessage(roomId: string, content: string, conversationId?: string) {
@@ -96,7 +86,7 @@ export async function notifyMentionedAgents(
     fromAgent?: string
   } = {}
 ) {
-  const mentions = message.content.match(/@(caesar|lux|athena|vulcan|vex|scout|ralph|quill|pixel|sage|verifier|tester|planner|builder|researcher|all)/gi)
+  const mentions = message.content.match(MENTION_PATTERN)
   if (!mentions || mentions.length === 0) return
 
   const uniqueAgents = Array.from(new Set(mentions.map(m => m.substring(1).toLowerCase())))

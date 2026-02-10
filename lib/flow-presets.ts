@@ -13,16 +13,16 @@ import { ALL_AGENTS } from '@/components/chat-v2/agentConfig'
 
 // Map hex colors from agentConfig to Tailwind color names used by flow-config
 const hexToColorName: Record<string, AgentMetadata['color']> = {
-  '#DC2626': 'red',
-  '#22C55E': 'emerald',
-  '#3B82F6': 'blue',
-  '#EA580C': 'orange',
-  '#8B5CF6': 'purple',
-  '#06B6D4': 'cyan',
-  '#EC4899': 'pink',
-  '#F97316': 'amber',   // Orange → closest Tailwind match
-  '#D946EF': 'purple',  // Fuchsia → closest Tailwind match
-  '#14B8A6': 'emerald', // Teal → closest Tailwind match
+  '#DC2626': 'red',       // Caesar
+  '#06B6D4': 'cyan',      // Athena
+  '#EA580C': 'amber',     // Vulcan
+  '#D946EF': 'purple',    // Janus
+  '#10B981': 'emerald',   // Minerva
+  '#8B5E3C': 'amber',     // Cato
+  '#C0C0C0': 'blue',      // Mercury (silver → closest)
+  '#7C3AED': 'purple',    // Cicero
+  '#EAB308': 'amber',     // Apollo
+  '#4338CA': 'blue',      // Oracle (indigo → closest)
 }
 
 // Map agentConfig tiers to flow-config tiers
@@ -492,9 +492,9 @@ export function formatTimeBudget(hours: number): string {
 }
 
 /**
- * Valid agent roles for validation
+ * Valid agent roles for validation — derived from agentConfig (single source of truth)
  */
-const VALID_ROLES: AgentRole[] = ['minerva', 'athena', 'vulcan', 'janus', 'caesar', 'cato', 'mercury', 'cicero', 'apollo', 'oracle']
+const VALID_ROLES: AgentRole[] = ALL_AGENTS.map(a => a.id) as AgentRole[]
 
 /**
  * Check if a role is a valid agent role

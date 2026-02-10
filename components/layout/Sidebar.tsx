@@ -7,7 +7,6 @@ import { usePathname } from 'next/navigation'
 import { useState } from 'react'
 import {
   Home,
-  MessageSquare,
   Briefcase,
   Bot,
   Settings,
@@ -73,11 +72,6 @@ const POWER_NAV_ITEMS: NavItem[] = [
     href: '/dashboard',
     icon: <Home className="w-5 h-5" />,
     label: 'Home'
-  },
-  {
-    href: '/chat',
-    icon: <MessageSquare className="w-5 h-5" />,
-    label: 'Chat'
   },
   {
     href: '/tasks',

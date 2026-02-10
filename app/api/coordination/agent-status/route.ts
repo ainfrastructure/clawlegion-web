@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { getAllAgentIds } from '@/components/chat-v2/agentConfig'
 
 // In-memory agent status store
 interface AgentStatusEntry {
@@ -14,8 +15,8 @@ const globalForStatus = globalThis as unknown as {
 
 if (!globalForStatus.agentStatuses) {
   globalForStatus.agentStatuses = new Map()
-  // Initialize with default online status for current agents
-  for (const agentId of ['caesar', 'athena', 'vulcan', 'janus', 'minerva', 'cicero', 'apollo', 'oracle']) {
+  // Initialize with default online status for all agents (derived from agentConfig)
+  for (const agentId of getAllAgentIds()) {
     globalForStatus.agentStatuses.set(agentId, {
       status: 'online',
       lastSeen: new Date().toISOString(),

@@ -59,6 +59,8 @@ export interface Task {
   lastVerificationNote?: string | null
   verifiedBy?: string | null
   verifiedAt?: string | null
+  startedAt?: string | null
+  submittedAt?: string | null
   shortId?: string
   specs?: string
   approach?: string

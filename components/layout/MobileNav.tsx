@@ -6,7 +6,6 @@ import { useState } from 'react'
 import {
   Home,
   ListTodo,
-  MessageSquare,
   Bot,
   MoreHorizontal,
   Settings,
@@ -24,7 +23,6 @@ interface NavTab {
 const mainTabs: NavTab[] = [
   { href: '/', icon: Home, label: 'Home' },
   { href: '/tasks', icon: ListTodo, label: 'Tasks' },
-  { href: '/chat', icon: MessageSquare, label: 'Chat' },
   { href: '/agents/org', icon: Bot, label: 'Agents' },
   { href: '#more', icon: MoreHorizontal, label: 'More', isMenu: true },
 ]

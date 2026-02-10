@@ -3,126 +3,37 @@
 import { useState } from 'react'
 import Image from 'next/image'
 import { cn } from '@/lib/utils'
+import {
+  COUNCIL_AGENTS,
+  ARMY_AGENTS,
+  ALL_AGENTS,
+  resolveAgentId,
+  getAgentById,
+  type AgentConfig,
+} from './agentConfig'
 
-export interface BotMember {
-  id: string
-  name: string
-  role: string
-  emoji: string
-  color: string
-  avatar: string
+export type BotMember = Pick<AgentConfig, 'id' | 'name' | 'role' | 'emoji' | 'color' | 'avatar'>
+
+// Derive from canonical agentConfig
+function toBotMember(agent: AgentConfig): BotMember {
+  return { id: agent.id, name: agent.name, role: agent.role, emoji: agent.emoji, color: agent.color, avatar: agent.avatar }
 }
 
-// Council - Top tier leadership
-export const COUNCIL_MEMBERS: BotMember[] = [
-  {
-    id: 'caesar',
-    name: 'Caesar',
-    role: 'Orchestrator',
-    emoji: '🔴',
-    color: '#DC2626', // Red
-    avatar: '/agents/caesar.png',
-  },
-  {
-    id: 'lux',
-    name: 'Lux',
-    role: 'Council Member',
-    emoji: '✨',
-    color: '#22C55E', // Green
-    avatar: '/agents/lux-lobster.png',
-  },
-]
+export const COUNCIL_MEMBERS: BotMember[] = COUNCIL_AGENTS.map(toBotMember)
+export const BOT_ARMY: BotMember[] = ARMY_AGENTS.map(toBotMember)
+export const ALL_BOTS: BotMember[] = ALL_AGENTS.map(toBotMember)
 
-// Bot Army - Specialized workers
-export const BOT_ARMY: BotMember[] = [
-  {
-    id: 'athena',
-    name: 'Athena',
-    role: 'Planner',
-    emoji: '🩵',
-    color: '#06B6D4', // Cyan
-    avatar: '/agents/athena.png',
-  },
-  {
-    id: 'vulcan',
-    name: 'Vulcan',
-    role: 'Builder',
-    emoji: '🔥',
-    color: '#EA580C', // Orange
-    avatar: '/agents/vulcan.png',
-  },
-  {
-    id: 'janus',
-    name: 'Janus',
-    role: 'Verifier',
-    emoji: '🧪',
-    color: '#8B5CF6', // Purple
-    avatar: '/agents/janus.png',
-  },
-  {
-    id: 'minerva',
-    name: 'Minerva',
-    role: 'Researcher',
-    emoji: '🔭',
-    color: '#06B6D4', // Cyan
-    avatar: '/agents/minerva.png',
-  },
-  {
-    id: 'ralph',
-    name: 'Ralph',
-    role: 'Loop Orchestrator',
-    emoji: '🔄',
-    color: '#EC4899', // Pink
-    avatar: '/agents/ralph.jpg',
-  },
-  {
-    id: 'cicero',
-    name: 'Cicero',
-    role: 'Content Creator',
-    emoji: '🪶',
-    color: '#F97316', // Orange
-    avatar: '/agents/cicero.png',
-  },
-  {
-    id: 'apollo',
-    name: 'Apollo',
-    role: 'Creative Director',
-    emoji: '🎨',
-    color: '#D946EF', // Fuchsia
-    avatar: '/agents/apollo.png',
-  },
-  {
-    id: 'oracle',
-    name: 'Oracle',
-    role: 'Data Analyst',
-    emoji: '📊',
-    color: '#14B8A6', // Teal
-    avatar: '/agents/oracle.png',
-  },
-]
-
-// All bots combined for lookups
-export const ALL_BOTS = [...COUNCIL_MEMBERS, ...BOT_ARMY]
-
-// ID aliases (OpenClaw internal IDs -> display IDs)
-const BOT_ID_ALIASES: Record<string, string> = {
-  'main': 'caesar',  // OpenClaw uses 'main' for Caesar
-}
-
-// Get bot by ID (handles aliases and case-insensitivity)
+// Get bot by ID (handles aliases, OpenClaw IDs, and case-insensitivity)
 export function getBotById(id: string): BotMember | undefined {
   if (!id) return undefined
-  const lowerId = id.toLowerCase()
-  // Check aliases first
-  const aliasId = BOT_ID_ALIASES[lowerId]
-  if (aliasId) {
-    return ALL_BOTS.find(bot => bot.id === aliasId)
+  const canonicalId = resolveAgentId(id)
+  if (canonicalId) {
+    const agent = getAgentById(canonicalId)
+    if (agent) return toBotMember(agent)
   }
-  // Case-insensitive lookup by id or name
-  return ALL_BOTS.find(bot => 
-    bot.id.toLowerCase() === lowerId || 
-    bot.name.toLowerCase() === lowerId
-  )
+  // Fallback: case-insensitive name match
+  const agent = ALL_AGENTS.find(a => a.name.toLowerCase() === id.toLowerCase())
+  return agent ? toBotMember(agent) : undefined
 }
 
 interface BotAvatarProps {

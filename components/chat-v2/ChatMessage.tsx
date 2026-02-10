@@ -7,6 +7,13 @@ import { cn } from '@/lib/utils'
 import { getBotById, type BotMember } from './BotArmyStickers'
 import { ImageLightbox } from './ImageLightbox'
 import { MentionHighlight } from './MentionHighlight'
+import {
+  getAgentAvatar as getConfigAvatar,
+  getAgentColor as getConfigColor,
+  getAgentEmoji as getConfigEmoji,
+  AGENT_ID_SET,
+  resolveAgentId,
+} from './agentConfig'
 
 export interface ChatAttachment {
   type: 'image' | 'video' | 'audio'
@@ -59,71 +66,32 @@ function formatTime(timestamp: string): string {
   }
 }
 
-// Default avatar paths for agents
-const AGENT_AVATARS: Record<string, string> = {
-  'caesar': '/agents/caesar.png',
-  'main': '/agents/caesar.png',
-  'athena': '/agents/athena.png',
-  'vulcan': '/agents/vulcan.png',
-  'janus': '/agents/janus.png',
-  'minerva': '/agents/minerva.png',
-  'mercury': '/agents/mercury.png',
-  'apollo': '/agents/apollo.png',
-  'cicero': '/agents/cicero.png',
-  'oracle': '/agents/oracle.png',
-  'cato': '/agents/cato.png',
-}
-
-// Default colors for agents
-const AGENT_COLORS: Record<string, string> = {
-  'caesar': '#DC2626',
-  'main': '#DC2626',
-  'athena': '#06B6D4',
-  'vulcan': '#EA580C',
-  'janus': '#D946EF',
-  'minerva': '#10B981',
-  'mercury': '#C0C0C0',
-  'apollo': '#EAB308',
-  'cicero': '#7C3AED',
-  'oracle': '#4338CA',
-  'cato': '#8B5E3C',
+// Resolve senderId → canonical agent ID (handles aliases like 'main', 'vex', etc.)
+function resolveId(senderId: string): string {
+  return resolveAgentId(senderId) ?? senderId.toLowerCase()
 }
 
 function getAgentAvatar(senderId: string): string | undefined {
-  const lowerId = senderId.toLowerCase()
-  return AGENT_AVATARS[lowerId]
+  const id = resolveId(senderId)
+  if (!AGENT_ID_SET.has(id)) return undefined
+  return getConfigAvatar(id)
 }
 
 function getAgentColor(senderId: string): string {
-  const lowerId = senderId.toLowerCase()
-  return AGENT_COLORS[lowerId] || '#F97316'
+  const id = resolveId(senderId)
+  return getConfigColor(id)
 }
 
-// Check if a senderId is a known agent (case-insensitive)
 function isKnownAgent(senderId: string): boolean {
-  const lowerId = senderId.toLowerCase()
-  return lowerId in AGENT_AVATARS
+  return resolveAgentId(senderId) !== undefined
 }
 
 function getSenderIcon(senderType: 'human' | 'agent', senderId: string): string {
   if (senderType === 'human') return '🧑'
   const bot = getBotById(senderId)
   if (bot) return bot.emoji
-  // Fallback for unknown agents
-  const agentIcons: Record<string, string> = {
-    'caesar': '🔴',
-    'main': '🔴',
-    'athena': '🩵',
-    'vulcan': '🔥',
-    'janus': '🌗',
-    'minerva': '💚',
-    'mercury': '⚡️',
-    'apollo': '☀️',
-    'cicero': '🟣',
-    'oracle': '🔮',
-    'cato': '🗿',
-  }
-  return agentIcons[senderId.toLowerCase()] || '🤖'
+  const id = resolveId(senderId)
+  return getConfigEmoji(id)
 }
 
 interface ReadReceiptsProps {

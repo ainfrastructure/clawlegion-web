@@ -19,6 +19,8 @@ export interface AgentConfig {
   webhookEnvVar?: string    // e.g., 'JARVIS_WEBHOOK_URL'
   openclawAgentId?: string  // e.g., 'main', 'planner'
   port?: number             // health check port
+  // Legacy aliases for @mention resolution (e.g., janus was previously 'vex')
+  legacyAliases?: string[]
 }
 
 // Council Members - Leadership tier
@@ -39,6 +41,7 @@ export const COUNCIL_AGENTS: AgentConfig[] = [
     webhookEnvVar: 'CAESAR_WEBHOOK_URL',
     openclawAgentId: 'main',
     port: 18789,
+    legacyAliases: ['jarvis'],
   },
 ]
 
@@ -58,6 +61,7 @@ export const ARMY_AGENTS: AgentConfig[] = [
     specialty: 'Implementation Planning',
     openclawAgentId: 'planner',
     port: 18790,
+    legacyAliases: ['archie', 'planner'],
   },
   {
     id: 'vulcan',
@@ -73,6 +77,7 @@ export const ARMY_AGENTS: AgentConfig[] = [
     specialty: 'Software Construction',
     openclawAgentId: 'builder',
     port: 18791,
+    legacyAliases: ['mason', 'builder'],
   },
   {
     id: 'janus',
@@ -88,6 +93,7 @@ export const ARMY_AGENTS: AgentConfig[] = [
     specialty: 'Quality Assurance',
     openclawAgentId: 'verifier',
     port: 18792,
+    legacyAliases: ['vex', 'verifier', 'tester'],
   },
   {
     id: 'minerva',
@@ -103,6 +109,7 @@ export const ARMY_AGENTS: AgentConfig[] = [
     specialty: 'Technical Research',
     openclawAgentId: 'researcher',
     port: 18793,
+    legacyAliases: ['scout', 'researcher'],
   },
   {
     id: 'cato',
@@ -118,6 +125,7 @@ export const ARMY_AGENTS: AgentConfig[] = [
     specialty: 'DevOps & Infrastructure',
     openclawAgentId: 'cato',
     port: 18795,
+    legacyAliases: ['ralph', 'forge'],
   },
   {
     id: 'mercury',
@@ -133,6 +141,7 @@ export const ARMY_AGENTS: AgentConfig[] = [
     specialty: 'Communications & Outreach',
     openclawAgentId: 'mercury',
     port: 18796,
+    legacyAliases: ['lux'],
   },
   {
     id: 'cicero',
@@ -148,6 +157,7 @@ export const ARMY_AGENTS: AgentConfig[] = [
     specialty: 'Content Creation',
     openclawAgentId: 'cicero',
     port: 18797,
+    legacyAliases: ['quill'],
   },
   {
     id: 'apollo',
@@ -163,6 +173,7 @@ export const ARMY_AGENTS: AgentConfig[] = [
     specialty: 'Visual Design',
     openclawAgentId: 'apollo',
     port: 18798,
+    legacyAliases: ['pixel'],
   },
   {
     id: 'oracle',
@@ -178,6 +189,7 @@ export const ARMY_AGENTS: AgentConfig[] = [
     specialty: 'Data Analysis',
     openclawAgentId: 'oracle',
     port: 18799,
+    legacyAliases: ['sage'],
   },
 ]
 
@@ -216,4 +228,43 @@ export function getOpenclawAgentMap(): Record<string, string> {
     }
   }
   return map
+}
+
+// Set of all valid agent IDs for fast lookups
+export const AGENT_ID_SET = new Set(ALL_AGENTS.map(a => a.id))
+
+// All agent IDs as an array
+export function getAllAgentIds(): string[] {
+  return ALL_AGENTS.map(a => a.id)
+}
+
+// Get webhook URL for an agent by ID
+export function getAgentWebhookUrl(id: string): string | undefined {
+  const agent = getAgentById(id)
+  if (!agent?.port) return undefined
+  return `http://localhost:${agent.port}`
+}
+
+// Build a name→canonical ID map including legacy aliases
+// e.g. { caesar: 'caesar', jarvis: 'caesar', vex: 'janus', planner: 'athena', ... }
+export function getAgentNames(): Record<string, string> {
+  const map: Record<string, string> = {}
+  for (const agent of ALL_AGENTS) {
+    map[agent.id] = agent.id
+    map[agent.name.toLowerCase()] = agent.id
+    if (agent.openclawAgentId) {
+      map[agent.openclawAgentId] = agent.id
+    }
+    if (agent.legacyAliases) {
+      for (const alias of agent.legacyAliases) {
+        map[alias] = agent.id
+      }
+    }
+  }
+  return map
+}
+
+// Resolve an alias/legacy name to the canonical agent ID
+export function resolveAgentId(nameOrAlias: string): string | undefined {
+  return getAgentNames()[nameOrAlias.toLowerCase()]
 }

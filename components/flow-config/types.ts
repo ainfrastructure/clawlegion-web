@@ -1,7 +1,7 @@
 // Agent Flow Customization & Resource Allocation Types
 
-// Agent role types - expanded agent pool
-export type AgentRole = 'minerva' | 'athena' | 'vulcan' | 'janus' | 'caesar' | 'cato' | 'mercury' | 'cicero' | 'apollo' | 'oracle'
+// Agent role types — must match IDs in components/chat-v2/agentConfig.ts (single source of truth)
+export type AgentRole = 'caesar' | 'athena' | 'vulcan' | 'janus' | 'minerva' | 'cato' | 'mercury' | 'cicero' | 'apollo' | 'oracle'
 
 // Resource allocation levels
 export type ResourceLevel = 'high' | 'medium' | 'low' | 'local'

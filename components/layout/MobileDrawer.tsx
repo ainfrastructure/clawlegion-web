@@ -6,7 +6,6 @@ import { usePathname } from 'next/navigation'
 import {
   X,
   Home,
-  MessageSquare,
   Briefcase,
   Bot,
   Settings,
@@ -30,17 +29,12 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { 
-    href: '/', 
-    icon: Home, 
-    label: 'Home' 
+  {
+    href: '/',
+    icon: Home,
+    label: 'Home'
   },
-  { 
-    href: '/chat', 
-    icon: MessageSquare, 
-    label: 'Chat' 
-  },
-  { 
+  {
     href: '/tasks', 
     icon: Briefcase, 
     label: 'Tasks',
