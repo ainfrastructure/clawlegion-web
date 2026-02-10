@@ -17,7 +17,7 @@ export function CountdownTimer({ variant = 'large' }: { variant?: 'large' | 'com
         {['Hours', 'Mins', 'Secs'].map((label) => (
           <div key={label} className="glass-2 rounded-xl px-4 py-3 min-w-[72px] text-center">
             <div className="text-2xl font-bold font-mono text-white">--</div>
-            <div className="text-[11px] text-slate-500 uppercase tracking-wider mt-0.5">{label}</div>
+            <div className="text-[11px] text-white uppercase tracking-wider mt-0.5">{label}</div>
           </div>
         ))}
       </div>
@@ -48,7 +48,7 @@ export function CountdownTimer({ variant = 'large' }: { variant?: 'large' | 'com
       {blocks.map((block) => (
         <div key={block.label} className="glass-2 rounded-xl px-4 py-3 min-w-[72px] text-center">
           <div className="text-2xl font-bold font-mono text-white">{pad(block.value)}</div>
-          <div className="text-[11px] text-slate-500 uppercase tracking-wider mt-0.5">{block.label}</div>
+          <div className="text-[11px] text-white uppercase tracking-wider mt-0.5">{block.label}</div>
         </div>
       ))}
     </div>
