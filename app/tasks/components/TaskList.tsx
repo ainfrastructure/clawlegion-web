@@ -74,12 +74,6 @@ export function KanbanView({
   
   return (
     <>
-      <style>{`
-        @keyframes taskPulse {
-          0%, 100% { box-shadow: 0 0 8px var(--pulse-color, rgba(255,255,255,0.05)); }
-          50% { box-shadow: 0 0 16px var(--pulse-color, rgba(255,255,255,0.1)); }
-        }
-      `}</style>
       <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
         <div className="flex gap-3 sm:gap-4 min-w-[900px] sm:min-w-0 sm:grid sm:grid-cols-4 h-[calc(100vh-380px)] sm:h-[calc(100vh-320px)]">
         {columnConfig.map(({ key, label, color, icon }) => (
@@ -254,7 +248,6 @@ function TaskCard({ task, isSelected, onSelect, onClick }: TaskCardProps) {
   const agentColor = agentColorMap[agentId]
   
   // Check if card should be animated (active states)
-  const isActive = task.status === 'in_progress' || task.status === 'verifying'
 
   return (
     <div
@@ -266,10 +259,6 @@ function TaskCard({ task, isSelected, onSelect, onClick }: TaskCardProps) {
       style={{
         borderLeftColor: agentColor || undefined,
         borderLeftWidth: agentColor ? '3px' : undefined,
-        ...(isActive && agentColor ? {
-          animation: 'taskPulse 2s ease-in-out infinite',
-          boxShadow: `0 0 12px ${agentColor}20`,
-        } : {}),
       }}
       onClick={(e) => {
         if ((e.target as HTMLElement).closest('button')) return
@@ -381,7 +370,6 @@ function MobileTaskCard({ task, isSelected, onSelect, onClick }: TaskCardProps) 
   const agentColor = agentColorMap[agentId]
   
   // Check if card should be animated (active states)
-  const isActive = task.status === 'in_progress' || task.status === 'verifying'
   
   return (
     <div 
@@ -391,10 +379,6 @@ function MobileTaskCard({ task, isSelected, onSelect, onClick }: TaskCardProps) 
       style={{
         borderLeftColor: agentColor || undefined,
         borderLeftWidth: agentColor ? '3px' : undefined,
-        ...(isActive && agentColor ? {
-          animation: 'taskPulse 2s ease-in-out infinite',
-          boxShadow: `0 0 12px ${agentColor}20`,
-        } : {}),
       }}
       onClick={(e) => {
         if ((e.target as HTMLElement).closest('button')) return
