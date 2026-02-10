@@ -3,21 +3,10 @@ import { MascotTrioIcon } from './MascotTrioIcon'
 const footerLinks = {
   Product: [
     { label: 'Features', href: '#features' },
-    { label: 'Demo', href: '#demo' },
-    { label: 'Pricing', href: '#' },
-    { label: 'Changelog', href: '#' },
-  ],
-  Resources: [
-    { label: 'Documentation', href: '#' },
-    { label: 'API Reference', href: '#' },
-    { label: 'Status', href: '#' },
-    { label: 'Blog', href: '#' },
+    { label: 'Pricing', href: '#pricing' },
   ],
   Company: [
-    { label: 'About', href: '#' },
     { label: 'Contact', href: '#' },
-    { label: 'Privacy', href: '#' },
-    { label: 'Terms', href: '#' },
   ],
 }
 
