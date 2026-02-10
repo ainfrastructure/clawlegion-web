@@ -184,9 +184,6 @@ export function TaskStatusTimeline({
               >
                 {/* Status indicator + agent */}
                 <div className="flex items-center gap-1.5">
-                  {isComplete && (
-                    <CheckCircle2 size={14} className="text-emerald-400 flex-shrink-0" />
-                  )}
                   {isCurrent && (
                     <div
                       className="w-2 h-2 rounded-full animate-pulse flex-shrink-0"
@@ -198,6 +195,8 @@ export function TaskStatusTimeline({
                   )}
                   {agent && (isComplete || isCurrent) ? (
                     <AgentAvatar agentId={agent} size="xs" />
+                  ) : isComplete && !agent ? (
+                    <CheckCircle2 size={14} className="text-emerald-400 flex-shrink-0" />
                   ) : isPending ? (
                     <div className="w-5 h-5 rounded-full bg-blue-500/[0.08] flex items-center justify-center">
                       <User size={10} className="text-blue-300/30" />
