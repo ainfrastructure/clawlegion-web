@@ -4,6 +4,12 @@ import { useState } from 'react'
 import { CheckCircle2, Circle, Clock, User, ExternalLink } from 'lucide-react'
 import { STATUS_ORDER as CANONICAL_STATUS_ORDER, STATUS_CONFIG, getWorkflowForDomain, type WorkflowStep } from './config/status'
 import { AgentAvatar } from '@/components/agents'
+import { COUNCIL_AGENTS, ARMY_AGENTS } from '@/components/chat-v2/agentConfig'
+
+// Build agent color lookup
+const ALL_AGENTS_LIST = [...COUNCIL_AGENTS, ...ARMY_AGENTS]
+const AGENT_COLOR_MAP: Record<string, string> = {}
+ALL_AGENTS_LIST.forEach(a => { AGENT_COLOR_MAP[a.id] = a.color })
 
 interface TaskActivity {
   id: string
@@ -150,6 +156,7 @@ export function TaskStatusTimeline({
           const isCurrent = index === currentIndex && !isCancelled
           const isPending = index > currentIndex || isCancelled
           const agent = getPhaseAgent(status.key, activities)
+          const agentColor = agent ? AGENT_COLOR_MAP[agent] : null
           const duration = getPhaseDuration(status.key, index, activities, currentStatus, workflowSteps)
           const isHovered = hoveredPhase === status.key
           const phaseActivities = isHovered && (isComplete || isCurrent) ? getPhaseActivities(status.key, activities) : []
@@ -164,9 +171,15 @@ export function TaskStatusTimeline({
                   flex-1 min-w-0 rounded-xl p-2.5 flex flex-col items-center gap-1.5
                   transition-all duration-300 group relative
                   ${isComplete ? 'bg-emerald-500/[0.08] border border-emerald-500/[0.15] hover:bg-emerald-500/[0.12]' : ''}
-                  ${isCurrent ? 'bg-blue-500/[0.12] border border-blue-500/[0.2] shadow-[0_0_20px_-4px_rgb(59_130_246/0.3)] animate-glow-pulse' : ''}
+                  ${isCurrent && !agentColor ? 'bg-blue-500/[0.12] border border-blue-500/[0.2] shadow-[0_0_20px_-4px_rgb(59_130_246/0.3)] animate-glow-pulse' : ''}
+                  ${isCurrent && agentColor ? 'border animate-glow-pulse' : ''}
                   ${isPending ? 'bg-white/[0.02] border border-transparent opacity-40' : ''}
                 `}
+                style={isCurrent && agentColor ? {
+                  backgroundColor: `${agentColor}18`,
+                  borderColor: `${agentColor}40`,
+                  boxShadow: `0 0 20px -4px ${agentColor}50`,
+                } : undefined}
               >
                 {/* Status indicator + agent */}
                 <div className="flex items-center gap-1.5">
@@ -174,7 +187,10 @@ export function TaskStatusTimeline({
                     <CheckCircle2 size={14} className="text-emerald-400 flex-shrink-0" />
                   )}
                   {isCurrent && (
-                    <div className="w-2 h-2 rounded-full bg-blue-400 animate-pulse flex-shrink-0" />
+                    <div
+                      className="w-2 h-2 rounded-full animate-pulse flex-shrink-0"
+                      style={{ backgroundColor: agentColor || '#60a5fa' }}
+                    />
                   )}
                   {isPending && (
                     <Circle size={12} className="text-blue-300/30 flex-shrink-0" />
@@ -200,11 +216,14 @@ export function TaskStatusTimeline({
 
                 {/* Duration */}
                 {duration && (isComplete || isCurrent) && (
-                  <span className={`
-                    text-[10px] font-mono leading-none
-                    ${isComplete ? 'text-emerald-400/60' : ''}
-                    ${isCurrent ? 'text-blue-300' : ''}
-                  `}>
+                  <span
+                    className={`
+                      text-[10px] font-mono leading-none
+                      ${isComplete ? 'text-emerald-400/60' : ''}
+                      ${isCurrent && !agentColor ? 'text-blue-300' : ''}
+                    `}
+                    style={isCurrent && agentColor ? { color: agentColor, opacity: 0.8 } : undefined}
+                  >
                     {duration}
                   </span>
                 )}
@@ -264,12 +283,15 @@ export function TaskStatusTimeline({
               {/* Connecting line */}
               {index < workflowSteps.length - 1 && (
                 <div className="flex items-center w-2 flex-shrink-0">
-                  <div className={`
-                    h-px w-full
-                    ${isComplete ? 'bg-emerald-500/30' : ''}
-                    ${isCurrent ? 'bg-blue-500/30' : ''}
-                    ${isPending ? 'bg-blue-500/[0.06]' : ''}
-                  `} />
+                  <div
+                    className={`
+                      h-px w-full
+                      ${isComplete ? 'bg-emerald-500/30' : ''}
+                      ${isCurrent && !agentColor ? 'bg-blue-500/30' : ''}
+                      ${isPending ? 'bg-blue-500/[0.06]' : ''}
+                    `}
+                    style={isCurrent && agentColor ? { backgroundColor: `${agentColor}50` } : undefined}
+                  />
                 </div>
               )}
             </div>
