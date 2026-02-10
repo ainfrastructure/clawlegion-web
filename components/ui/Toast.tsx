@@ -93,7 +93,7 @@ function parseMessageOrOptions(arg?: string | ToastOptions): ToastOptions {
 
 export function ToastProvider({ children }: { children: React.ReactNode }) {
   const [toasts, setToasts] = useState<Toast[]>([])
-  const [soundEnabled, setSoundEnabled] = useState(true)
+  const [soundEnabled, setSoundEnabled] = useState(false)
   
   // Load sound preference from localStorage
   useEffect(() => {

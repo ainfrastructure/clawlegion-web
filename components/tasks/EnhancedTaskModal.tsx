@@ -3,16 +3,16 @@
 import { useState, useCallback } from 'react'
 import { useMutation } from '@tanstack/react-query'
 import api from '@/lib/api'
-import { X, Loader2, Plus, Trash2, ChevronDown, ChevronUp, Zap, BookOpen, Microscope, Search, Sparkles, ArrowLeft } from 'lucide-react'
+import { X, Loader2, Plus, Trash2, ChevronDown, ChevronUp, Sparkles, ArrowLeft } from 'lucide-react'
+import { AgentFlowSection } from './AgentFlowSection'
 import {
   DEFAULT_PRESETS,
-  AGENT_METADATA,
   RESOURCE_LEVELS,
   applyPreset,
-  getAgentColorClasses
 } from '@/lib/flow-presets'
 import type {
   FlowConfiguration,
+  AgentConfig,
   AgentRole,
   ResourceLevel
 } from '@/components/flow-config/types'
@@ -165,6 +165,16 @@ export function EnhancedTaskModal({ isOpen, onClose, onTaskCreated, repositories
           ? { ...agent, resourceLevel: level }
           : agent
       ),
+      presetId: undefined,
+    }))
+    setSelectedPresetId('custom')
+  }, [])
+
+  // Handle agents reorder (drag & drop)
+  const handleAgentsReorder = useCallback((agents: AgentConfig[]) => {
+    setFlowConfig(prev => ({
+      ...prev,
+      agents,
       presetId: undefined,
     }))
     setSelectedPresetId('custom')
@@ -418,33 +428,6 @@ export function EnhancedTaskModal({ isOpen, onClose, onTaskCreated, repositories
                     AI-generated — review and edit before submitting
                   </div>
                 )}
-
-                {/* Template/Preset Selector */}
-                <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-3">
-                    Quick Template
-                  </label>
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                    {DEFAULT_PRESETS.map((preset) => (
-                      <button
-                        key={preset.id}
-                        type="button"
-                        onClick={() => handlePresetSelect(preset.id)}
-                        className={`flex flex-col items-center p-3 rounded-lg border-2 transition-all ${
-                          selectedPresetId === preset.id
-                            ? 'border-amber-500 bg-amber-500/10 text-amber-400'
-                            : 'border-slate-600 hover:border-slate-500 text-slate-400 hover:text-slate-300'
-                        }`}
-                      >
-                        <span className="mb-1">{PRESET_ICONS[preset.id]}</span>
-                        <span className="text-xs font-medium">{preset.name}</span>
-                      </button>
-                    ))}
-                  </div>
-                  {selectedPresetId === 'custom' && (
-                    <p className="mt-2 text-xs text-amber-400">Customized from preset</p>
-                  )}
-                </div>
 
                 {/* Task Details */}
                 <div className="space-y-4">
