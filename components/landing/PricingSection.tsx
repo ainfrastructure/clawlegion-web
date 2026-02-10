@@ -6,14 +6,14 @@ import { useEarlyAccessForm } from '@/hooks/useEarlyAccessForm'
 import { LAUNCH_CONFIG } from '@/lib/launch-config'
 
 const valueItems = [
-  'Real-time fleet monitoring dashboard',
-  'Task orchestration & queue management',
-  'Multi-agent coordination chat',
-  'Interactive dependency graph',
-  'Session replay & audit logs',
   'Unlimited custom agents',
-  '5 workflow templates',
-  'Priority support',
+  'Visual flow builder — design any workflow',
+  'Smart task routing & parallel execution',
+  'Agent-to-agent coordination',
+  'Live dashboard & session replay',
+  'Bring your own API keys',
+  'Platform integrations (social, messaging, more)',
+  '1-on-1 mentoring & hands-on setup',
   'All future features included',
 ]
 
