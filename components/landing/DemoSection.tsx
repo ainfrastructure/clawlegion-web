@@ -128,8 +128,8 @@ export function DemoSection() {
             className="group relative w-full glass-3 rounded-2xl overflow-hidden cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-[#020617] touch-manipulation"
             aria-label="Play demo video"
           >
-            {/* Aspect-ratio container — prevents layout shift */}
-            <div className="aspect-video relative overflow-hidden">
+            {/* Aspect-ratio container — uses video's native 1280:970 ratio, not 16:9 */}
+            <div className="relative overflow-hidden" style={{ aspectRatio: '1280 / 970' }}>
               {/* Poster image */}
               <img
                 src="/demo-poster.jpg"
@@ -184,8 +184,13 @@ export function DemoSection() {
             <X className="w-6 h-6 text-white" />
           </button>
 
-          {/* Video container — mobile: near-full screen, desktop: centered with padding */}
-          <div className="w-[96vw] sm:w-[90vw] max-w-5xl aspect-video relative">
+          {/* Video container
+              Mobile: 100vw edge-to-edge, natural aspect ratio (1280:970 ≈ 4:3)
+              Desktop: centered, max-width capped, natural ratio */}
+          <div
+            className="w-screen sm:w-[90vw] sm:max-w-5xl relative"
+            style={{ aspectRatio: '1280 / 970', maxHeight: '90vh' }}
+          >
             {/* Loading spinner */}
             {isLoading && (
               <div className="absolute inset-0 flex items-center justify-center z-20">
@@ -196,7 +201,7 @@ export function DemoSection() {
             {/* Video */}
             <video
               ref={videoRef}
-              className="w-full h-full rounded-lg sm:rounded-xl object-contain bg-black"
+              className="w-full h-full sm:rounded-xl object-contain bg-black"
               poster="/demo-poster.jpg"
               playsInline
               controls
