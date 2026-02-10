@@ -69,9 +69,9 @@ const AGENT_AVATARS: Record<string, string> = {
   'janus': '/agents/janus.png',
   'hermes': '/agents/minerva.png',
   'ralph': '/agents/ralph.png',
-  'quill': '/agents/quill-writer.svg',
-  'pixel': '/agents/pixel-designer.svg',
-  'sage': '/agents/sage-analyst.svg',
+  'cicero': '/agents/cicero.png',
+  'apollo': '/agents/apollo.png',
+  'oracle': '/agents/oracle.png',
 }
 
 // Default colors for agents
@@ -84,9 +84,9 @@ const AGENT_COLORS: Record<string, string> = {
   'janus': '#1E40AF',
   'minerva': '#10B981',
   'ralph': '#EC4899',
-  'quill': '#F97316',
-  'pixel': '#D946EF',
-  'sage': '#14B8A6',
+  'cicero': '#7C3AED',
+  'apollo': '/agents/apollo.png',
+  'oracle': '#4338CA',
 }
 
 function getAgentAvatar(senderId: string): string | undefined {
@@ -119,9 +119,9 @@ function getSenderIcon(senderType: 'human' | 'agent', senderId: string): string 
     'janus': '🌗',
     'minerva': '💚',
     'ralph': '🔄',
-    'quill': '🪶',
-    'pixel': '🎨',
-    'sage': '📊',
+    'cicero': '🟣',
+    'apollo': '/agents/apollo.png',
+    'oracle': '🔮',
   }
   return agentIcons[senderId.toLowerCase()] || '🤖'
 }

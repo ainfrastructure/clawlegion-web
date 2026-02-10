@@ -35,9 +35,9 @@ export const AGENT_WEBHOOKS: Record<string, string> = {
   'janus': process.env.AGENT_WEBHOOK_VEX || 'http://localhost:18792',
   'minerva': process.env.AGENT_WEBHOOK_SCOUT || 'http://localhost:18793',
   'ralph': process.env.AGENT_WEBHOOK_RALPH || 'http://localhost:18794',
-  'quill': process.env.AGENT_WEBHOOK_QUILL || 'http://localhost:18797',
-  'pixel': process.env.AGENT_WEBHOOK_PIXEL || 'http://localhost:18798',
-  'sage': process.env.AGENT_WEBHOOK_SAGE || 'http://localhost:18799',
+  'cicero': process.env.AGENT_WEBHOOK_QUILL || 'http://localhost:18797',
+  'apollo': process.env.AGENT_WEBHOOK_PIXEL || 'http://localhost:18798',
+  'oracle': process.env.AGENT_WEBHOOK_SAGE || 'http://localhost:18799',
 }
 
 // Canonical agent names (for self-mention detection and alias resolution)
@@ -49,9 +49,9 @@ export const AGENT_NAMES: Record<string, string> = {
   'janus': 'janus',
   'minerva': 'minerva',
   'ralph': 'ralph',
-  'quill': 'quill',
-  'pixel': 'pixel',
-  'sage': 'sage',
+  'cicero': 'cicero',
+  'apollo': 'apollo',
+  'oracle': 'oracle',
   // Legacy aliases
   'verifier': 'janus',
   'tester': 'janus',

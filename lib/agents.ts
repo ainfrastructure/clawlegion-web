@@ -9,9 +9,9 @@ export const AGENTS = [
   { id: 'janus', name: 'Janus', port: 18792, role: 'Verifier' },
   { id: 'minerva', name: 'Minerva', port: 18793, role: 'Researcher' },
   { id: 'ralph', name: 'Ralph', port: 18794, role: 'Loop Orchestrator' },
-  { id: 'quill', name: 'Quill', port: 18797, role: 'Content Creator' },
-  { id: 'pixel', name: 'Pixel', port: 18798, role: 'Creative Director' },
-  { id: 'sage', name: 'Sage', port: 18799, role: 'Data Analyst' },
+  { id: 'cicero', name: 'Cicero', port: 18797, role: 'Content Creator' },
+  { id: 'apollo', name: 'Apollo', port: 18798, role: 'Creative Director' },
+  { id: 'oracle', name: 'Oracle', port: 18799, role: 'Data Analyst' },
 ] as const;
 
 export type AgentId = typeof AGENTS[number]['id'];
@@ -47,7 +47,7 @@ const AGENT_COLORS: Record<string, string> = {
   minerva: '#10B981',     // Emerald - Researcher (Minerva)
   ralph: '#EC4899',     // Pink - Loop Orchestrator
   quill: '#F97316',     // Orange - Content Creator
-  pixel: '#D946EF',     // Fuchsia - Creative Director
+  apollo: '#EAB308',     // Fuchsia - Creative Director
   sage: '#14B8A6',      // Teal - Data Analyst
   // Role-based IDs from OpenClaw config
   main: '#DC2626',      // Red - Orchestrator (caesar)
@@ -67,9 +67,9 @@ const AGENT_AVATARS: Record<string, string> = {
   minerva: '/agents/minerva.png',
   ralph: '/agents/ralph.jpg',
   lux: '/agents/lux-lobster.png',
-  quill: '/agents/quill-writer.svg',
-  pixel: '/agents/pixel-designer.svg',
-  sage: '/agents/sage-analyst.svg',
+  cicero: '/agents/cicero.png',
+  apollo: '/agents/apollo.png',
+  sage: '/agents/oracle.png',
   // Role-based IDs from OpenClaw config
   main: '/agents/caesar.png',
   planner: '/agents/athena.png',
@@ -89,7 +89,7 @@ const AGENT_EMOJIS: Record<string, string> = {
   ralph: '🔄',
   lux: '✨',
   quill: '🪶',
-  pixel: '🎨',
+  apollo: '☀️',
   sage: '📊',
   // Role-based IDs from OpenClaw config
   main: '🔴',
@@ -223,9 +223,9 @@ export const FALLBACK_BOT_ARMY: AgentDisplay[] = [
   { id: 'janus', name: 'Janus', emoji: '🧪', avatar: '/agents/vex.jpg', role: 'Verifier', color: '#10B981', status: 'online' },
   { id: 'minerva', name: 'Minerva', emoji: '🔭', avatar: '/agents/scout.jpg', role: 'Researcher', color: '#06B6D4', status: 'online' },
   { id: 'ralph', name: 'Ralph', emoji: '🔄', avatar: '/agents/ralph.jpg', role: 'Loop Orchestrator', color: '#EC4899', status: 'online' },
-  { id: 'quill', name: 'Quill', emoji: '🪶', avatar: '/agents/quill-writer.svg', role: 'Content Creator', color: '#F97316', status: 'online' },
-  { id: 'pixel', name: 'Pixel', emoji: '🎨', avatar: '/agents/pixel-designer.svg', role: 'Creative Director', color: '#D946EF', status: 'online' },
-  { id: 'sage', name: 'Sage', emoji: '📊', avatar: '/agents/sage-analyst.svg', role: 'Data Analyst', color: '#14B8A6', status: 'online' },
+  { id: 'cicero', name: 'Cicero', emoji: '🪶', avatar: '/agents/quill-writer.svg', role: 'Content Creator', color: '#F97316', status: 'online' },
+  { id: 'apollo', name: 'Apollo', emoji: '🎨', avatar: '/agents/apollo.png', role: 'Creative Director', color: '#D946EF', status: 'online' },
+  { id: 'oracle', name: 'Oracle', emoji: '📊', avatar: '/agents/oracle.png', role: 'Data Analyst', color: '#14B8A6', status: 'online' },
 ]
 
 export async function checkAgentHealth(port: number, timeoutMs: number = 2000): Promise<boolean> {

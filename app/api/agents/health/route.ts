@@ -45,10 +45,10 @@ const DEFAULT_AGENTS: AgentConfig[] = [
   { id: 'vulcan', name: 'Vulcan' },
   { id: 'janus', name: 'Janus' },
   { id: 'mercury', name: 'Mercury' },
-  { id: 'forge', name: 'Forge' },
-  { id: 'pixel', name: 'Pixel' },
-  { id: 'quill', name: 'Quill' },
-  { id: 'sage', name: 'Sage' },
+  { id: 'cato', name: 'Cato' },
+  { id: 'apollo', name: 'Apollo' },
+  { id: 'cicero', name: 'Cicero' },
+  { id: 'oracle', name: 'Oracle' },
 ]
 
 // Simple in-memory cache with 30s TTL

@@ -178,8 +178,8 @@ export const DEFAULT_PRESETS: FlowPreset[] = [
     isSystem: true,
     agents: [
       { role: 'minerva', enabled: true, resourceLevel: 'medium' },
-      { role: 'quill', enabled: true, resourceLevel: 'high' },
-      { role: 'pixel', enabled: true, resourceLevel: 'medium' },
+      { role: 'cicero', enabled: true, resourceLevel: 'high' },
+      { role: 'apollo', enabled: true, resourceLevel: 'medium' },
       { role: 'mercury', enabled: true, resourceLevel: 'medium' },
     ],
     loopSettings: {
@@ -201,9 +201,9 @@ export const DEFAULT_PRESETS: FlowPreset[] = [
     description: 'Data-driven brand campaign with creative assets',
     isSystem: true,
     agents: [
-      { role: 'sage', enabled: true, resourceLevel: 'high' },
-      { role: 'quill', enabled: true, resourceLevel: 'high' },
-      { role: 'pixel', enabled: true, resourceLevel: 'high' },
+      { role: 'oracle', enabled: true, resourceLevel: 'high' },
+      { role: 'cicero', enabled: true, resourceLevel: 'high' },
+      { role: 'apollo', enabled: true, resourceLevel: 'high' },
       { role: 'mercury', enabled: true, resourceLevel: 'medium' },
     ],
     loopSettings: {
@@ -226,8 +226,8 @@ export const DEFAULT_PRESETS: FlowPreset[] = [
     isSystem: true,
     agents: [
       { role: 'mercury', enabled: true, resourceLevel: 'medium' },
-      { role: 'sage', enabled: true, resourceLevel: 'high' },
-      { role: 'quill', enabled: true, resourceLevel: 'medium' },
+      { role: 'oracle', enabled: true, resourceLevel: 'high' },
+      { role: 'cicero', enabled: true, resourceLevel: 'medium' },
     ],
     loopSettings: {
       timeBudgetHours: 3,
@@ -252,7 +252,7 @@ export const DEFAULT_PRESETS: FlowPreset[] = [
       { role: 'athena', enabled: true, resourceLevel: 'high' },
       { role: 'vulcan', enabled: true, resourceLevel: 'high' },
       { role: 'janus', enabled: true, resourceLevel: 'high' },
-      { role: 'forge', enabled: true, resourceLevel: 'medium' },
+      { role: 'cato', enabled: true, resourceLevel: 'medium' },
     ],
     loopSettings: {
       timeBudgetHours: 8,
@@ -494,7 +494,7 @@ export function formatTimeBudget(hours: number): string {
 /**
  * Valid agent roles for validation
  */
-const VALID_ROLES: AgentRole[] = ['minerva', 'athena', 'vulcan', 'janus', 'caesar', 'forge', 'mercury', 'quill', 'pixel', 'sage']
+const VALID_ROLES: AgentRole[] = ['minerva', 'athena', 'vulcan', 'janus', 'caesar', 'cato', 'mercury', 'cicero', 'apollo', 'oracle']
 
 /**
  * Check if a role is a valid agent role

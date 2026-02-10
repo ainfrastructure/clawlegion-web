@@ -49,7 +49,7 @@ const AGENT_POOL: Record<string, Agent> = {
     avatarType: 'svg',
   },
   forge: {
-    id: 'forge',
+    id: 'cato',
     name: 'Forge',
     role: 'DevOps Engineer',
     color: '#FF6B00',
@@ -65,7 +65,7 @@ const AGENT_POOL: Record<string, Agent> = {
     avatarType: 'png',
   },
   quill: {
-    id: 'quill',
+    id: 'cicero',
     name: 'Quill',
     role: 'Content Creator',
     color: '#F97316',
@@ -73,7 +73,7 @@ const AGENT_POOL: Record<string, Agent> = {
     avatarType: 'svg',
   },
   pixel: {
-    id: 'pixel',
+    id: 'apollo',
     name: 'Pixel',
     role: 'Creative Director',
     color: '#D946EF',
@@ -81,7 +81,7 @@ const AGENT_POOL: Record<string, Agent> = {
     avatarType: 'svg',
   },
   sage: {
-    id: 'sage',
+    id: 'oracle',
     name: 'Sage',
     role: 'Data Analyst',
     color: '#14B8A6',
@@ -128,7 +128,7 @@ const TEMPLATES: Template[] = [
     name: 'Content Marketing',
     emoji: '📝',
     tagline: 'One brief in, a week of content out',
-    pipeline: ['minerva', 'quill', 'pixel', 'mercury'],
+    pipeline: ['minerva', 'cicero', 'apollo', 'mercury'],
     descriptions: {
       caesar: 'Routes briefs & coordinates the content pipeline',
       scout: 'Researches trending topics & competitors',
@@ -145,7 +145,7 @@ const TEMPLATES: Template[] = [
     name: 'Market Research & Analysis',
     emoji: '🔬',
     tagline: 'Data-driven insights on autopilot',
-    pipeline: ['minerva', 'sage', 'athena', 'quill'],
+    pipeline: ['minerva', 'oracle', 'athena', 'cicero'],
     descriptions: {
       caesar: 'Coordinates research streams & deliverables',
       scout: 'Gathers market data, competitor intel, surveys',
@@ -162,7 +162,7 @@ const TEMPLATES: Template[] = [
     name: 'Product Launch',
     emoji: '🎯',
     tagline: 'From positioning to launch day — orchestrated',
-    pipeline: ['sage', 'athena', 'pixel', 'mercury'],
+    pipeline: ['oracle', 'athena', 'apollo', 'mercury'],
     descriptions: {
       caesar: 'Manages the launch timeline & coordinates teams',
       sage: 'Analyzes market fit & competitor positioning',
@@ -179,7 +179,7 @@ const TEMPLATES: Template[] = [
     name: 'Operations & Compliance',
     emoji: '📋',
     tagline: 'Streamline processes, enforce standards',
-    pipeline: ['minerva', 'athena', 'forge', 'janus'],
+    pipeline: ['minerva', 'athena', 'cato', 'janus'],
     descriptions: {
       caesar: 'Oversees operational workflows & compliance',
       scout: 'Audits current processes & regulations',

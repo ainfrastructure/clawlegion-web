@@ -76,28 +76,28 @@ export const BOT_ARMY: BotMember[] = [
     avatar: '/agents/ralph.jpg',
   },
   {
-    id: 'quill',
-    name: 'Quill',
+    id: 'cicero',
+    name: 'Cicero',
     role: 'Content Creator',
     emoji: '🪶',
     color: '#F97316', // Orange
-    avatar: '/agents/quill-writer.svg',
+    avatar: '/agents/cicero.png',
   },
   {
-    id: 'pixel',
-    name: 'Pixel',
+    id: 'apollo',
+    name: 'Apollo',
     role: 'Creative Director',
     emoji: '🎨',
     color: '#D946EF', // Fuchsia
-    avatar: '/agents/pixel-designer.svg',
+    avatar: '/agents/apollo.png',
   },
   {
-    id: 'sage',
-    name: 'Sage',
+    id: 'oracle',
+    name: 'Oracle',
     role: 'Data Analyst',
     emoji: '📊',
     color: '#14B8A6', // Teal
-    avatar: '/agents/sage-analyst.svg',
+    avatar: '/agents/oracle.png',
   },
 ]
 

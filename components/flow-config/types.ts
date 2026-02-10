@@ -1,7 +1,7 @@
 // Agent Flow Customization & Resource Allocation Types
 
 // Agent role types - expanded agent pool
-export type AgentRole = 'minerva' | 'athena' | 'vulcan' | 'janus' | 'caesar' | 'forge' | 'mercury' | 'quill' | 'pixel' | 'sage'
+export type AgentRole = 'minerva' | 'athena' | 'vulcan' | 'janus' | 'caesar' | 'cato' | 'mercury' | 'cicero' | 'apollo' | 'oracle'
 
 // Resource allocation levels
 export type ResourceLevel = 'high' | 'medium' | 'low' | 'local'
