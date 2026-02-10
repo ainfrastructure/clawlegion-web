@@ -12,7 +12,6 @@ export { ReachabilityIndicator, ReachabilityDot } from './ReachabilityIndicator'
 export { AgentAvatar, agentAvatars, agentNames, agentColors, type AgentAvatarProps } from './AgentAvatar';
 
 // Fleet page config components
-export { AgentProfilePanel } from './AgentProfilePanel';
 export { SoulEditorModal } from './SoulEditorModal';
 
 // Redesigned agent cards

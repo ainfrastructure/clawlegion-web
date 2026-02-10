@@ -3,16 +3,16 @@
 import { useState, useCallback } from 'react'
 import { useMutation } from '@tanstack/react-query'
 import api from '@/lib/api'
-import { X, Loader2, Plus, Trash2, ChevronDown, ChevronUp, Zap, BookOpen, Microscope, Search, Sparkles, ArrowLeft } from 'lucide-react'
+import { X, Loader2, ChevronDown, ChevronUp, Sparkles, ArrowLeft, HelpCircle } from 'lucide-react'
+import { AgentFlowSection } from './AgentFlowSection'
+import { SuccessCriteriaSection } from './SuccessCriteriaSection'
 import {
   DEFAULT_PRESETS,
-  AGENT_METADATA,
-  RESOURCE_LEVELS,
   applyPreset,
-  getAgentColorClasses
 } from '@/lib/flow-presets'
 import type {
   FlowConfiguration,
+  AgentConfig,
   AgentRole,
   ResourceLevel
 } from '@/components/flow-config/types'
@@ -23,14 +23,6 @@ type Step = 'prompt' | 'review'
 interface SuccessCriterion {
   id: string
   text: string
-}
-
-// Icons for presets
-const PRESET_ICONS: Record<string, React.ReactNode> = {
-  'quick-fix': <Zap size={16} />,
-  'standard': <BookOpen size={16} />,
-  'deep-work': <Microscope size={16} />,
-  'research-only': <Search size={16} />,
 }
 
 const DEFAULT_CRITERIA: SuccessCriterion[] = [
@@ -65,7 +57,6 @@ export function EnhancedTaskModal({ isOpen, onClose, onTaskCreated, repositories
 
   // Success criteria
   const [successCriteria, setSuccessCriteria] = useState<SuccessCriterion[]>(DEFAULT_CRITERIA)
-  const [newCriterion, setNewCriterion] = useState('')
 
   // Collapsible sections
   const [showAdvanced, setShowAdvanced] = useState(false)
@@ -90,7 +81,6 @@ export function EnhancedTaskModal({ isOpen, onClose, onTaskCreated, repositories
     const preset = DEFAULT_PRESETS.find(p => p.id === 'standard')!
     setFlowConfig(applyPreset(preset))
     setSuccessCriteria(DEFAULT_CRITERIA)
-    setNewCriterion('')
     setShowAdvanced(false)
     setShowTechnical(false)
   }, [])
@@ -142,17 +132,28 @@ export function EnhancedTaskModal({ isOpen, onClose, onTaskCreated, repositories
     }
   }, [])
 
-  // Handle agent toggle
+  // Handle agent toggle — also adds agents not yet in config
   const handleAgentToggle = useCallback((role: AgentRole) => {
-    setFlowConfig(prev => ({
-      ...prev,
-      agents: prev.agents.map(agent =>
-        agent.role === role
-          ? { ...agent, enabled: !agent.enabled }
-          : agent
-      ),
-      presetId: undefined,
-    }))
+    setFlowConfig(prev => {
+      const existing = prev.agents.find(a => a.role === role)
+      if (existing) {
+        return {
+          ...prev,
+          agents: prev.agents.map(agent =>
+            agent.role === role
+              ? { ...agent, enabled: !agent.enabled }
+              : agent
+          ),
+          presetId: undefined,
+        }
+      }
+      // Agent not in config yet — add it as enabled
+      return {
+        ...prev,
+        agents: [...prev.agents, { role, enabled: true, resourceLevel: 'medium' as ResourceLevel }],
+        presetId: undefined,
+      }
+    })
     setSelectedPresetId('custom')
   }, [])
 
@@ -170,19 +171,19 @@ export function EnhancedTaskModal({ isOpen, onClose, onTaskCreated, repositories
     setSelectedPresetId('custom')
   }, [])
 
-  // Handle success criteria
-  const addCriterion = useCallback(() => {
-    if (newCriterion.trim()) {
-      setSuccessCriteria(prev => [
-        ...prev,
-        { id: Date.now().toString(), text: newCriterion.trim() }
-      ])
-      setNewCriterion('')
-    }
-  }, [newCriterion])
+  // Handle agents reorder (drag & drop)
+  const handleAgentsReorder = useCallback((agents: AgentConfig[]) => {
+    setFlowConfig(prev => ({
+      ...prev,
+      agents,
+      presetId: undefined,
+    }))
+    setSelectedPresetId('custom')
+  }, [])
 
-  const removeCriterion = useCallback((id: string) => {
-    setSuccessCriteria(prev => prev.filter(c => c.id !== id))
+  // Handle success criteria change (from SuccessCriteriaSection)
+  const handleCriteriaChange = useCallback((newCriteria: typeof successCriteria) => {
+    setSuccessCriteria(newCriteria)
   }, [])
 
   // Create task mutation
@@ -419,33 +420,6 @@ export function EnhancedTaskModal({ isOpen, onClose, onTaskCreated, repositories
                   </div>
                 )}
 
-                {/* Template/Preset Selector */}
-                <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-3">
-                    Quick Template
-                  </label>
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                    {DEFAULT_PRESETS.map((preset) => (
-                      <button
-                        key={preset.id}
-                        type="button"
-                        onClick={() => handlePresetSelect(preset.id)}
-                        className={`flex flex-col items-center p-3 rounded-lg border-2 transition-all ${
-                          selectedPresetId === preset.id
-                            ? 'border-amber-500 bg-amber-500/10 text-amber-400'
-                            : 'border-slate-600 hover:border-slate-500 text-slate-400 hover:text-slate-300'
-                        }`}
-                      >
-                        <span className="mb-1">{PRESET_ICONS[preset.id]}</span>
-                        <span className="text-xs font-medium">{preset.name}</span>
-                      </button>
-                    ))}
-                  </div>
-                  {selectedPresetId === 'custom' && (
-                    <p className="mt-2 text-xs text-amber-400">Customized from preset</p>
-                  )}
-                </div>
-
                 {/* Task Details */}
                 <div className="space-y-4">
                   {/* Title */}
@@ -499,8 +473,18 @@ export function EnhancedTaskModal({ isOpen, onClose, onTaskCreated, repositories
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-slate-300 mb-2">
+                      <label className="flex items-center gap-1.5 text-sm font-medium text-slate-300 mb-2">
                         Priority
+                        <span className="relative group/tip">
+                          <HelpCircle className="w-3.5 h-3.5 text-slate-500 cursor-help" />
+                          <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 rounded-lg bg-slate-900 border border-white/[0.08] text-[11px] text-slate-300 leading-relaxed whitespace-nowrap opacity-0 pointer-events-none group-hover/tip:opacity-100 transition-opacity duration-150 shadow-xl z-20">
+                            <span className="font-semibold text-red-400">P0</span> Critical / urgent<br />
+                            <span className="font-semibold text-orange-400">P1</span> High priority<br />
+                            <span className="font-semibold text-amber-400">P2</span> Medium priority<br />
+                            <span className="font-semibold text-blue-400">P3</span> Low priority
+                            <span className="absolute top-full left-1/2 -translate-x-1/2 -mt-px border-4 border-transparent border-t-slate-900" />
+                          </span>
+                        </span>
                       </label>
                       <div className="flex gap-2">
                         {(['P0', 'P1', 'P2', 'P3'] as const).map((p) => (
@@ -508,7 +492,7 @@ export function EnhancedTaskModal({ isOpen, onClose, onTaskCreated, repositories
                             key={p}
                             type="button"
                             onClick={() => setPriority(p)}
-                            className={`flex-1 py-2 rounded-lg text-sm font-medium transition-all ${
+                            className={`flex-1 py-3 rounded-lg text-sm font-medium transition-all ${
                               priority === p
                                 ? p === 'P0' ? 'bg-red-500 text-white'
                                 : p === 'P1' ? 'bg-orange-500 text-white'
@@ -526,107 +510,20 @@ export function EnhancedTaskModal({ isOpen, onClose, onTaskCreated, repositories
                 </div>
 
                 {/* Agent Flow Builder */}
-                <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-3">
-                    Agent Flow
-                  </label>
-                  <div className="bg-slate-900/50 rounded-xl border border-white/[0.06] p-4">
-                    <div className="flex items-center justify-between gap-2 mb-4">
-                      {flowConfig.agents.map((agent, idx) => {
-                        const meta = AGENT_METADATA[agent.role]
-                        const colors = getAgentColorClasses(meta.color)
-                        return (
-                          <div key={agent.role} className="flex items-center flex-1">
-                            <div className={`flex-1 p-3 rounded-lg border-2 transition-all ${
-                              agent.enabled
-                                ? `${colors.bgLight} ${colors.border}`
-                                : 'glass-2 border-white/[0.06] opacity-50'
-                            }`}>
-                              <div className="flex items-center justify-between mb-2">
-                                <span className="text-lg">{meta.emoji}</span>
-                                <button
-                                  type="button"
-                                  onClick={() => handleAgentToggle(agent.role)}
-                                  className={`w-10 h-5 rounded-full transition-colors relative ${
-                                    agent.enabled ? 'bg-green-500' : 'bg-slate-600'
-                                  }`}
-                                >
-                                  <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-transform ${
-                                    agent.enabled ? 'left-5' : 'left-0.5'
-                                  }`} />
-                                </button>
-                              </div>
-                              <div className="text-xs font-medium text-slate-300 mb-1">{meta.name}</div>
-                              {agent.enabled && (
-                                <select
-                                  value={agent.resourceLevel}
-                                  onChange={(e) => handleResourceLevelChange(agent.role, e.target.value as ResourceLevel)}
-                                  className="w-full px-2 py-1 text-xs rounded bg-slate-800 border border-slate-600 text-slate-300"
-                                >
-                                  {RESOURCE_LEVELS.filter(l => l.value !== 'local').map((level) => (
-                                    <option key={level.value} value={level.value}>
-                                      {level.label}
-                                    </option>
-                                  ))}
-                                </select>
-                              )}
-                            </div>
-                            {idx < flowConfig.agents.length - 1 && (
-                              <div className="mx-1 text-slate-600">&rarr;</div>
-                            )}
-                          </div>
-                        )
-                      })}
-                    </div>
-
-                    <div className="flex gap-4 text-xs text-slate-500 border-t border-white/[0.06] pt-3">
-                      <span><strong>High:</strong> Deep reasoning</span>
-                      <span><strong>Medium:</strong> Balanced</span>
-                      <span><strong>Low:</strong> Fast</span>
-                    </div>
-                  </div>
-                </div>
+                <AgentFlowSection
+                  flowConfig={flowConfig}
+                  selectedPresetId={selectedPresetId}
+                  onPresetSelect={handlePresetSelect}
+                  onAgentToggle={handleAgentToggle}
+                  onResourceLevelChange={handleResourceLevelChange}
+                  onAgentsReorder={handleAgentsReorder}
+                />
 
                 {/* Success Criteria */}
-                <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-3">
-                    Success Criteria
-                  </label>
-                  <div className="bg-slate-900/50 rounded-xl border border-white/[0.06] p-4">
-                    <div className="space-y-2 mb-3">
-                      {successCriteria.map((criterion) => (
-                        <div key={criterion.id} className="flex items-center gap-2">
-                          <span className="text-green-400">&#10003;</span>
-                          <span className="flex-1 text-sm text-slate-300">{criterion.text}</span>
-                          <button
-                            type="button"
-                            onClick={() => removeCriterion(criterion.id)}
-                            className="p-1 hover:bg-slate-700 rounded text-slate-500 hover:text-red-400"
-                          >
-                            <Trash2 size={14} />
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                    <div className="flex gap-2">
-                      <input
-                        type="text"
-                        value={newCriterion}
-                        onChange={(e) => setNewCriterion(e.target.value)}
-                        onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addCriterion())}
-                        placeholder="Add success criterion..."
-                        className="flex-1 px-3 py-2 text-sm rounded-lg bg-slate-800 border border-slate-600 text-slate-100 placeholder-slate-500"
-                      />
-                      <button
-                        type="button"
-                        onClick={addCriterion}
-                        className="px-3 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg text-slate-300"
-                      >
-                        <Plus size={16} />
-                      </button>
-                    </div>
-                  </div>
-                </div>
+                <SuccessCriteriaSection
+                  criteria={successCriteria}
+                  onCriteriaChange={handleCriteriaChange}
+                />
 
                 {/* Technical Details (collapsible) */}
                 <button

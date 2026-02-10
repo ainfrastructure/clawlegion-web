@@ -5,17 +5,15 @@ import { useQuery } from '@tanstack/react-query'
 import Link from 'next/link'
 import Image from 'next/image'
 import { PageContainer } from '@/components/layout'
-import { AgentProfilePanel, type AgentData, type AgentStatus } from '@/components/agents'
+import { type AgentData } from '@/components/agents'
 import { OrgAgentCard } from '@/components/agents/OrgAgentCard'
 import { AgentDetailModal } from '@/components/agents/AgentDetailModal'
 import { AddAgentModal } from '@/components/agents/AddAgentModal'
 import { DEFAULT_PRESETS, AGENT_METADATA } from '@/lib/flow-presets'
-import type { FlowPreset } from '@/components/flow-config/types'
-import { getAgentByName, getAgentById, ALL_AGENTS } from '@/components/chat-v2/agentConfig'
+import { getAgentById, ALL_AGENTS } from '@/components/chat-v2/agentConfig'
 import {
   Users,
   GitBranch,
-  RefreshCw,
   Loader2,
   ArrowRight,
   Bot,
@@ -73,7 +71,6 @@ const LEADERSHIP_NAMES = ['caesar', 'lux']
 export default function AgentOrgPage() {
   const [selectedAgent, setSelectedAgent] = useState<AgentData | null>(null)
   const [showDetailModal, setShowDetailModal] = useState(false)
-  const [configAgentId, setConfigAgentId] = useState<string | null>(null)
   const [showAddAgent, setShowAddAgent] = useState(false)
 
   const {
@@ -152,14 +149,6 @@ export default function AgentOrgPage() {
     setShowDetailModal(true)
   }
 
-  const handleOpenConfig = (agentId: string) => {
-    setShowDetailModal(false)
-    // agentId here is a DB CUID — resolve to display ID via name
-    const agent = allAgents.find((a) => a.id === agentId)
-    const enriched = agent ? getAgentByName(agent.name) : null
-    setConfigAgentId(enriched?.id || agentId)
-  }
-
   return (
     <PageContainer>
       {/* Header */}
@@ -180,12 +169,6 @@ export default function AgentOrgPage() {
               className="px-3 sm:px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg flex items-center justify-center gap-2 transition-colors text-sm font-medium"
             >
               <Plus size={16} /> Add Agent
-            </button>
-            <button
-              onClick={handleRefresh}
-              className="flex items-center gap-2 px-4 py-2 glass-2 rounded-lg text-sm text-white hover:bg-slate-700/50 transition-colors"
-            >
-              <RefreshCw size={16} /> Refresh
             </button>
           </div>
         </div>
@@ -275,32 +258,48 @@ export default function AgentOrgPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
           {DEFAULT_PRESETS.map((preset) => {
             const enabledAgents = preset.agents.filter(a => a.enabled)
-            const primaryAgent = enabledAgents[0]
-            const primaryColor = primaryAgent ? getAgentById(primaryAgent.role)?.color : undefined
+            // Build gradient from all agent colors in pipeline order
+            const agentColors = enabledAgents.map(a => getAgentById(a.role)?.color || '#64748b')
+            const gradientStops = agentColors.map((c, i) =>
+              `${c} ${Math.round((i / Math.max(agentColors.length - 1, 1)) * 100)}%`
+            ).join(', ')
+            const pipelineGradient = agentColors.length > 1
+              ? `linear-gradient(90deg, ${gradientStops})`
+              : agentColors[0] || '#64748b'
 
             return (
               <Link
                 key={preset.id}
                 href={`/flows?preset=${preset.id}`}
-                className="group relative rounded-xl cursor-pointer transition-all duration-200 overflow-hidden"
+                className="group relative rounded-xl cursor-pointer transition-all duration-300 overflow-hidden"
               >
-                {/* Gradient border from primary agent color */}
-                {primaryColor && (
-                  <div
-                    className="absolute -inset-px rounded-xl opacity-30 group-hover:opacity-50 transition-opacity"
-                    style={{
-                      background: `linear-gradient(135deg, ${primaryColor}40, transparent 60%)`,
-                    }}
-                  />
-                )}
+                {/* Multi-color gradient border — all agent colors, on hover */}
+                <div
+                  className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                  style={{
+                    background: pipelineGradient,
+                    padding: '1px',
+                    WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+                    WebkitMaskComposite: 'xor',
+                    maskComposite: 'exclude',
+                  }}
+                />
 
-                <div className="relative rounded-xl p-4 glass-2 group-hover:border-white/[0.1] transition-colors h-full">
+                {/* Gradient glow wash — subtle bg tint */}
+                <div
+                  className="absolute inset-0 rounded-xl opacity-[0.04] group-hover:opacity-[0.08] transition-opacity duration-300"
+                  style={{
+                    background: `linear-gradient(135deg, ${agentColors[0]}30, transparent 40%, transparent 60%, ${agentColors[agentColors.length - 1]}20)`,
+                  }}
+                />
+
+                <div className="relative rounded-xl p-4 glass-2 group-hover:border-transparent transition-colors h-full">
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0 flex-1">
                       {/* Title */}
                       <div className="flex items-center gap-1.5">
                         <Lock className="w-3 h-3 text-slate-600 flex-shrink-0" />
-                        <p className="text-sm font-semibold text-slate-200 group-hover:text-cyan-300 transition-colors truncate">
+                        <p className="text-sm font-semibold text-slate-200 group-hover:text-white transition-colors truncate">
                           {preset.name}
                         </p>
                       </div>
@@ -350,25 +349,15 @@ export default function AgentOrgPage() {
                           {enabledAgents.length} agents
                         </span>
                       </div>
-                      {/* Mini flow preview dots */}
-                      <div className="flex items-center gap-0.5 mt-2">
-                        {enabledAgents.slice(0, 6).map((agent, i) => {
-                          const agentColor = getAgentById(agent.role)?.color || '#64748b'
-                          return (
-                            <div key={agent.role} className="flex items-center">
-                              <div
-                                className="w-1.5 h-1.5 rounded-full"
-                                style={{ backgroundColor: agentColor }}
-                              />
-                              {i < Math.min(enabledAgents.length, 6) - 1 && (
-                                <div className="w-3 h-px bg-slate-700" />
-                              )}
-                            </div>
-                          )
-                        })}
+                      {/* Pipeline gradient bar */}
+                      <div className="mt-2.5 flex items-center gap-1.5">
+                        <div
+                          className="h-1 flex-1 rounded-full opacity-60 group-hover:opacity-90 transition-opacity duration-300"
+                          style={{ background: pipelineGradient }}
+                        />
                       </div>
                     </div>
-                    <ArrowRight size={14} className="text-slate-600 group-hover:text-cyan-400 transition-colors mt-0.5 flex-shrink-0" />
+                    <ArrowRight size={14} className="text-slate-600 group-hover:text-white transition-colors mt-0.5 flex-shrink-0" />
                   </div>
                 </div>
               </Link>
@@ -382,17 +371,11 @@ export default function AgentOrgPage() {
         agent={selectedAgent}
         isOpen={showDetailModal}
         onClose={() => setShowDetailModal(false)}
-        onOpenConfig={handleOpenConfig}
+        onDeleted={() => {
+          refetchAgents()
+          refetchHealth()
+        }}
       />
-
-      {/* Agent Profile Panel (config) */}
-      {configAgentId && (
-        <AgentProfilePanel
-          agentId={configAgentId}
-          agentStatus={(allAgents.find((a) => a.name.toLowerCase() === configAgentId?.toLowerCase())?.status as AgentStatus) || 'offline'}
-          onClose={() => setConfigAgentId(null)}
-        />
-      )}
 
       {/* Add Agent Modal */}
       <AddAgentModal

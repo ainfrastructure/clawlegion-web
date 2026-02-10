@@ -31,9 +31,9 @@ export default function LandingPage() {
       <div className="pt-[41px]">
         <HeroSection />
         <HowItWorks />
+        <EasyVsPower />
         <ProductShowcase />
         <FeaturesGrid />
-        <EasyVsPower />
         <PricingSection />
         <DemoSection />
         <EarlyAccessForm />
