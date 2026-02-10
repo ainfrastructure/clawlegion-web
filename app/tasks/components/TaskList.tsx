@@ -327,6 +327,12 @@ function TaskCard({ task, isSelected, onSelect, onClick }: TaskCardProps) {
               · started {formatTimeAgo(task.startedAt)}
             </span>
           )}
+          {/* Timestamp for verifying tasks */}
+          {task.status === 'verifying' && (task.submittedAt || task.startedAt) && (
+            <span className="text-[10px] text-slate-500 ml-1">
+              · verifying {formatTimeAgo(task.submittedAt || task.startedAt!)}
+            </span>
+          )}
           {/* Completion time for done tasks */}
           {task.status === 'done' && task.verifiedAt && (
             <span className="text-[10px] text-slate-500 ml-1">
@@ -417,6 +423,12 @@ function MobileTaskCard({ task, isSelected, onSelect, onClick }: TaskCardProps) 
               {task.startedAt && (task.status === 'in_progress' || task.status === 'building') && (
                 <span className="text-[10px] text-slate-500 ml-1">
                   · started {formatTimeAgo(task.startedAt)}
+                </span>
+              )}
+              {/* Timestamp for verifying tasks */}
+              {task.status === 'verifying' && (task.submittedAt || task.startedAt) && (
+                <span className="text-[10px] text-slate-500 ml-1">
+                  · verifying {formatTimeAgo(task.submittedAt || task.startedAt!)}
                 </span>
               )}
               {/* Completion time for done tasks */}
