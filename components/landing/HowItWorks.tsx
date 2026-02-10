@@ -3,8 +3,9 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
 import { CheckCircle2, XCircle, ChevronRight } from 'lucide-react'
 import Image from 'next/image'
+import { ALL_AGENTS, getAgentById } from '@/components/chat-v2/agentConfig'
 
-/* ─── Agent pool — all available pipeline agents ─── */
+/* ─── Agent pool — derived from agentConfig (single source of truth) ─── */
 
 type Agent = {
   id: string
@@ -15,80 +16,19 @@ type Agent = {
   avatarType: 'svg' | 'png'
 }
 
-const AGENT_POOL: Record<string, Agent> = {
-  athena: {
-    id: 'athena',
-    name: 'Athena',
-    role: 'Planner',
-    color: '#06B6D4',
-    avatar: '/agents/athena.png',
-    avatarType: 'png',
-  },
-  minerva: {
-    id: 'minerva',
-    name: 'Minerva',
-    role: 'Researcher',
-    color: '#10B981',
-    avatar: '/agents/minerva.png',
-    avatarType: 'png',
-  },
-  vulcan: {
-    id: 'vulcan',
-    name: 'Vulcan',
-    role: 'Builder',
-    color: '#EA580C',
-    avatar: '/agents/vulcan.png',
-    avatarType: 'png',
-  },
-  janus: {
-    id: 'janus',
-    name: 'Janus',
-    role: 'Verifier',
-    color: '#D946EF',
-    avatar: '/agents/janus.png',
-    avatarType: 'png',
-  },
-  cato: {
-    id: 'cato',
-    name: 'Cato',
-    role: 'DevOps Engineer',
-    color: '#8B5E3C',
-    avatar: '/agents/cato.png',
-    avatarType: 'png',
-  },
-  mercury: {
-    id: 'mercury',
-    name: 'Mercury',
-    role: 'Messenger',
-    color: '#C0C0C0',
-    avatar: '/agents/mercury.png',
-    avatarType: 'png',
-  },
-  cicero: {
-    id: 'cicero',
-    name: 'Cicero',
-    role: 'Content Creator',
-    color: '#7C3AED',
-    avatar: '/agents/cicero.png',
-    avatarType: 'png',
-  },
-  apollo: {
-    id: 'apollo',
-    name: 'Apollo',
-    role: 'Creative Director',
-    color: '#EAB308',
-    avatar: '/agents/apollo.png',
-    avatarType: 'png',
-  },
-  oracle: {
-    id: 'oracle',
-    name: 'Oracle',
-    role: 'Data Analyst',
-    color: '#4338CA',
-    avatar: '/agents/oracle.png',
-    avatarType: 'png',
-  },
-}
+const AGENT_POOL: Record<string, Agent> = Object.fromEntries(
+  ALL_AGENTS.map(a => [
+    a.id,
+    {
+      id: a.id,
+      name: a.name,
+      role: a.role,
+      color: a.color,
+      avatar: a.avatar,
+      avatarType: a.avatar.endsWith('.svg') ? 'svg' as const : 'png' as const,
+    },
+  ])
+)
 
 /* ─── Template data ─── */
 
@@ -198,12 +138,13 @@ function getTemplateAgents(template: Template): Agent[] {
   return template.pipeline.map((id) => AGENT_POOL[id]).filter(Boolean)
 }
 
+const caesarConfig = getAgentById('caesar')!
 const CAESAR = {
-  id: 'caesar',
-  name: 'Caesar',
-  role: 'Orchestrator',
-  color: '#DC2626',
-  avatar: '/agents/caesar.png',
+  id: caesarConfig.id,
+  name: caesarConfig.name,
+  role: caesarConfig.role,
+  color: caesarConfig.color,
+  avatar: caesarConfig.avatar,
 }
 
 /* ─── Sub-components ─── */
@@ -571,7 +512,7 @@ export function HowItWorks() {
             One Team. Any Workflow.
           </h2>
           <p className="text-lg text-slate-400 max-w-xl mx-auto">
-            Five specialized agents working in concert. Watch them adapt to any industry.
+            Ten specialized agents working in concert. Watch them adapt to any industry.
           </p>
         </div>
       </div>

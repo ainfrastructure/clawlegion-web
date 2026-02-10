@@ -2,6 +2,8 @@ export function LogoBar() {
   return (
     <section className="px-4 sm:px-6 py-16 border-t border-white/[0.04] border-b border-b-white/[0.04]">
       <div className="max-w-5xl mx-auto text-center">
+        {/* Temporarily hidden - no customer logos yet */}
+        {/*
         <p className="text-sm text-slate-500 uppercase tracking-wider mb-8">
           Powering agent fleets at
         </p>
@@ -13,6 +15,7 @@ export function LogoBar() {
             />
           ))}
         </div>
+        */}
       </div>
     </section>
   )

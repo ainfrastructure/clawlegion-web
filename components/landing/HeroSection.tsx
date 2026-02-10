@@ -46,8 +46,7 @@ export function HeroSection() {
 
         {/* Subtitle */}
         <p className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto mb-6 leading-relaxed">
-          Ship faster with autonomous AI agents. Monitor, coordinate, and scale your entire
-          AI workforce from a single command center.
+          10 specialized AI agents. One command center. From code to content to compliance — fully autonomous.
         </p>
 
         {/* Price anchor */}

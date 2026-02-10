@@ -3,7 +3,7 @@ import { Activity, Zap, MessageSquare, GitBranch, Shield, Eye } from 'lucide-rea
 const features = [
   {
     icon: Activity,
-    title: 'Real-Time Fleet Monitoring',
+    title: 'Real-Time Agent Monitoring',
     description: 'Track every agent in your fleet with live status updates, resource usage, and performance metrics.',
     accent: 'text-blue-400',
     glow: 'group-hover:shadow-blue-500/20',
@@ -24,8 +24,8 @@ const features = [
   },
   {
     icon: GitBranch,
-    title: 'Dependency Graph',
-    description: 'Visualize task dependencies and agent workflows as interactive directed graphs.',
+    title: 'Flow Builder',
+    description: 'Design and customize agent pipelines with drag-and-drop workflow configuration.',
     accent: 'text-cyan-400',
     glow: 'group-hover:shadow-cyan-500/20',
   },
@@ -38,7 +38,7 @@ const features = [
   },
   {
     icon: Eye,
-    title: 'Session Replay',
+    title: 'Session Replay & Audit',
     description: 'Review past agent sessions with full context — see exactly what happened and when.',
     accent: 'text-pink-400',
     glow: 'group-hover:shadow-pink-500/20',
@@ -51,10 +51,10 @@ export function FeaturesGrid() {
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4 tracking-tight">
-            Everything you need to run an AI fleet
+            Everything you need to command an AI legion
           </h2>
           <p className="text-lg text-slate-400 max-w-2xl mx-auto">
-            Purpose-built tooling for teams deploying autonomous AI agents at scale.
+            Purpose-built for teams running autonomous AI workforces.
           </p>
         </div>
 

@@ -9,7 +9,7 @@ const PIPELINE_DOTS = [
   { label: 'Jarvis', color: '#DC2626' },
   { label: 'Archie', color: '#3B82F6' },
   { label: 'Minerva', color: '#06B6D4' },
-  { label: 'Mason', color: '#EA580C' },
+  { label: 'Vulcan', color: '#EA580C' },
   { label: 'Janus', color: '#8B5CF6' },
 ]
 

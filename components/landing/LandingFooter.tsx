@@ -37,7 +37,7 @@ export function LandingFooter({ onContactClick }: LandingFooterProps) {
               <span className="font-bold text-white">ClawLegion</span>
             </div>
             <p className="text-sm text-slate-500 leading-relaxed">
-              The command center for autonomous AI agent fleets.
+              The command center for autonomous AI legions.
             </p>
           </div>
 

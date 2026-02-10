@@ -11,7 +11,8 @@ const valueItems = [
   'Multi-agent coordination chat',
   'Interactive dependency graph',
   'Session replay & audit logs',
-  'Unlimited agents',
+  '10 specialized agents',
+  '5 workflow templates',
   'Priority support',
   'All future features included',
 ]
@@ -24,7 +25,7 @@ export function PricingSection() {
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4 tracking-tight">
-            Lock in the Launch Price
+            One plan. Ten agents. Infinite workflows.
           </h2>
           <p className="text-lg text-slate-400 max-w-2xl mx-auto">
             Join now and keep this price forever — even as we add features and raise pricing.
