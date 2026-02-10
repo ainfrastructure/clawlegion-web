@@ -11,10 +11,10 @@ const valueItems = [
   'Multi-agent coordination chat',
   'Interactive dependency graph',
   'Session replay & audit logs',
-  'Full fleet of specialized agents',
-  '5 workflow templates',
+  'Specialized AI agents for every role',
+  'Pre-built workflow templates',
+  'Growing integration library',
   'Priority support',
-  'All future features included',
 ]
 
 export function PricingSection() {
@@ -28,7 +28,7 @@ export function PricingSection() {
             One plan. Full legion. Infinite workflows.
           </h2>
           <p className="text-lg text-slate-400 max-w-2xl mx-auto">
-            Join now and keep this price forever — even as we add features and raise pricing.
+            Early access pricing — limited spots at this rate.
           </p>
         </div>
 

@@ -20,8 +20,8 @@ export function EarlyAccessForm() {
           Don&apos;t Miss the Launch Price
         </h2>
         <p className="text-lg text-slate-400 mb-4">
-          Lock in ${LAUNCH_CONFIG.earlyBirdPrice}/mo forever — this price won&apos;t last.
-          Join now and keep your launch rate even as we add features and raise pricing.
+          Early access at ${LAUNCH_CONFIG.earlyBirdPrice}/mo — limited spots at this rate.
+          Get in now before we raise pricing.
         </p>
 
         {/* Compact countdown */}

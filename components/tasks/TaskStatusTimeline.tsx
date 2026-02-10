@@ -49,12 +49,25 @@ function getStatusTimestamp(status: string, activities: TaskActivity[]): string 
 }
 
 function getPhaseAgent(status: string, activities: TaskActivity[]): string | null {
+  // Try exact match first
   const activity = activities.find(
     a => a.eventType === 'status_change' && a.details?.toValue === status
   )
-  if (activity?.actor && activity.actor !== 'system') return activity.actor
+  // Also try in_progress → building alias
+  const aliasActivity = status === 'building' ? activities.find(
+    a => a.eventType === 'status_change' && (a.details?.toValue === 'in_progress' || a.details?.toValue === 'in-progress' || a.details?.toValue === 'assigned')
+  ) : null
+  const match = activity || aliasActivity
+  if (match?.actor && match.actor !== 'system') return match.actor
+  // Fallback to config-defined agent for this phase
   const config = STATUS_CONFIG[status as keyof typeof STATUS_CONFIG]
-  return config?.agent || null
+  if (config?.agent) return config.agent
+  // Try in_progress config for building
+  if (status === 'building') {
+    const ipConfig = STATUS_CONFIG['in_progress' as keyof typeof STATUS_CONFIG]
+    return ipConfig?.agent || null
+  }
+  return null
 }
 
 function getPhaseDuration(

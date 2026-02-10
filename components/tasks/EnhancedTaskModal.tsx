@@ -26,8 +26,11 @@ interface SuccessCriterion {
 }
 
 const DEFAULT_CRITERIA: SuccessCriterion[] = [
-  { id: '1', text: 'Feature works as described' },
-  { id: '2', text: 'Screenshot proof captured' },
+  { id: 'tpl-feature-0', text: 'Feature works as described in requirements' },
+  { id: 'tpl-feature-1', text: 'All edge cases handled gracefully' },
+  { id: 'tpl-feature-2', text: 'No regressions in existing functionality' },
+  { id: 'tpl-feature-3', text: 'Tests written and passing' },
+  { id: 'tpl-feature-4', text: 'Screenshot/recording proof captured' },
 ]
 
 export function EnhancedTaskModal({ isOpen, onClose, onTaskCreated, repositories }: CreateTaskModalProps) {
