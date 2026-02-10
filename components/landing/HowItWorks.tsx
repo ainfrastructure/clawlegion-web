@@ -630,7 +630,7 @@ export function HowItWorks() {
             One Team. Any Workflow.
           </h2>
           <p className="text-lg text-slate-400 max-w-xl mx-auto">
-            Ten specialized agents working in concert. Watch them adapt to any industry.
+            Create custom agents. Design unique workflows. Automate anything.
           </p>
         </div>
       </div>

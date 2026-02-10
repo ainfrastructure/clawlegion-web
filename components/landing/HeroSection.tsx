@@ -46,7 +46,7 @@ export function HeroSection() {
 
         {/* Subtitle */}
         <p className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto mb-6 leading-relaxed">
-          10 specialized AI agents. One command center. From code to content to compliance — fully autonomous.
+          Build your own AI workforce. Custom agents, unique workflows, total automation — from code to content to compliance.
         </p>
 
         {/* Price anchor */}
