@@ -57,11 +57,11 @@ const AGENT_POOL: Record<string, Agent> = {
     avatarType: 'png',
   },
   echo: {
-    id: 'echo',
-    name: 'Echo',
+    id: 'mercury',
+    name: 'Mercury',
     role: 'Comms Manager',
     color: '#3B82F6',
-    avatar: '/agents/echo-avatar.jpg',
+    avatar: '/agents/mercury.png',
     avatarType: 'png',
   },
   quill: {
@@ -128,7 +128,7 @@ const TEMPLATES: Template[] = [
     name: 'Content Marketing',
     emoji: '📝',
     tagline: 'One brief in, a week of content out',
-    pipeline: ['scout', 'quill', 'pixel', 'echo'],
+    pipeline: ['scout', 'quill', 'pixel', 'mercury'],
     descriptions: {
       caesar: 'Routes briefs & coordinates the content pipeline',
       scout: 'Researches trending topics & competitors',
@@ -162,7 +162,7 @@ const TEMPLATES: Template[] = [
     name: 'Product Launch',
     emoji: '🎯',
     tagline: 'From positioning to launch day — orchestrated',
-    pipeline: ['sage', 'athena', 'pixel', 'echo'],
+    pipeline: ['sage', 'athena', 'pixel', 'mercury'],
     descriptions: {
       caesar: 'Manages the launch timeline & coordinates teams',
       sage: 'Analyzes market fit & competitor positioning',

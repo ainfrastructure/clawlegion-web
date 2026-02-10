@@ -44,7 +44,7 @@ const DEFAULT_AGENTS: AgentConfig[] = [
   { id: 'athena', name: 'Athena' },
   { id: 'vulcan', name: 'Vulcan' },
   { id: 'vex', name: 'Vex' },
-  { id: 'echo', name: 'Echo' },
+  { id: 'mercury', name: 'Mercury' },
   { id: 'forge', name: 'Forge' },
   { id: 'pixel', name: 'Pixel' },
   { id: 'quill', name: 'Quill' },

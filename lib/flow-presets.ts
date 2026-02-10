@@ -180,7 +180,7 @@ export const DEFAULT_PRESETS: FlowPreset[] = [
       { role: 'scout', enabled: true, resourceLevel: 'medium' },
       { role: 'quill', enabled: true, resourceLevel: 'high' },
       { role: 'pixel', enabled: true, resourceLevel: 'medium' },
-      { role: 'echo', enabled: true, resourceLevel: 'medium' },
+      { role: 'mercury', enabled: true, resourceLevel: 'medium' },
     ],
     loopSettings: {
       timeBudgetHours: 4,
@@ -204,7 +204,7 @@ export const DEFAULT_PRESETS: FlowPreset[] = [
       { role: 'sage', enabled: true, resourceLevel: 'high' },
       { role: 'quill', enabled: true, resourceLevel: 'high' },
       { role: 'pixel', enabled: true, resourceLevel: 'high' },
-      { role: 'echo', enabled: true, resourceLevel: 'medium' },
+      { role: 'mercury', enabled: true, resourceLevel: 'medium' },
     ],
     loopSettings: {
       timeBudgetHours: 6,
@@ -225,7 +225,7 @@ export const DEFAULT_PRESETS: FlowPreset[] = [
     description: 'Outreach, measure performance, and generate reports',
     isSystem: true,
     agents: [
-      { role: 'echo', enabled: true, resourceLevel: 'medium' },
+      { role: 'mercury', enabled: true, resourceLevel: 'medium' },
       { role: 'sage', enabled: true, resourceLevel: 'high' },
       { role: 'quill', enabled: true, resourceLevel: 'medium' },
     ],
@@ -494,7 +494,7 @@ export function formatTimeBudget(hours: number): string {
 /**
  * Valid agent roles for validation
  */
-const VALID_ROLES: AgentRole[] = ['scout', 'athena', 'vulcan', 'vex', 'caesar', 'forge', 'echo', 'quill', 'pixel', 'sage']
+const VALID_ROLES: AgentRole[] = ['scout', 'athena', 'vulcan', 'vex', 'caesar', 'forge', 'mercury', 'quill', 'pixel', 'sage']
 
 /**
  * Check if a role is a valid agent role
