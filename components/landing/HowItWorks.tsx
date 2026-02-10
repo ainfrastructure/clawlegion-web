@@ -44,7 +44,7 @@ const AGENT_POOL: Record<string, Agent> = {
     id: 'janus',
     name: 'Janus',
     role: 'Verifier',
-    color: '#0EA5E9',
+    color: '#D946EF',
     avatar: '/agents/janus.png',
     avatarType: 'png',
   },

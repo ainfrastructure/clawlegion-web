@@ -42,7 +42,7 @@ const AGENT_COLORS: Record<string, string> = {
   caesar: '#DC2626',    // Crimson - Orchestrator
   athena: '#06B6D4',    // Teal - Planner
   vulcan: '#EA580C',    // Amber - Builder
-  janus: '#0EA5E9',     // Blue/Gold - Verifier
+  janus: '#D946EF',     // Blue/Gold - Verifier
   minerva: '#10B981',   // Emerald - Researcher
   mercury: '#C0C0C0',   // Silver - Messenger
   apollo: '#EAB308',    // Golden - Creative Director
@@ -53,7 +53,7 @@ const AGENT_COLORS: Record<string, string> = {
   main: '#DC2626',      // Red - Orchestrator (caesar)
   planner: '#06B6D4',   // Teal - Planner (athena)
   builder: '#EA580C',   // Amber - Builder (vulcan)
-  verifier: '#0EA5E9',  // Blue - Verifier (janus)
+  verifier: '#D946EF',  // Blue - Verifier (janus)
   researcher: '#10B981', // Emerald - Researcher (minerva)
 }
 
@@ -219,7 +219,7 @@ export const FALLBACK_BOT_ARMY: AgentDisplay[] = [
   ...FALLBACK_COUNCIL,
   { id: 'athena', name: 'Athena', emoji: '🩵', avatar: '/agents/athena.png', role: 'Planner', color: '#06B6D4', status: 'online' },
   { id: 'vulcan', name: 'Vulcan', emoji: '🔥', avatar: '/agents/vulcan.png', role: 'Builder', color: '#EA580C', status: 'online' },
-  { id: 'janus', name: 'Janus', emoji: '🌗', avatar: '/agents/janus.png', role: 'Verifier', color: '#0EA5E9', status: 'online' },
+  { id: 'janus', name: 'Janus', emoji: '🌗', avatar: '/agents/janus.png', role: 'Verifier', color: '#D946EF', status: 'online' },
   { id: 'minerva', name: 'Minerva', emoji: '💚', avatar: '/agents/minerva.png', role: 'Researcher', color: '#10B981', status: 'online' },
   { id: 'mercury', name: 'Mercury', emoji: '⚡️', avatar: '/agents/mercury.png', role: 'Messenger', color: '#C0C0C0', status: 'online' },
   { id: 'apollo', name: 'Apollo', emoji: '☀️', avatar: '/agents/apollo.png', role: 'Creative Director', color: '#EAB308', status: 'online' },
