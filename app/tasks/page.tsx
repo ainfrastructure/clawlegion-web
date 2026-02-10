@@ -345,31 +345,33 @@ function TasksPageContent() {
       </div>
 
       {/* Header */}
-      <div className="mb-4 sm:mb-6">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-white flex items-center gap-2 sm:gap-3">
-              <ListTodo className="text-amber-400" size={28} /> Task Queue
-            </h1>
-            <p className="text-sm text-slate-400">{tasks.length} tasks total</p>
-          </div>
-          <div className="flex gap-2 sm:gap-3">
-            <button 
-              onClick={() => setShowNewTaskModal(true)}
-              type="button"
-              data-testid="btn-add-task" 
-              className="flex-1 sm:flex-none px-3 sm:px-4 py-2 bg-amber-600 hover:bg-amber-700 rounded-lg flex items-center justify-center gap-2 transition-colors text-sm"
-            >
-              <Plus size={18} /> Add Task
-            </button>
-            <Link href="/tasks/graph" className="flex-1 sm:flex-none px-3 sm:px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg flex items-center justify-center gap-2 transition-colors text-sm">
-              <LayoutGrid size={18} /> Graph
-            </Link>
+      <div className="mb-6">
+        <div className="flex flex-col gap-4 mb-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white flex items-center gap-2 sm:gap-3">
+                <ListTodo className="text-amber-400" size={28} /> Task Queue
+              </h1>
+              <p className="text-sm sm:text-base text-slate-400 mt-1">{tasks.length} tasks total</p>
+            </div>
+            <div className="flex gap-2 sm:gap-3">
+              <button 
+                onClick={() => setShowNewTaskModal(true)}
+                type="button"
+                data-testid="btn-add-task" 
+                className="flex-1 sm:flex-none min-h-[44px] px-4 sm:px-5 py-3 bg-amber-600 hover:bg-amber-700 active:bg-amber-800 rounded-xl flex items-center justify-center gap-2 transition-colors text-sm sm:text-base font-medium touch-manipulation"
+              >
+                <Plus size={20} /> Add Task
+              </button>
+              <Link href="/tasks/graph" className="flex-1 sm:flex-none min-h-[44px] px-4 sm:px-5 py-3 bg-slate-700 hover:bg-slate-600 active:bg-slate-800 rounded-xl flex items-center justify-center gap-2 transition-colors text-sm sm:text-base font-medium touch-manipulation">
+                <LayoutGrid size={20} /> Graph
+              </Link>
+            </div>
           </div>
         </div>
 
         {/* Stats Bar */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4 mb-4 sm:mb-6">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-6">
           <StatCard icon={<Clock size={20} />} label="Queued" value={(stats.backlog ?? 0) + (stats.todo ?? 0)} color="slate" />
           <StatCard icon={<Zap size={20} />} label="In Progress" value={stats.inProgress ?? 0} color="amber" />
           <StatCard icon={<CheckCircle2 size={20} />} label="Completed" value={stats.done ?? 0} color="green" />

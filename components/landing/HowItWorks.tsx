@@ -518,32 +518,55 @@ export function HowItWorks() {
       </div>
 
       {/* Pipeline strip — full width, edge to edge */}
-      {prefersReducedMotion ? (
-        <div className="max-w-5xl mx-auto px-4 sm:px-6">
-          <SlideContent
-            template={TEMPLATES[reducedMotionIdx]}
-            visible={visible}
-          />
+      {/* Mobile: single template with nav dots */}
+      <div className="md:hidden max-w-5xl mx-auto px-4">
+        <SlideContent
+          template={TEMPLATES[reducedMotionIdx]}
+          visible={visible}
+        />
+        {/* Dot navigation */}
+        <div className="flex justify-center gap-2 mt-6">
+          {TEMPLATES.map((t, i) => (
+            <button
+              key={t.name}
+              onClick={() => setReducedMotionIdx(i)}
+              className={`w-2 h-2 rounded-full transition-all ${
+                i === reducedMotionIdx ? 'bg-blue-400 w-6' : 'bg-slate-600'
+              }`}
+            />
+          ))}
         </div>
-      ) : (
-        <div
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
-        >
-          <div
-            className={`flex ${entryDone ? 'pipeline-strip' : ''} ${paused ? 'paused' : ''}`}
-            style={{ width: '500%' }}
-          >
-            {[...TEMPLATES, ...TEMPLATES].map((tmpl, i) => (
-              <SlideContent
-                key={`${tmpl.name}-${i < TEMPLATES.length ? 'a' : 'b'}`}
-                template={tmpl}
-                visible={visible}
-              />
-            ))}
+      </div>
+
+      {/* Desktop: scrolling strip */}
+      <div className="hidden md:block">
+        {prefersReducedMotion ? (
+          <div className="max-w-5xl mx-auto px-4 sm:px-6">
+            <SlideContent
+              template={TEMPLATES[reducedMotionIdx]}
+              visible={visible}
+            />
           </div>
-        </div>
-      )}
+        ) : (
+          <div
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+          >
+            <div
+              className={`flex ${entryDone ? 'pipeline-strip' : ''} ${paused ? 'paused' : ''}`}
+              style={{ width: '500%' }}
+            >
+              {[...TEMPLATES, ...TEMPLATES].map((tmpl, i) => (
+                <SlideContent
+                  key={`${tmpl.name}-${i < TEMPLATES.length ? 'a' : 'b'}`}
+                  template={tmpl}
+                  visible={visible}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
     </section>
   )
 }

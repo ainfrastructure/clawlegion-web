@@ -7,21 +7,33 @@ const MOBILE_BREAKPOINT = 768
 /**
  * Hook to detect mobile viewport
  * SSR-safe: defaults to false, updates on mount
+ * Uses modern matchMedia for better orientation change detection
  */
 export function useMobile(): boolean {
   const [isMobile, setIsMobile] = useState(false)
 
   useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < MOBILE_BREAKPOINT)
+    const mediaQuery = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`)
+    
+    // Set initial value
+    setIsMobile(mediaQuery.matches)
+
+    // Handler for changes (handles orientation changes better than resize)
+    const handler = (event: MediaQueryListEvent) => {
+      setIsMobile(event.matches)
     }
 
-    // Check on mount
-    checkMobile()
-
-    // Listen for resize
-    window.addEventListener('resize', checkMobile)
-    return () => window.removeEventListener('resize', checkMobile)
+    // Modern browsers
+    if (mediaQuery.addEventListener) {
+      mediaQuery.addEventListener('change', handler)
+      return () => mediaQuery.removeEventListener('change', handler)
+    }
+    
+    // Fallback for older browsers
+    if (mediaQuery.addListener) {
+      mediaQuery.addListener(handler)
+      return () => mediaQuery.removeListener(handler)
+    }
   }, [])
 
   return isMobile

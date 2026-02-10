@@ -74,20 +74,20 @@ export function KanbanView({
   
   return (
     <>
-      <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
-        <div className="flex gap-3 sm:gap-4 min-w-[900px] sm:min-w-0 sm:grid sm:grid-cols-4 h-[calc(100vh-380px)] sm:h-[calc(100vh-320px)]">
+      {/* Mobile: Stacked columns for better UX */}
+      <div className="block sm:hidden space-y-4">
         {columnConfig.map(({ key, label, color, icon }) => (
-          <div key={key} className="flex-1 min-w-[220px] sm:min-w-0 bg-slate-800/30 rounded-xl border border-white/[0.06] flex flex-col">
-            <div className="p-3 sm:p-4 border-b border-white/[0.06] flex items-center justify-between">
+          <div key={key} className="bg-slate-800/30 rounded-xl border border-white/[0.06]">
+            <div className="p-4 border-b border-white/[0.06] flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <span className={`text-${color}-400`}>{icon}</span>
-                <span className="font-medium text-white text-sm sm:text-base">{label}</span>
+                <span className="font-medium text-white text-base">{label}</span>
               </div>
-              <span className="px-2 py-0.5 bg-slate-700 rounded text-xs sm:text-sm text-slate-300">
+              <span className="px-2.5 py-1 bg-slate-700 rounded-md text-sm text-slate-300">
                 {columns[key]?.length ?? 0}
               </span>
             </div>
-            <div className="flex-1 overflow-y-auto p-2 space-y-2">
+            <div className="p-3 space-y-3 max-h-[300px] overflow-y-auto">
               {columns[key]?.slice(0, 20).map((task) => {
                 const globalIndex = filteredTasks.findIndex(t => t.id === task.id)
                 return (
@@ -101,11 +101,48 @@ export function KanbanView({
                 )
               })}
               {columns[key]?.length === 0 && (
-                <div className="text-center text-slate-500 py-8 text-sm">No tasks</div>
+                <div className="text-center text-slate-500 py-6 text-sm">No tasks</div>
               )}
             </div>
           </div>
         ))}
+      </div>
+
+      {/* Tablet/Desktop: Grid layout with better breakpoints */}
+      <div className="hidden sm:block">
+        <div className="overflow-x-auto">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 min-w-[640px] h-[calc(100vh-360px)] md:h-[calc(100vh-320px)]">
+            {columnConfig.map(({ key, label, color, icon }) => (
+              <div key={key} className="bg-slate-800/30 rounded-xl border border-white/[0.06] flex flex-col min-w-[200px]">
+                <div className="p-3 md:p-4 border-b border-white/[0.06] flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className={`text-${color}-400`}>{icon}</span>
+                    <span className="font-medium text-white text-sm md:text-base">{label}</span>
+                  </div>
+                  <span className="px-2 py-0.5 bg-slate-700 rounded text-xs md:text-sm text-slate-300">
+                    {columns[key]?.length ?? 0}
+                  </span>
+                </div>
+                <div className="flex-1 overflow-y-auto p-2 space-y-2">
+                  {columns[key]?.slice(0, 20).map((task) => {
+                    const globalIndex = filteredTasks.findIndex(t => t.id === task.id)
+                    return (
+                      <TaskCard 
+                        key={task.id} 
+                        task={task} 
+                        isSelected={selectedTasks.has(task.id)}
+                        onSelect={(shiftKey) => onSelectTask(task.id, globalIndex, shiftKey)}
+                        onClick={() => onTaskClick(task)}
+                      />
+                    )
+                  })}
+                  {columns[key]?.length === 0 && (
+                    <div className="text-center text-slate-500 py-8 text-sm">No tasks</div>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </>
@@ -247,14 +284,12 @@ function TaskCard({ task, isSelected, onSelect, onClick }: TaskCardProps) {
   const agentId = task.assignee || task.assignedTo || ''
   const agentColor = agentColorMap[agentId]
   
-  // Check if card should be animated (active states)
-
   return (
     <div
-      className={`bg-slate-900/50 rounded-lg p-3 border transition-colors cursor-pointer ${
+      className={`bg-slate-900/50 rounded-lg p-4 border transition-all duration-200 cursor-pointer touch-manipulation ${
         isSelected
-          ? 'border-amber-500 bg-amber-500/10'
-          : 'border-white/[0.06] hover:border-slate-600'
+          ? 'border-amber-500 bg-amber-500/10 shadow-lg'
+          : 'border-white/[0.06] hover:border-slate-600 active:border-slate-500'
       }`}
       style={{
         borderLeftColor: agentColor || undefined,
@@ -265,30 +300,31 @@ function TaskCard({ task, isSelected, onSelect, onClick }: TaskCardProps) {
         onClick()
       }}
     >
-      <div className="flex items-start justify-between gap-2">
-        <div className="flex items-start gap-2 min-w-0">
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex items-start gap-3 min-w-0 flex-1">
           <button
             onClick={(e) => { e.stopPropagation(); onSelect(e.shiftKey) }}
-            className="mt-0.5 flex-shrink-0"
+            className="mt-1 flex-shrink-0 min-h-[44px] min-w-[44px] flex items-center justify-center -m-2 rounded-lg hover:bg-slate-800/50 active:bg-slate-800/70 transition-colors"
+            aria-label={isSelected ? 'Deselect task' : 'Select task'}
           >
             {isSelected ? (
-              <CheckSquare size={16} className="text-amber-400" />
+              <CheckSquare size={18} className="text-amber-400" />
             ) : (
-              <Square size={16} className="text-slate-500 hover:text-slate-400" />
+              <Square size={18} className="text-slate-500" />
             )}
           </button>
-          <span className="text-sm text-white font-medium line-clamp-2">{task.title}</span>
+          <span className="text-sm text-white font-medium line-clamp-2 leading-relaxed">{task.title}</span>
         </div>
-        <span className={`${prio.color} flex-shrink-0`}>{prio.icon}</span>
+        <div className={`${prio.color} flex-shrink-0 mt-1`}>{prio.icon}</div>
       </div>
       {/* Subtask progress chip */}
       {subtaskTotal > 0 && (
-        <div className="mt-2 ml-6 flex items-center gap-2">
-          <div className="flex items-center gap-1.5 px-2 py-0.5 bg-slate-800 rounded-full text-xs text-slate-400">
+        <div className="mt-3 ml-14 flex items-center gap-2">
+          <div className="flex items-center gap-1.5 px-2.5 py-1 bg-slate-800 rounded-full text-xs text-slate-400">
             <span>{subtaskDone}/{subtaskTotal} subtasks</span>
-            <div className="w-12 h-1 bg-slate-700 rounded-full overflow-hidden">
+            <div className="w-14 h-1.5 bg-slate-700 rounded-full overflow-hidden">
               <div
-                className="h-full bg-emerald-500 rounded-full"
+                className="h-full bg-emerald-500 rounded-full transition-all duration-300"
                 style={{ width: `${subtaskTotal > 0 ? (subtaskDone / subtaskTotal) * 100 : 0}%` }}
               />
             </div>
@@ -298,15 +334,15 @@ function TaskCard({ task, isSelected, onSelect, onClick }: TaskCardProps) {
       
       {/* Domain + workflow step tags */}
       {(task.domain || task.currentWorkflowStep) && (
-        <div className="mt-2 ml-6 flex items-center gap-1.5">
+        <div className="mt-3 ml-14 flex items-center gap-2 flex-wrap">
           {task.domain && (
-            <span className="px-1.5 py-0.5 bg-slate-800 rounded text-[10px] text-slate-500 uppercase tracking-wide">
+            <span className="px-2 py-1 bg-slate-800 rounded-md text-[11px] text-slate-500 uppercase tracking-wide">
               {task.domain}
             </span>
           )}
           {task.currentWorkflowStep && task.currentWorkflowStep !== 'pending' && task.currentWorkflowStep !== 'done' && (
             <span
-              className="px-1.5 py-0.5 rounded text-[10px] uppercase tracking-wide font-medium"
+              className="px-2 py-1 rounded-md text-[11px] uppercase tracking-wide font-medium"
               style={{
                 backgroundColor: agentColor ? `${agentColor}20` : 'rgba(96,165,250,0.15)',
                 color: agentColor || '#93c5fd',
@@ -320,30 +356,30 @@ function TaskCard({ task, isSelected, onSelect, onClick }: TaskCardProps) {
       
       {/* Agent assignment with timestamp */}
       {(task.assignee || task.assignedTo) && (
-        <div className="mt-2 ml-6 flex items-center gap-1.5 text-xs text-slate-500">
+        <div className="mt-3 ml-14 flex items-center gap-2 text-xs text-slate-500">
           <AgentAvatar agentId={task.assignee || task.assignedTo || ''} size="xs" />
           <span>{task.assignee || task.assignedTo}</span>
           {/* Timestamp for active tasks */}
           {task.startedAt && (task.status === 'in_progress' || task.status === 'building') && (
-            <span className="text-[10px] text-slate-500 ml-1">
+            <span className="text-[10px] text-slate-500">
               · started {formatTimeAgo(task.startedAt)}
             </span>
           )}
           {/* Timestamp for verifying tasks */}
           {task.status === 'verifying' && (task.submittedAt || task.startedAt) && (
-            <span className="text-[10px] text-slate-500 ml-1">
+            <span className="text-[10px] text-slate-500">
               · verifying {formatTimeAgo(task.submittedAt || task.startedAt!)}
             </span>
           )}
           {/* Completion time for done tasks */}
           {task.status === 'done' && task.verifiedAt && (
-            <span className="text-[10px] text-slate-500 ml-1">
+            <span className="text-[10px] text-slate-500">
               · completed {formatTimeAgo(task.verifiedAt)}
             </span>
           )}
           {/* Duration for done tasks */}
           {task.status === 'done' && task.startedAt && task.verifiedAt && (
-            <span className="text-[10px] text-emerald-400/70 ml-1">
+            <span className="text-[10px] text-emerald-400/70">
               took {formatDuration(task.startedAt, task.verifiedAt)}
             </span>
           )}
@@ -351,9 +387,9 @@ function TaskCard({ task, isSelected, onSelect, onClick }: TaskCardProps) {
       )}
       
       {task.tags && task.tags.length > 0 && (
-        <div className="mt-2 ml-6 flex gap-1 flex-wrap">
+        <div className="mt-3 ml-14 flex gap-1.5 flex-wrap">
           {task.tags.slice(0, 2).map((tag) => (
-            <span key={tag} className="px-1.5 py-0.5 bg-slate-800 rounded text-xs text-slate-400">{tag}</span>
+            <span key={tag} className="px-2 py-1 bg-slate-800 rounded-md text-xs text-slate-400">{tag}</span>
           ))}
         </div>
       )}
@@ -369,68 +405,67 @@ function MobileTaskCard({ task, isSelected, onSelect, onClick }: TaskCardProps) 
   const agentId = task.assignee || task.assignedTo || ''
   const agentColor = agentColorMap[agentId]
   
-  // Check if card should be animated (active states)
-  
   return (
     <div 
-      className={`bg-slate-800/50 rounded-xl border p-4 transition-colors cursor-pointer ${
-        isSelected ? 'border-amber-500 bg-amber-500/10' : 'border-white/[0.06]'
+      className={`bg-slate-800/50 rounded-xl border p-5 transition-all duration-200 cursor-pointer touch-manipulation ${
+        isSelected ? 'border-amber-500 bg-amber-500/10 shadow-lg transform scale-[0.98]' : 'border-white/[0.06] active:transform active:scale-[0.98]'
       }`}
       style={{
         borderLeftColor: agentColor || undefined,
-        borderLeftWidth: agentColor ? '3px' : undefined,
+        borderLeftWidth: agentColor ? '4px' : undefined,
       }}
       onClick={(e) => {
         if ((e.target as HTMLElement).closest('button')) return
         onClick()
       }}
     >
-      <div className="flex items-start gap-3">
+      <div className="flex items-start gap-4">
         <button 
           onClick={(e) => { e.stopPropagation(); onSelect(e.shiftKey) }}
-          className="mt-1 flex-shrink-0"
+          className="mt-1 flex-shrink-0 min-h-[44px] min-w-[44px] flex items-center justify-center -m-2 rounded-lg hover:bg-slate-700/50 active:bg-slate-700/70 transition-colors"
+          aria-label={isSelected ? 'Deselect task' : 'Select task'}
         >
           {isSelected ? (
-            <CheckSquare size={20} className="text-amber-400" />
+            <CheckSquare size={22} className="text-amber-400" />
           ) : (
-            <Square size={20} className="text-slate-500" />
+            <Square size={22} className="text-slate-500" />
           )}
         </button>
         <div className="flex-1 min-w-0">
-          <h3 className="text-white font-medium mb-2">{task.title}</h3>
+          <h3 className="text-white font-medium mb-3 text-base leading-relaxed">{task.title}</h3>
           <div className="flex flex-wrap gap-2">
-            <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs ${prio.bg} ${prio.color}`}>
+            <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium ${prio.bg} ${prio.color}`}>
               {prio.icon} {task.priority}
             </span>
-            <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs ${status.bg} ${status.color}`}>
+            <span className={`inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium ${status.bg} ${status.color}`}>
               {task.status?.replace('_', ' ')}
             </span>
             {/* Domain tag */}
             {task.domain && (
-              <span className="px-1.5 py-0.5 bg-slate-800 rounded text-[10px] text-slate-500 uppercase tracking-wide">
+              <span className="px-2.5 py-1 bg-slate-800 rounded-md text-xs text-slate-500 uppercase tracking-wide">
                 {task.domain}
               </span>
             )}
           </div>
           {(task.assignee || task.assignedTo) && (
-            <div className="mt-2 flex items-center gap-1.5 text-xs text-slate-400">
-              <AgentAvatar agentId={task.assignee || task.assignedTo || ''} size="xs" />
-              <span>{task.assignee || task.assignedTo}</span>
+            <div className="mt-3 flex items-center gap-2 text-sm text-slate-400">
+              <AgentAvatar agentId={task.assignee || task.assignedTo || ''} size="sm" />
+              <span className="font-medium">{task.assignee || task.assignedTo}</span>
               {/* Timestamp for active tasks */}
               {task.startedAt && (task.status === 'in_progress' || task.status === 'building') && (
-                <span className="text-[10px] text-slate-500 ml-1">
+                <span className="text-xs text-slate-500">
                   · started {formatTimeAgo(task.startedAt)}
                 </span>
               )}
               {/* Timestamp for verifying tasks */}
               {task.status === 'verifying' && (task.submittedAt || task.startedAt) && (
-                <span className="text-[10px] text-slate-500 ml-1">
+                <span className="text-xs text-slate-500">
                   · verifying {formatTimeAgo(task.submittedAt || task.startedAt!)}
                 </span>
               )}
               {/* Completion time for done tasks */}
               {task.status === 'done' && task.verifiedAt && (
-                <span className="text-[10px] text-slate-500 ml-1">
+                <span className="text-xs text-slate-500">
                   · completed {formatTimeAgo(task.verifiedAt)}
                 </span>
               )}
@@ -438,8 +473,8 @@ function MobileTaskCard({ task, isSelected, onSelect, onClick }: TaskCardProps) 
           )}
           {/* Duration for done tasks */}
           {task.status === 'done' && task.startedAt && task.verifiedAt && (
-            <div className="mt-1 text-xs">
-              <span className="text-emerald-400/70">
+            <div className="mt-2 text-sm">
+              <span className="text-emerald-400/70 font-medium">
                 took {formatDuration(task.startedAt, task.verifiedAt)}
               </span>
             </div>
