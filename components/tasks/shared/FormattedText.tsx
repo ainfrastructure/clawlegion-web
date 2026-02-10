@@ -15,7 +15,7 @@ function renderInline(str: string): React.ReactNode {
       return <strong key={i} className="text-white font-semibold">{part.slice(2, -2)}</strong>
     }
     if (part.startsWith('`') && part.endsWith('`')) {
-      return <code key={i} className="px-1 py-0.5 rounded bg-white/[0.06] text-blue-300 text-xs font-mono">{part.slice(1, -1)}</code>
+      return <code key={i} className="px-1.5 py-0.5 rounded bg-white/[0.06] text-blue-300 text-[12px] font-mono">{part.slice(1, -1)}</code>
     }
     // [link text](url)
     const linkMatch = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/)
@@ -43,14 +43,16 @@ export function FormattedText({ text, className }: FormattedTextProps) {
   const elements: React.ReactNode[] = []
   let bulletList: string[] = []
   let numberedList: string[] = []
+  let codeBlock: string[] | null = null
+  let codeBlockLang = ''
   let key = 0
 
   function flushBulletList() {
     if (bulletList.length > 0) {
       elements.push(
-        <ul key={key++} className="list-disc list-inside space-y-0.5 text-slate-300 text-sm">
+        <ul key={key++} className="list-disc list-outside pl-5 space-y-1 text-slate-300 text-sm">
           {bulletList.map((item, i) => (
-            <li key={i}>{renderInline(item)}</li>
+            <li key={i} className="leading-relaxed">{renderInline(item)}</li>
           ))}
         </ul>
       )
@@ -61,9 +63,9 @@ export function FormattedText({ text, className }: FormattedTextProps) {
   function flushNumberedList() {
     if (numberedList.length > 0) {
       elements.push(
-        <ol key={key++} className="list-decimal list-inside space-y-0.5 text-slate-300 text-sm">
+        <ol key={key++} className="list-decimal list-outside pl-5 space-y-1 text-slate-300 text-sm">
           {numberedList.map((item, i) => (
-            <li key={i}>{renderInline(item)}</li>
+            <li key={i} className="leading-relaxed">{renderInline(item)}</li>
           ))}
         </ol>
       )
@@ -76,8 +78,48 @@ export function FormattedText({ text, className }: FormattedTextProps) {
     flushNumberedList()
   }
 
+  function flushCodeBlock() {
+    if (codeBlock !== null) {
+      const code = codeBlock.join('\n')
+      elements.push(
+        <div key={key++} className="rounded-lg overflow-hidden border border-white/[0.04] my-1">
+          {codeBlockLang && (
+            <div className="px-3 py-1 bg-white/[0.03] border-b border-white/[0.04] text-[10px] text-slate-500 font-mono uppercase tracking-wider">
+              {codeBlockLang}
+            </div>
+          )}
+          <pre className="px-3 py-2.5 overflow-x-auto bg-[#060e1c]/80 custom-scrollbar">
+            <code className="text-[12px] leading-relaxed font-mono text-slate-300">{code}</code>
+          </pre>
+        </div>
+      )
+      codeBlock = null
+      codeBlockLang = ''
+    }
+  }
+
   for (const line of lines) {
     const trimmed = line.trim()
+
+    // Fenced code block toggle
+    if (trimmed.startsWith('```')) {
+      if (codeBlock === null) {
+        // Opening fence
+        flushLists()
+        codeBlock = []
+        codeBlockLang = trimmed.slice(3).trim()
+      } else {
+        // Closing fence
+        flushCodeBlock()
+      }
+      continue
+    }
+
+    // Inside code block — preserve original line (not trimmed)
+    if (codeBlock !== null) {
+      codeBlock.push(line)
+      continue
+    }
 
     // Bullet list
     if (trimmed.startsWith('- ') || trimmed.startsWith('* ')) {
@@ -102,10 +144,26 @@ export function FormattedText({ text, className }: FormattedTextProps) {
       continue
     }
 
-    // Headings
+    // Horizontal rule
+    if (/^[-*_]{3,}$/.test(trimmed)) {
+      elements.push(
+        <hr key={key++} className="border-t border-white/[0.06] my-2" />
+      )
+      continue
+    }
+
+    // Headings (h4 ####, h3 ###, h2 ##, h1 #)
+    if (trimmed.startsWith('#### ')) {
+      elements.push(
+        <h6 key={key++} className="text-xs font-semibold text-slate-300 uppercase tracking-wider mt-3 mb-1">
+          {renderInline(trimmed.slice(5))}
+        </h6>
+      )
+      continue
+    }
     if (trimmed.startsWith('### ')) {
       elements.push(
-        <h5 key={key++} className="text-sm font-semibold text-slate-200 mt-2">
+        <h5 key={key++} className="text-sm font-semibold text-slate-200 mt-3 mb-0.5">
           {renderInline(trimmed.slice(4))}
         </h5>
       )
@@ -113,7 +171,7 @@ export function FormattedText({ text, className }: FormattedTextProps) {
     }
     if (trimmed.startsWith('## ')) {
       elements.push(
-        <h4 key={key++} className="text-sm font-bold text-white mt-3">
+        <h4 key={key++} className="text-[15px] font-bold text-white mt-4 mb-0.5">
           {renderInline(trimmed.slice(3))}
         </h4>
       )
@@ -121,7 +179,7 @@ export function FormattedText({ text, className }: FormattedTextProps) {
     }
     if (trimmed.startsWith('# ')) {
       elements.push(
-        <h3 key={key++} className="text-base font-bold text-white mt-3">
+        <h3 key={key++} className="text-base font-bold text-white mt-4 mb-1">
           {renderInline(trimmed.slice(2))}
         </h3>
       )
@@ -146,6 +204,7 @@ export function FormattedText({ text, className }: FormattedTextProps) {
     )
   }
   flushLists()
+  flushCodeBlock() // Close unclosed code blocks
 
   return <div className={className ?? 'space-y-1.5'}>{elements}</div>
 }
