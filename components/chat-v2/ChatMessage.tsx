@@ -80,7 +80,7 @@ const AGENT_COLORS: Record<string, string> = {
   'main': '#DC2626',
   'athena': '#06B6D4',
   'vulcan': '#EA580C',
-  'janus': '#D4A017',
+  'janus': '#0EA5E9',
   'minerva': '#10B981',
   'mercury': '#C0C0C0',
   'apollo': '#EAB308',

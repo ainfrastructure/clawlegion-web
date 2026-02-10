@@ -79,7 +79,7 @@ export const ARMY_AGENTS: AgentConfig[] = [
     name: 'Janus',
     role: 'Verifier',
     emoji: '\u{1F9EA}',
-    color: '#D4A017', // Blue/Gold
+    color: '#0EA5E9', // Blue/Gold
     avatar: '/agents/janus.png',
     tier: 'army',
     description: 'The quality gate. Runs tests, captures proof screenshots, and validates every deliverable.',
