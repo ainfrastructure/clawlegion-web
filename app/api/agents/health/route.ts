@@ -40,7 +40,7 @@ const WORKFLOW_STEP_AGENTS: Record<string, string> = {
 // Default agents configuration
 const DEFAULT_AGENTS: AgentConfig[] = [
   { id: 'caesar', name: 'Caesar' },
-  { id: 'hermes', name: 'Hermes' },
+  { id: 'minerva', name: 'Minerva' },
   { id: 'athena', name: 'Athena' },
   { id: 'vulcan', name: 'Vulcan' },
   { id: 'janus', name: 'Janus' },

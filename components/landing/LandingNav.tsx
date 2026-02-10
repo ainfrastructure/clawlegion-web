@@ -8,7 +8,7 @@ import { LAUNCH_CONFIG } from '@/lib/launch-config'
 const PIPELINE_DOTS = [
   { label: 'Jarvis', color: '#DC2626' },
   { label: 'Archie', color: '#3B82F6' },
-  { label: 'Hermes', color: '#06B6D4' },
+  { label: 'Minerva', color: '#06B6D4' },
   { label: 'Mason', color: '#F59E0B' },
   { label: 'Janus', color: '#8B5CF6' },
 ]

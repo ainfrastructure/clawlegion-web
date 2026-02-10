@@ -81,7 +81,7 @@ export const DEFAULT_PRESETS: FlowPreset[] = [
     description: 'Fast iteration for small bugs and hotfixes',
     isSystem: true,
     agents: [
-      { role: 'hermes', enabled: false, resourceLevel: 'low' },
+      { role: 'minerva', enabled: false, resourceLevel: 'low' },
       { role: 'athena', enabled: false, resourceLevel: 'low' },
       { role: 'vulcan', enabled: true, resourceLevel: 'medium' },
       { role: 'janus', enabled: true, resourceLevel: 'low' },
@@ -105,7 +105,7 @@ export const DEFAULT_PRESETS: FlowPreset[] = [
     description: 'Balanced approach for typical features',
     isSystem: true,
     agents: [
-      { role: 'hermes', enabled: false, resourceLevel: 'medium' },
+      { role: 'minerva', enabled: false, resourceLevel: 'medium' },
       { role: 'athena', enabled: true, resourceLevel: 'medium' },
       { role: 'vulcan', enabled: true, resourceLevel: 'medium' },
       { role: 'janus', enabled: true, resourceLevel: 'medium' },
@@ -129,7 +129,7 @@ export const DEFAULT_PRESETS: FlowPreset[] = [
     description: 'Thorough analysis for complex features',
     isSystem: true,
     agents: [
-      { role: 'hermes', enabled: true, resourceLevel: 'high' },
+      { role: 'minerva', enabled: true, resourceLevel: 'high' },
       { role: 'athena', enabled: true, resourceLevel: 'high' },
       { role: 'vulcan', enabled: true, resourceLevel: 'high' },
       { role: 'janus', enabled: true, resourceLevel: 'high' },
@@ -153,7 +153,7 @@ export const DEFAULT_PRESETS: FlowPreset[] = [
     description: 'Investigation and analysis without implementation',
     isSystem: true,
     agents: [
-      { role: 'hermes', enabled: true, resourceLevel: 'high' },
+      { role: 'minerva', enabled: true, resourceLevel: 'high' },
       { role: 'athena', enabled: true, resourceLevel: 'medium' },
       { role: 'vulcan', enabled: false, resourceLevel: 'low' },
       { role: 'janus', enabled: false, resourceLevel: 'low' },
@@ -177,7 +177,7 @@ export const DEFAULT_PRESETS: FlowPreset[] = [
     description: 'Research, write, design, and distribute content end-to-end',
     isSystem: true,
     agents: [
-      { role: 'hermes', enabled: true, resourceLevel: 'medium' },
+      { role: 'minerva', enabled: true, resourceLevel: 'medium' },
       { role: 'quill', enabled: true, resourceLevel: 'high' },
       { role: 'pixel', enabled: true, resourceLevel: 'medium' },
       { role: 'mercury', enabled: true, resourceLevel: 'medium' },
@@ -248,7 +248,7 @@ export const DEFAULT_PRESETS: FlowPreset[] = [
     description: 'End-to-end development with deployment and verification',
     isSystem: true,
     agents: [
-      { role: 'hermes', enabled: true, resourceLevel: 'medium' },
+      { role: 'minerva', enabled: true, resourceLevel: 'medium' },
       { role: 'athena', enabled: true, resourceLevel: 'high' },
       { role: 'vulcan', enabled: true, resourceLevel: 'high' },
       { role: 'janus', enabled: true, resourceLevel: 'high' },
@@ -494,7 +494,7 @@ export function formatTimeBudget(hours: number): string {
 /**
  * Valid agent roles for validation
  */
-const VALID_ROLES: AgentRole[] = ['hermes', 'athena', 'vulcan', 'janus', 'caesar', 'forge', 'mercury', 'quill', 'pixel', 'sage']
+const VALID_ROLES: AgentRole[] = ['minerva', 'athena', 'vulcan', 'janus', 'caesar', 'forge', 'mercury', 'quill', 'pixel', 'sage']
 
 /**
  * Check if a role is a valid agent role

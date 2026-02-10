@@ -44,7 +44,7 @@ export const STATUS_CONFIG: Record<TaskStatusKey, StatusConfig> = {
     label: 'Researching',
     color: 'indigo',
     icon: Search,
-    agent: 'hermes',
+    agent: 'minerva',
   },
   planning: {
     key: 'planning',

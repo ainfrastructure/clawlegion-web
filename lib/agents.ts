@@ -7,7 +7,7 @@ export const AGENTS = [
   { id: 'athena', name: 'Athena', port: 18790, role: 'Planner' },
   { id: 'vulcan', name: 'Vulcan', port: 18791, role: 'Builder' },
   { id: 'janus', name: 'Janus', port: 18792, role: 'Verifier' },
-  { id: 'hermes', name: 'Hermes', port: 18793, role: 'Researcher' },
+  { id: 'minerva', name: 'Minerva', port: 18793, role: 'Researcher' },
   { id: 'ralph', name: 'Ralph', port: 18794, role: 'Loop Orchestrator' },
   { id: 'quill', name: 'Quill', port: 18797, role: 'Content Creator' },
   { id: 'pixel', name: 'Pixel', port: 18798, role: 'Creative Director' },
@@ -44,7 +44,7 @@ const AGENT_COLORS: Record<string, string> = {
   athena: '#06B6D4',    // Cyan - Planner
   vulcan: '#F59E0B',    // Amber - Builder
   janus: '#1E40AF',       // Emerald - Verifier
-  hermes: '#10B981',     // Emerald - Researcher (Hermes)
+  minerva: '#10B981',     // Emerald - Researcher (Minerva)
   ralph: '#EC4899',     // Pink - Loop Orchestrator
   quill: '#F97316',     // Orange - Content Creator
   pixel: '#D946EF',     // Fuchsia - Creative Director
@@ -54,7 +54,7 @@ const AGENT_COLORS: Record<string, string> = {
   planner: '#06B6D4',   // Cyan - Planner (athena)
   builder: '#F59E0B',   // Amber - Builder (vulcan)
   verifier: '#10B981',  // Emerald - Verifier (Vex)
-  researcher: '#06B6D4', // Emerald - Researcher (Hermes) (Scout)
+  researcher: '#06B6D4', // Emerald - Researcher (Minerva) (Scout)
 }
 
 // Agent avatars - map both friendly names AND role-based IDs from API
@@ -64,7 +64,7 @@ const AGENT_AVATARS: Record<string, string> = {
   athena: '/agents/athena.png',
   vulcan: '/agents/vulcan.png',
   janus: '/agents/janus.png',
-  hermes: '/agents/hermes.png',
+  minerva: '/agents/minerva.png',
   ralph: '/agents/ralph.jpg',
   lux: '/agents/lux-lobster.png',
   quill: '/agents/quill-writer.svg',
@@ -75,7 +75,7 @@ const AGENT_AVATARS: Record<string, string> = {
   planner: '/agents/athena.png',
   builder: '/agents/vulcan.png',
   verifier: '/agents/janus.png',
-  researcher: '/agents/hermes.png',
+  researcher: '/agents/minerva.png',
 }
 
 // Agent emojis - map both friendly names AND role-based IDs
@@ -85,7 +85,7 @@ const AGENT_EMOJIS: Record<string, string> = {
   athena: '🩵',
   vulcan: '🔥',
   janus: '🌗',
-  hermes: '💚',
+  minerva: '💚',
   ralph: '🔄',
   lux: '✨',
   quill: '🪶',
@@ -146,7 +146,7 @@ function normalizeAgentId(id: string): string {
     planner: 'athena',
     builder: 'vulcan',
     verifier: 'janus',
-    researcher: 'hermes',
+    researcher: 'minerva',
   }
   return idMap[id] || id
 }
@@ -221,7 +221,7 @@ export const FALLBACK_BOT_ARMY: AgentDisplay[] = [
   { id: 'athena', name: 'Athena', emoji: '🩵', avatar: '/agents/athena.png', role: 'Planner', color: '#06B6D4', status: 'online' },
   { id: 'vulcan', name: 'Vulcan', emoji: '🔥', avatar: '/agents/vulcan.png', role: 'Builder', color: '#F59E0B', status: 'online' },
   { id: 'janus', name: 'Janus', emoji: '🧪', avatar: '/agents/vex.jpg', role: 'Verifier', color: '#10B981', status: 'online' },
-  { id: 'hermes', name: 'Hermes', emoji: '🔭', avatar: '/agents/scout.jpg', role: 'Researcher', color: '#06B6D4', status: 'online' },
+  { id: 'minerva', name: 'Minerva', emoji: '🔭', avatar: '/agents/scout.jpg', role: 'Researcher', color: '#06B6D4', status: 'online' },
   { id: 'ralph', name: 'Ralph', emoji: '🔄', avatar: '/agents/ralph.jpg', role: 'Loop Orchestrator', color: '#EC4899', status: 'online' },
   { id: 'quill', name: 'Quill', emoji: '🪶', avatar: '/agents/quill-writer.svg', role: 'Content Creator', color: '#F97316', status: 'online' },
   { id: 'pixel', name: 'Pixel', emoji: '🎨', avatar: '/agents/pixel-designer.svg', role: 'Creative Director', color: '#D946EF', status: 'online' },
