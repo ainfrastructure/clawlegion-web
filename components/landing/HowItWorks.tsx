@@ -158,7 +158,7 @@ function SlideOrchestratorCard({ template, visible, compact = false }: { templat
         }`}
       >
         <div
-          className="glass-2 rounded-xl p-2 flex items-center gap-2 animate-card-breathe w-full"
+          className="glass-2 rounded-xl p-2 flex items-center gap-2 animate-card-breathe max-w-[280px] mx-auto"
           style={{
             boxShadow: `0 0 14px -4px ${CAESAR.color}33`,
             borderColor: `${CAESAR.color}30`,
@@ -472,7 +472,7 @@ function SlideContent({ template, visible }: { template: Template; visible: bool
   const agents = getTemplateAgents(template)
 
   return (
-    <div className="flex-shrink-0" style={{ width: '20%' }}>
+    <div className="flex-shrink-0" style={{ width: '10%' }}>
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Template label */}
         <div className="text-center mb-3">
@@ -518,54 +518,63 @@ function SlideContent({ template, visible }: { template: Template; visible: bool
   )
 }
 
-/** Mobile: compact horizontal pipeline for one template */
+/** Mobile: desktop layout scaled down to fit mobile viewport */
 function MobileSlideContent({ template, visible }: { template: Template; visible: boolean }) {
   const agents = getTemplateAgents(template)
 
   return (
-    <div className="flex-shrink-0" style={{ width: '20%' }}>
-      <div className="px-3">
-        {/* Template label — compact */}
-        <div className="text-center mb-2">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full glass-2 border border-white/[0.06]">
-            <span className="text-[11px] font-semibold text-white">{template.name}</span>
-          </div>
-          <p className="text-[10px] text-slate-500 mt-0.5 italic">{template.tagline}</p>
-        </div>
-
-        {/* Orchestrator — compact */}
-        <SlideOrchestratorCard template={template} visible={visible} compact />
-
-        {/* Oversight line — compact */}
-        <SlideOversightLine visible={visible} compact />
-
-        {/* Agent pipeline — compact horizontal row */}
-        <div className="flex items-center justify-center gap-0.5">
-          {agents.map((agent, i) => (
-            <div key={agent.id} className="flex items-center">
-              <div className="w-[72px]">
-                <SlideAgentCard
-                  agent={agent}
-                  index={i}
-                  visible={visible}
-                  description={template.descriptions[agent.id]}
-                  compact
-                />
+    <div className="flex-shrink-0" style={{ width: '10%' }}>
+      <div className="overflow-hidden" style={{ height: '240px' }}>
+        <div
+          className="origin-top"
+          style={{
+            transform: 'scale(0.45)',
+            width: '222%',
+            marginLeft: '-61%',
+          }}
+        >
+          <div className="px-6">
+            {/* Template label */}
+            <div className="text-center mb-3">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-2 border border-white/[0.06]">
+                <span className="text-sm font-semibold text-white">{template.name}</span>
               </div>
-              {i < agents.length - 1 && (
-                <SlideConnectionArrow
-                  color={agent.color}
-                  delay={400 + i * 100}
-                  visible={visible}
-                  compact
-                />
-              )}
+              <p className="text-sm text-slate-500 mt-1 italic">{template.tagline}</p>
             </div>
-          ))}
-        </div>
 
-        {/* Branch fork — compact */}
-        <SlideBranchFork visible={visible} outcomes={template.outcomes} compact />
+            {/* Orchestrator */}
+            <SlideOrchestratorCard template={template} visible={visible} />
+
+            {/* Oversight line */}
+            <SlideOversightLine visible={visible} />
+
+            {/* Agent pipeline — horizontal, forced single row */}
+            <div className="flex items-center justify-center flex-nowrap gap-1">
+              {agents.map((agent, i) => (
+                <div key={agent.id} className="flex items-center">
+                  <div className="w-[160px]">
+                    <SlideAgentCard
+                      agent={agent}
+                      index={i}
+                      visible={visible}
+                      description={template.descriptions[agent.id]}
+                    />
+                  </div>
+                  {i < agents.length - 1 && (
+                    <SlideConnectionArrow
+                      color={agent.color}
+                      delay={400 + i * 150}
+                      visible={visible}
+                    />
+                  )}
+                </div>
+              ))}
+            </div>
+
+            {/* Branch fork */}
+            <SlideBranchFork visible={visible} outcomes={template.outcomes} />
+          </div>
+        </div>
       </div>
     </div>
   )
@@ -576,7 +585,6 @@ function MobileSlideContent({ template, visible }: { template: Template; visible
 export function HowItWorks() {
   const sectionRef = useRef<HTMLDivElement>(null)
   const [visible, setVisible] = useState(false)
-  const [entryDone, setEntryDone] = useState(false)
 
   // Visibility observer
   useEffect(() => {
@@ -590,19 +598,12 @@ export function HowItWorks() {
           observer.disconnect()
         }
       },
-      { threshold: 0.15 }
+      { threshold: 0.05 }
     )
 
     observer.observe(el)
     return () => observer.disconnect()
   }, [])
-
-  // After entry animations complete, start the CSS scroll
-  useEffect(() => {
-    if (!visible) return
-    const timeout = setTimeout(() => setEntryDone(true), 1500)
-    return () => clearTimeout(timeout)
-  }, [visible])
 
   return (
     <section
@@ -638,11 +639,11 @@ export function HowItWorks() {
         </div>
       </div>
 
-      {/* Mobile: compact horizontal scrolling strip */}
+      {/* Mobile: continuous scrolling strip with 2x2 agent grid */}
       <div className="md:hidden overflow-hidden">
         <div
-          className={`flex ${entryDone ? 'pipeline-strip-mobile' : ''}`}
-          style={{ width: '500%', transform: entryDone ? undefined : 'translateX(-50%)' }}
+          className="flex pipeline-strip-mobile"
+          style={{ width: '1000%' }}
         >
           {[...TEMPLATES, ...TEMPLATES].map((tmpl, i) => (
             <MobileSlideContent
@@ -657,8 +658,8 @@ export function HowItWorks() {
       {/* Desktop: scrolling strip */}
       <div className="hidden md:block overflow-hidden">
         <div
-          className={`flex ${entryDone ? 'pipeline-strip' : ''}`}
-          style={{ width: '500%', transform: entryDone ? undefined : 'translateX(-50%)' }}
+          className="flex pipeline-strip"
+          style={{ width: '1000%' }}
         >
           {[...TEMPLATES, ...TEMPLATES].map((tmpl, i) => (
             <SlideContent

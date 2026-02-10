@@ -371,19 +371,19 @@
     pointer-events: none;
   }
 
-  /* Pipeline strip continuous scroll — flows left to right */
+  /* Pipeline strip continuous scroll — starts centered, flows left-to-right */
   @keyframes slide-strip {
-    0%   { transform: translateX(-50%); }
-    100% { transform: translateX(0%); }
+    0%   { transform: translateX(-75%); }
+    100% { transform: translateX(-25%); }
   }
 
   .pipeline-strip {
-    animation: slide-strip 50s linear infinite;
+    animation: slide-strip 60s linear infinite;
     will-change: transform;
   }
 
   .pipeline-strip-mobile {
-    animation: slide-strip 35s linear infinite;
+    animation: slide-strip 40s linear infinite;
     will-change: transform;
   }
 
