@@ -10,10 +10,6 @@ import {
   Gauge,
   Shield,
   Monitor,
-  ChevronDown,
-  ChevronUp,
-  Bookmark,
-  BookmarkCheck,
   GripVertical,
   Workflow,
   ArrowRight,
@@ -22,12 +18,10 @@ import {
 import { ALL_AGENTS, getAgentById } from '@/components/chat-v2/agentConfig'
 import {
   DEFAULT_PRESETS,
-  AGENT_METADATA,
   RESOURCE_LEVELS,
 } from '@/lib/flow-presets'
 import type {
   FlowConfiguration,
-  FlowPreset,
   AgentConfig,
   AgentRole,
   ResourceLevel,
@@ -70,7 +64,6 @@ export function AgentFlowSection({
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null)
 
   const enabledAgents = flowConfig.agents.filter(a => a.enabled)
-  const disabledAgents = flowConfig.agents.filter(a => !a.enabled)
 
   // Cycle resource level on click
   const cycleResourceLevel = useCallback((role: AgentRole, current: ResourceLevel) => {

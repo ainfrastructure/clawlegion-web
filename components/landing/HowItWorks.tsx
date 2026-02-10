@@ -472,7 +472,7 @@ function SlideContent({ template, visible }: { template: Template; visible: bool
   const agents = getTemplateAgents(template)
 
   return (
-    <div className="flex-shrink-0" style={{ width: '20%' }}>
+    <div className="flex-shrink-0" style={{ width: `${100 / (TEMPLATES.length * 2)}%` }}>
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Template label */}
         <div className="text-center mb-3">
@@ -523,7 +523,7 @@ function MobileSlideContent({ template, visible }: { template: Template; visible
   const agents = getTemplateAgents(template)
 
   return (
-    <div className="flex-shrink-0" style={{ width: '20%' }}>
+    <div className="flex-shrink-0" style={{ width: `${100 / (TEMPLATES.length * 2)}%` }}>
       <div className="px-3">
         {/* Template label — compact */}
         <div className="text-center mb-2">
@@ -639,7 +639,7 @@ export function HowItWorks() {
       <div className="md:hidden overflow-hidden">
         <div
           className={`flex ${entryDone ? 'pipeline-strip-mobile' : ''}`}
-          style={{ width: '500%', transform: entryDone ? undefined : 'translateX(-50%)' }}
+          style={{ width: `${TEMPLATES.length * 2 * 100}%`, transform: entryDone ? undefined : 'translateX(0%)' }}
         >
           {[...TEMPLATES, ...TEMPLATES].map((tmpl, i) => (
             <MobileSlideContent
@@ -655,7 +655,7 @@ export function HowItWorks() {
       <div className="hidden md:block overflow-hidden">
         <div
           className={`flex ${entryDone ? 'pipeline-strip' : ''}`}
-          style={{ width: '500%', transform: entryDone ? undefined : 'translateX(-50%)' }}
+          style={{ width: `${TEMPLATES.length * 2 * 100}%`, transform: entryDone ? undefined : 'translateX(0%)' }}
         >
           {[...TEMPLATES, ...TEMPLATES].map((tmpl, i) => (
             <SlideContent

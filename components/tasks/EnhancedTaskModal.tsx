@@ -133,17 +133,28 @@ export function EnhancedTaskModal({ isOpen, onClose, onTaskCreated, repositories
     }
   }, [])
 
-  // Handle agent toggle
+  // Handle agent toggle — also adds agents not yet in config
   const handleAgentToggle = useCallback((role: AgentRole) => {
-    setFlowConfig(prev => ({
-      ...prev,
-      agents: prev.agents.map(agent =>
-        agent.role === role
-          ? { ...agent, enabled: !agent.enabled }
-          : agent
-      ),
-      presetId: undefined,
-    }))
+    setFlowConfig(prev => {
+      const existing = prev.agents.find(a => a.role === role)
+      if (existing) {
+        return {
+          ...prev,
+          agents: prev.agents.map(agent =>
+            agent.role === role
+              ? { ...agent, enabled: !agent.enabled }
+              : agent
+          ),
+          presetId: undefined,
+        }
+      }
+      // Agent not in config yet — add it as enabled
+      return {
+        ...prev,
+        agents: [...prev.agents, { role, enabled: true, resourceLevel: 'medium' as ResourceLevel }],
+        presetId: undefined,
+      }
+    })
     setSelectedPresetId('custom')
   }, [])
 
