@@ -25,11 +25,11 @@ const AGENT_POOL: Record<string, Agent> = {
     avatarType: 'png',
   },
   scout: {
-    id: 'scout',
-    name: 'Scout',
+    id: 'hermes',
+    name: 'Hermes',
     role: 'Researcher',
     color: '#06B6D4',
-    avatar: '/agents/scout-researcher.png',
+    avatar: '/agents/hermes.png',
     avatarType: 'png',
   },
   vulcan: {
@@ -111,7 +111,7 @@ const TEMPLATES: Template[] = [
     name: 'Software Development',
     emoji: '🚀',
     tagline: 'From issue to shipped code — fully automated',
-    pipeline: ['athena', 'scout', 'vulcan', 'janus'],
+    pipeline: ['athena', 'hermes', 'vulcan', 'janus'],
     descriptions: {
       caesar: 'Routes tasks & manages the pipeline',
       athena: 'Decomposes tasks into implementation plans',
@@ -128,7 +128,7 @@ const TEMPLATES: Template[] = [
     name: 'Content Marketing',
     emoji: '📝',
     tagline: 'One brief in, a week of content out',
-    pipeline: ['scout', 'quill', 'pixel', 'mercury'],
+    pipeline: ['hermes', 'quill', 'pixel', 'mercury'],
     descriptions: {
       caesar: 'Routes briefs & coordinates the content pipeline',
       scout: 'Researches trending topics & competitors',
@@ -145,7 +145,7 @@ const TEMPLATES: Template[] = [
     name: 'Market Research & Analysis',
     emoji: '🔬',
     tagline: 'Data-driven insights on autopilot',
-    pipeline: ['scout', 'sage', 'athena', 'quill'],
+    pipeline: ['hermes', 'sage', 'athena', 'quill'],
     descriptions: {
       caesar: 'Coordinates research streams & deliverables',
       scout: 'Gathers market data, competitor intel, surveys',
@@ -179,7 +179,7 @@ const TEMPLATES: Template[] = [
     name: 'Operations & Compliance',
     emoji: '📋',
     tagline: 'Streamline processes, enforce standards',
-    pipeline: ['scout', 'athena', 'forge', 'janus'],
+    pipeline: ['hermes', 'athena', 'forge', 'janus'],
     descriptions: {
       caesar: 'Oversees operational workflows & compliance',
       scout: 'Audits current processes & regulations',

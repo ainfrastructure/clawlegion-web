@@ -33,7 +33,7 @@ export const AGENT_WEBHOOKS: Record<string, string> = {
   'athena': process.env.AGENT_WEBHOOK_ATHENA || 'http://localhost:18790',
   'vulcan': process.env.AGENT_WEBHOOK_VULCAN || 'http://localhost:18791',
   'janus': process.env.AGENT_WEBHOOK_VEX || 'http://localhost:18792',
-  'scout': process.env.AGENT_WEBHOOK_SCOUT || 'http://localhost:18793',
+  'hermes': process.env.AGENT_WEBHOOK_SCOUT || 'http://localhost:18793',
   'ralph': process.env.AGENT_WEBHOOK_RALPH || 'http://localhost:18794',
   'quill': process.env.AGENT_WEBHOOK_QUILL || 'http://localhost:18797',
   'pixel': process.env.AGENT_WEBHOOK_PIXEL || 'http://localhost:18798',
@@ -47,7 +47,7 @@ export const AGENT_NAMES: Record<string, string> = {
   'athena': 'athena',
   'vulcan': 'vulcan',
   'janus': 'janus',
-  'scout': 'scout',
+  'hermes': 'hermes',
   'ralph': 'ralph',
   'quill': 'quill',
   'pixel': 'pixel',
@@ -57,7 +57,7 @@ export const AGENT_NAMES: Record<string, string> = {
   'tester': 'janus',
   'planner': 'athena',
   'builder': 'vulcan',
-  'researcher': 'scout',
+  'researcher': 'hermes',
 }
 
 // Post a system message to a room via the Express backend

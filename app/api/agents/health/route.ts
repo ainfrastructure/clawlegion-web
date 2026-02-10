@@ -31,7 +31,7 @@ interface HealthCheckResponse {
 
 // Agent roles that correspond to workflow steps
 const WORKFLOW_STEP_AGENTS: Record<string, string> = {
-  research: 'scout',
+  research: 'hermes',
   plan: 'athena', 
   build: 'vulcan',
   verify: 'janus'
@@ -40,7 +40,7 @@ const WORKFLOW_STEP_AGENTS: Record<string, string> = {
 // Default agents configuration
 const DEFAULT_AGENTS: AgentConfig[] = [
   { id: 'caesar', name: 'Caesar' },
-  { id: 'scout', name: 'Scout' },
+  { id: 'hermes', name: 'Hermes' },
   { id: 'athena', name: 'Athena' },
   { id: 'vulcan', name: 'Vulcan' },
   { id: 'janus', name: 'Janus' },

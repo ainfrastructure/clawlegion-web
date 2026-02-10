@@ -60,12 +60,12 @@ export const BOT_ARMY: BotMember[] = [
     avatar: '/agents/janus.png',
   },
   {
-    id: 'scout',
-    name: 'Scout',
+    id: 'hermes',
+    name: 'Hermes',
     role: 'Researcher',
     emoji: '🔭',
     color: '#06B6D4', // Cyan
-    avatar: '/agents/scout-researcher.png',
+    avatar: '/agents/hermes.png',
   },
   {
     id: 'ralph',
