@@ -108,7 +108,7 @@ export const ARMY_AGENTS: AgentConfig[] = [
     id: 'cato',
     name: 'Cato',
     role: 'DevOps Engineer',
-    emoji: '\u{1F525}',
+    emoji: '🗿',
     color: '#78716C', // Stone Gray
     avatar: '/agents/cato.png',
     tier: 'army',
@@ -123,7 +123,7 @@ export const ARMY_AGENTS: AgentConfig[] = [
     id: 'mercury',
     name: 'Mercury',
     role: 'Messenger',
-    emoji: '\u{1F4E1}',
+    emoji: '⚡️',
     color: '#C0C0C0', // Silver
     avatar: '/agents/mercury.png',
     tier: 'army',
@@ -168,12 +168,12 @@ export const ARMY_AGENTS: AgentConfig[] = [
     id: 'oracle',
     name: 'Oracle',
     role: 'Data Analyst',
-    emoji: '\u{1F4CA}',
+    emoji: '🔮',
     color: '#4338CA', // Indigo
-    avatar: '/agents/sage-avatar.jpg',
+    avatar: '/agents/oracle.png',
     tier: 'army',
     description: 'The numbers whisperer. Tracks metrics, spots trends, and turns raw data into decisions.',
-    longDescription: 'Sage sees the story the data is telling before anyone else does. From tracking agent performance metrics to analyzing task completion trends, generating reports to surfacing actionable insights, Sage transforms raw numbers into clear narratives that drive better decisions across the fleet.',
+    longDescription: 'Oracle sees the story the data is telling before anyone else does. From tracking agent performance metrics to analyzing task completion trends, generating reports to surfacing actionable insights, Oracle transforms raw numbers into clear narratives that drive better decisions across the fleet.',
     capabilities: ['metrics tracking', 'trend analysis', 'report generation', 'data visualization', 'performance insights'],
     specialty: 'Data Analysis',
     openclawAgentId: 'oracle',
