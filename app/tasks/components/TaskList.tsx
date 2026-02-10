@@ -307,12 +307,25 @@ function TaskCard({ task, isSelected, onSelect, onClick }: TaskCardProps) {
         </div>
       )}
       
-      {/* Domain tag */}
-      {task.domain && (
-        <div className="mt-2 ml-6">
-          <span className="px-1.5 py-0.5 bg-slate-800 rounded text-[10px] text-slate-500 uppercase tracking-wide">
-            {task.domain}
-          </span>
+      {/* Domain + workflow step tags */}
+      {(task.domain || task.currentWorkflowStep) && (
+        <div className="mt-2 ml-6 flex items-center gap-1.5">
+          {task.domain && (
+            <span className="px-1.5 py-0.5 bg-slate-800 rounded text-[10px] text-slate-500 uppercase tracking-wide">
+              {task.domain}
+            </span>
+          )}
+          {task.currentWorkflowStep && task.currentWorkflowStep !== 'pending' && task.currentWorkflowStep !== 'done' && (
+            <span
+              className="px-1.5 py-0.5 rounded text-[10px] uppercase tracking-wide font-medium"
+              style={{
+                backgroundColor: agentColor ? `${agentColor}20` : 'rgba(96,165,250,0.15)',
+                color: agentColor || '#93c5fd',
+              }}
+            >
+              {task.currentWorkflowStep}
+            </span>
+          )}
         </div>
       )}
       
