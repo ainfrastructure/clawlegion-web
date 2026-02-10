@@ -15,7 +15,7 @@ const valueItems = [
   'Pre-built workflow templates',
   'All AI models — Anthropic, OpenAI, Google, Grok & more',
   'Social media management — Instagram, Facebook, TikTok, X',
-  '15+ messaging integrations — WhatsApp, Telegram, Slack, Discord',
+  '15+ messaging integrations included',
   'Growing integration library',
   'Priority support',
 ]
