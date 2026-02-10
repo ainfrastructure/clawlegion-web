@@ -13,7 +13,7 @@ const NODE_HEIGHT = 160
 const NODE_SEP = 100
 const RANK_SEP = 100
 
-let dagreModule: typeof import('dagre') | null = null
+let dagreModule: any = null
 
 export function useFlowLayout(steps: PipelineStep[]) {
   const [dagreReady, setDagreReady] = useState(!!dagreModule)

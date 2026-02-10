@@ -5,17 +5,15 @@ import { useQuery } from '@tanstack/react-query'
 import Link from 'next/link'
 import Image from 'next/image'
 import { PageContainer } from '@/components/layout'
-import { AgentProfilePanel, type AgentData, type AgentStatus } from '@/components/agents'
+import { type AgentData } from '@/components/agents'
 import { OrgAgentCard } from '@/components/agents/OrgAgentCard'
 import { AgentDetailModal } from '@/components/agents/AgentDetailModal'
 import { AddAgentModal } from '@/components/agents/AddAgentModal'
 import { DEFAULT_PRESETS, AGENT_METADATA } from '@/lib/flow-presets'
-import type { FlowPreset } from '@/components/flow-config/types'
-import { getAgentByName, getAgentById, ALL_AGENTS } from '@/components/chat-v2/agentConfig'
+import { getAgentById, ALL_AGENTS } from '@/components/chat-v2/agentConfig'
 import {
   Users,
   GitBranch,
-  RefreshCw,
   Loader2,
   ArrowRight,
   Bot,
@@ -73,7 +71,6 @@ const LEADERSHIP_NAMES = ['caesar', 'lux']
 export default function AgentOrgPage() {
   const [selectedAgent, setSelectedAgent] = useState<AgentData | null>(null)
   const [showDetailModal, setShowDetailModal] = useState(false)
-  const [configAgentId, setConfigAgentId] = useState<string | null>(null)
   const [showAddAgent, setShowAddAgent] = useState(false)
 
   const {
@@ -152,14 +149,6 @@ export default function AgentOrgPage() {
     setShowDetailModal(true)
   }
 
-  const handleOpenConfig = (agentId: string) => {
-    setShowDetailModal(false)
-    // agentId here is a DB CUID — resolve to display ID via name
-    const agent = allAgents.find((a) => a.id === agentId)
-    const enriched = agent ? getAgentByName(agent.name) : null
-    setConfigAgentId(enriched?.id || agentId)
-  }
-
   return (
     <PageContainer>
       {/* Header */}
@@ -180,12 +169,6 @@ export default function AgentOrgPage() {
               className="px-3 sm:px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg flex items-center justify-center gap-2 transition-colors text-sm font-medium"
             >
               <Plus size={16} /> Add Agent
-            </button>
-            <button
-              onClick={handleRefresh}
-              className="flex items-center gap-2 px-4 py-2 glass-2 rounded-lg text-sm text-white hover:bg-slate-700/50 transition-colors"
-            >
-              <RefreshCw size={16} /> Refresh
             </button>
           </div>
         </div>
@@ -382,17 +365,11 @@ export default function AgentOrgPage() {
         agent={selectedAgent}
         isOpen={showDetailModal}
         onClose={() => setShowDetailModal(false)}
-        onOpenConfig={handleOpenConfig}
+        onDeleted={() => {
+          refetchAgents()
+          refetchHealth()
+        }}
       />
-
-      {/* Agent Profile Panel (config) */}
-      {configAgentId && (
-        <AgentProfilePanel
-          agentId={configAgentId}
-          agentStatus={(allAgents.find((a) => a.name.toLowerCase() === configAgentId?.toLowerCase())?.status as AgentStatus) || 'offline'}
-          onClose={() => setConfigAgentId(null)}
-        />
-      )}
 
       {/* Add Agent Modal */}
       <AddAgentModal
