@@ -174,7 +174,7 @@ function SlideOrchestratorCard({ template, visible, compact = false }: { templat
               width={22}
               height={22}
               className="object-contain"
-              loading="eager"
+              loading="lazy"
             />
           </div>
           <div className="min-w-0">
@@ -217,7 +217,7 @@ function SlideOrchestratorCard({ template, visible, compact = false }: { templat
             width={40}
             height={40}
             className="object-contain"
-            loading="eager"
+            loading="lazy"
           />
         </div>
         <div className="min-w-0">
@@ -293,7 +293,7 @@ function SlideAgentCard({
               width={24}
               height={24}
               className={agent.avatarType === 'svg' ? 'object-contain' : 'object-cover rounded-md'}
-              loading="eager"
+              loading="lazy"
             />
           </div>
           <span className="text-white font-semibold text-[10px] leading-tight">{agent.name}</span>
@@ -339,7 +339,7 @@ function SlideAgentCard({
             width={44}
             height={44}
             className={agent.avatarType === 'svg' ? 'object-contain' : 'object-cover rounded-lg'}
-            loading="eager"
+            loading="lazy"
           />
         </div>
         <span className="text-white font-semibold text-sm">{agent.name}</span>
