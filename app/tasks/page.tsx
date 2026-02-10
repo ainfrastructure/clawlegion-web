@@ -27,6 +27,8 @@ import {
   TaskFilters,
   KanbanView,
   ListView,
+  TaskListSkeleton,
+  KanbanViewSkeleton,
   StatCard,
   BulkActionsBar,
   useTaskFilters,
@@ -389,7 +391,7 @@ function TasksPageContent() {
 
       {/* Content */}
       {isLoading ? (
-        <div className="text-center text-slate-400 py-12">Loading tasks...</div>
+        viewMode === 'kanban' ? <KanbanViewSkeleton /> : <TaskListSkeleton />
       ) : viewMode === 'kanban' ? (
         <KanbanView 
           columns={columns} 

@@ -2,6 +2,7 @@
 export { TaskErrorBoundary } from './TaskErrorBoundary'
 export { TaskFilters } from './TaskFilters'
 export { KanbanView, ListView } from './TaskList'
+export { TaskListSkeleton, KanbanViewSkeleton } from './TaskListSkeleton'
 export { StatCard } from '@/components/ui/StatCard'
 export { BulkActionsBar } from './BulkActionsBar'
 
