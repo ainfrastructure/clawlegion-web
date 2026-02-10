@@ -13,6 +13,9 @@ const valueItems = [
   'Session replay & audit logs',
   'Specialized AI agents for every role',
   'Pre-built workflow templates',
+  'All AI models — Anthropic, OpenAI, Google, Grok & more',
+  'Social media management — Instagram, Facebook, TikTok, X',
+  '15+ messaging integrations — WhatsApp, Telegram, Slack, Discord',
   'Growing integration library',
   'Priority support',
 ]
@@ -63,16 +66,16 @@ export function PricingSection() {
             <div className="mb-6">
               <div className="flex items-baseline gap-3">
                 <span className="text-5xl font-bold text-white">${LAUNCH_CONFIG.earlyBirdPrice}</span>
-                <span className="text-slate-400">/mo</span>
+                <span className="text-slate-300">/mo</span>
               </div>
               <div className="mt-1">
-                <span className="text-slate-500 line-through text-lg">${LAUNCH_CONFIG.originalPrice}/mo</span>
+                <span className="text-slate-400 line-through text-lg">${LAUNCH_CONFIG.originalPrice}/mo</span>
               </div>
             </div>
 
             {/* Countdown */}
             <div className="mb-6">
-              <p className="text-xs text-slate-500 uppercase tracking-wider mb-3">Price increases in:</p>
+              <p className="text-xs text-slate-400 uppercase tracking-wider font-medium mb-3">Price increases in:</p>
               <CountdownTimer variant="large" />
             </div>
 
@@ -90,7 +93,7 @@ export function PricingSection() {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@company.com"
                   required
-                  className="w-full px-4 py-3 glass-2 rounded-xl text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
+                  className="w-full px-4 py-3 glass-2 rounded-xl text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
                 />
                 <button
                   type="submit"
@@ -121,8 +124,8 @@ export function PricingSection() {
                 { icon: Lock, text: 'Secure checkout' },
               ].map(({ icon: Icon, text }) => (
                 <div key={text} className="flex flex-col items-center gap-1.5 text-center">
-                  <Icon className="w-4 h-4 text-slate-500" />
-                  <span className="text-[11px] text-slate-500">{text}</span>
+                  <Icon className="w-4 h-4 text-slate-400" />
+                  <span className="text-[11px] text-slate-400">{text}</span>
                 </div>
               ))}
             </div>
