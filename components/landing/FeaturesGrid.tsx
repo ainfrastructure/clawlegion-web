@@ -3,43 +3,43 @@ import { Activity, Zap, MessageSquare, GitBranch, Shield, Eye } from 'lucide-rea
 const features = [
   {
     icon: Activity,
-    title: 'Real-Time Agent Monitoring',
-    description: 'Track every agent in your fleet with live status updates, resource usage, and performance metrics.',
+    title: 'Live Agent Dashboard',
+    description: 'See every agent working in real time. Monitor progress, catch issues, and track what your workforce is doing — all in one view.',
     accent: 'text-blue-400',
     glow: 'group-hover:shadow-blue-500/20',
   },
   {
     icon: Zap,
-    title: 'Task Orchestration',
-    description: 'Assign, prioritize, and route tasks to agents automatically with intelligent queue management.',
+    title: 'Smart Task Routing',
+    description: 'Drop tasks in, the right agent picks them up. Automatic prioritization, parallel execution, and retry on failure.',
     accent: 'text-purple-400',
     glow: 'group-hover:shadow-purple-500/20',
   },
   {
     icon: MessageSquare,
-    title: 'Agent Coordination',
-    description: 'Real-time chat between agents and operators. Council rooms for multi-agent decision making.',
+    title: 'Agent-to-Agent Chat',
+    description: 'Agents coordinate with each other — passing context, handing off work, and making decisions together without you in the loop.',
     accent: 'text-green-400',
     glow: 'group-hover:shadow-green-500/20',
   },
   {
     icon: GitBranch,
-    title: 'Flow Builder',
-    description: 'Design and customize agent pipelines with drag-and-drop workflow configuration.',
+    title: 'Visual Flow Builder',
+    description: 'Drag, drop, done. Create custom workflows, define your own agents, and wire them together however you want.',
     accent: 'text-cyan-400',
     glow: 'group-hover:shadow-cyan-500/20',
   },
   {
     icon: Shield,
-    title: 'Health Monitoring',
-    description: 'Automated health checks, heartbeat monitoring, and system status overview.',
+    title: 'Bring Your Own Keys',
+    description: 'Use your own API keys from any LLM provider. You control the models, the costs, and the data. No vendor lock-in.',
     accent: 'text-amber-400',
     glow: 'group-hover:shadow-amber-500/20',
   },
   {
     icon: Eye,
-    title: 'Session Replay & Audit',
-    description: 'Review past agent sessions with full context — see exactly what happened and when.',
+    title: 'Full Session Replay',
+    description: 'Every agent action is logged. Replay any session, audit decisions, and understand exactly what happened and why.',
     accent: 'text-pink-400',
     glow: 'group-hover:shadow-pink-500/20',
   },
@@ -51,10 +51,10 @@ export function FeaturesGrid() {
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4 tracking-tight">
-            Everything you need to command an AI legion
+            Your command center for autonomous AI
           </h2>
           <p className="text-lg text-slate-400 max-w-2xl mx-auto">
-            Purpose-built for teams running autonomous AI workforces.
+            Build custom agents, design unique workflows, and let them run — you just watch the results come in.
           </p>
         </div>
 
