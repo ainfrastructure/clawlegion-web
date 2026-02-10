@@ -129,33 +129,83 @@ export function isRetryable(error: unknown): boolean {
   return apiError.isRetryable
 }
 
-// Get retry delay with exponential backoff
-export function getRetryDelay(attempt: number, baseDelayMs = 1000): number {
+// Retry configuration
+export interface RetryConfig {
+  /** Maximum number of retry attempts (default: 3) */
+  maxAttempts?: number
+  /** Base delay in ms for exponential backoff (default: 1000) */
+  baseDelayMs?: number
+  /** Fixed delay schedule in ms — overrides exponential backoff when provided (e.g. [1000, 2000, 4000]) */
+  fixedDelays?: number[]
+  /** Whether to add jitter to delays (default: true) */
+  jitter?: boolean
+}
+
+/** Default retry config: 3 attempts with 1s/2s/4s fixed delays */
+export const DEFAULT_RETRY_CONFIG: Required<RetryConfig> = {
+  maxAttempts: 3,
+  baseDelayMs: 1000,
+  fixedDelays: [1000, 2000, 4000],
+  jitter: true,
+}
+
+// Get retry delay with exponential backoff or fixed schedule
+export function getRetryDelay(
+  attempt: number,
+  baseDelayMs = 1000,
+  options?: { fixedDelays?: number[]; jitter?: boolean }
+): number {
+  const { fixedDelays, jitter = true } = options ?? {}
   const maxDelay = 30000 // 30 seconds max
-  const delay = Math.min(baseDelayMs * Math.pow(2, attempt), maxDelay)
-  // Add jitter (±25%)
-  return delay * (0.75 + Math.random() * 0.5)
+
+  let delay: number
+  if (fixedDelays && attempt < fixedDelays.length) {
+    delay = fixedDelays[attempt]
+  } else {
+    delay = Math.min(baseDelayMs * Math.pow(2, attempt), maxDelay)
+  }
+
+  // Add jitter (±25%) to prevent thundering herd
+  if (jitter) {
+    delay = delay * (0.75 + Math.random() * 0.5)
+  }
+
+  return delay
 }
 
 // Retry wrapper for API calls
 export async function withRetry<T>(
   fn: () => Promise<T>,
-  maxAttempts = 3,
-  baseDelayMs = 1000
+  configOrMaxAttempts?: RetryConfig | number,
+  baseDelayMs?: number
 ): Promise<T> {
+  // Support both old signature (maxAttempts, baseDelayMs) and new config object
+  const config: Required<RetryConfig> =
+    typeof configOrMaxAttempts === 'number'
+      ? {
+          ...DEFAULT_RETRY_CONFIG,
+          maxAttempts: configOrMaxAttempts,
+          baseDelayMs: baseDelayMs ?? DEFAULT_RETRY_CONFIG.baseDelayMs,
+          fixedDelays: [], // Legacy callers don't use fixed delays
+        }
+      : { ...DEFAULT_RETRY_CONFIG, ...configOrMaxAttempts }
+
   let lastError: unknown
 
-  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+  for (let attempt = 0; attempt < config.maxAttempts; attempt++) {
     try {
       return await fn()
     } catch (error) {
       lastError = error
-      
-      if (!isRetryable(error) || attempt === maxAttempts - 1) {
+
+      if (!isRetryable(error) || attempt === config.maxAttempts - 1) {
         throw handleApiError(error)
       }
 
-      const delay = getRetryDelay(attempt, baseDelayMs)
+      const delay = getRetryDelay(attempt, config.baseDelayMs, {
+        fixedDelays: config.fixedDelays,
+        jitter: config.jitter,
+      })
       await new Promise(resolve => setTimeout(resolve, delay))
     }
   }
