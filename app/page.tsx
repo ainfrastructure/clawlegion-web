@@ -16,6 +16,7 @@ import {
   PricingSection,
   StickyCtaBar,
   ContactModal,
+  EasyVsPower,
 } from '@/components/landing'
 
 export default function LandingPage() {
@@ -32,6 +33,7 @@ export default function LandingPage() {
         <HowItWorks />
         <ProductShowcase />
         <FeaturesGrid />
+        <EasyVsPower />
         <PricingSection />
         <DemoSection />
         <EarlyAccessForm />
