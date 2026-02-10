@@ -127,7 +127,7 @@ export function TaskNotificationManager() {
         if (!isComponentMountedRef.current) return
         
         // Only show for significant changes that don't have specific handlers
-        if (data.changes.assignee && !data.changes.status) {
+        if (data.changes?.assignee && !data.changes?.status) {
           const assigneeName = data.changes.assignee.to || 'Unassigned'
           toast.taskAssigned(data.title, assigneeName)
         }
