@@ -46,6 +46,31 @@ ALL_AGENTS.forEach(a => {
   agentColorMap[a.id] = a.color
 })
 
+// Derive agent from workflow step when assignee is not set
+function deriveAgentFromStep(step: string | null | undefined): string {
+  if (!step) return ''
+  const s = step.toLowerCase()
+  if (s.includes('build')) return 'vulcan'
+  if (s.includes('verify')) return 'janus'
+  if (s.includes('research')) return 'minerva'
+  if (s.includes('plan')) return 'athena'
+  if (s.includes('review')) return 'janus'
+  if (s.includes('create') || s.includes('draft')) return 'mercury'
+  if (s.includes('execute')) return 'cato'
+  if (s.includes('synthesize')) return 'athena'
+  return ''
+}
+
+// Get fallback border color based on task status
+function getStatusBorderColor(status: string | undefined): string {
+  const s = status || ''
+  if (s === 'todo' || s === 'planned' || s === 'backlog' || s === 'queued') return '#3b82f6' // blue
+  if (s === 'building' || s === 'in_progress' || s === 'in_research' || s === 'assigned' || s === 'researching' || s === 'planning') return '#f59e0b' // amber
+  if (s === 'verifying') return '#06b6d4' // cyan
+  if (s === 'done' || s === 'completed') return '#22c55e' // green
+  return '#64748b' // slate fallback
+}
+
 // ============================================
 // Kanban View - horizontal scroll on mobile
 // ============================================
@@ -290,9 +315,10 @@ function TaskCard({ task, isSelected, onSelect, onClick }: TaskCardProps) {
   const subtaskDone = subtasks.filter(s => s.status === 'done' || s.status === 'completed').length
   const subtaskTotal = subtasks.length
   
-  // Get agent color for border
-  const agentId = task.assignee || task.assignedTo || ''
+  // Get agent color for border (with workflow step fallback)
+  const agentId = task.assignee || task.assignedTo || deriveAgentFromStep(task.currentWorkflowStep)
   const agentColor = agentColorMap[agentId]
+  const fallbackBorderColor = getStatusBorderColor(task.status)
   
   return (
     <div
@@ -302,8 +328,8 @@ function TaskCard({ task, isSelected, onSelect, onClick }: TaskCardProps) {
           : 'border-white/[0.06] hover:border-slate-600 active:border-slate-500'
       }`}
       style={{
-        borderLeftColor: agentColor || undefined,
-        borderLeftWidth: agentColor ? '3px' : undefined,
+        borderLeftColor: agentColor || fallbackBorderColor,
+        borderLeftWidth: '3px',
       }}
       onClick={(e) => {
         if ((e.target as HTMLElement).closest('button')) return
@@ -361,10 +387,10 @@ function TaskCard({ task, isSelected, onSelect, onClick }: TaskCardProps) {
       )}
       
       {/* Agent assignment with timestamp */}
-      {(task.assignee || task.assignedTo) && (
+      {agentId && (
         <div className="mt-3 flex items-center gap-2 text-xs text-slate-500">
-          <AgentAvatar agentId={task.assignee || task.assignedTo || ''} size="xs" />
-          <span className="capitalize">{task.assignee || task.assignedTo}</span>
+          <AgentAvatar agentId={agentId} size="xs" />
+          <span className="capitalize">{agentId}</span>
           {/* Timestamp for active tasks */}
           {task.startedAt && (task.status !== 'done' && task.status !== 'verifying') && (
             <span className="text-[10px] text-slate-500">
@@ -407,9 +433,10 @@ function MobileTaskCard({ task, isSelected, onSelect, onClick }: TaskCardProps) 
   const prio = priorityConfig[task.priority] ?? priorityConfig.P2
   const status = statusConfig[task.status] ?? statusConfig.queued
   
-  // Get agent color for border
-  const agentId = task.assignee || task.assignedTo || ''
+  // Get agent color for border (with workflow step fallback)
+  const agentId = task.assignee || task.assignedTo || deriveAgentFromStep(task.currentWorkflowStep)
   const agentColor = agentColorMap[agentId]
+  const fallbackBorderColor = getStatusBorderColor(task.status)
   
   return (
     <div 
@@ -417,8 +444,8 @@ function MobileTaskCard({ task, isSelected, onSelect, onClick }: TaskCardProps) 
         isSelected ? 'border-amber-500 bg-amber-500/10 shadow-lg transform scale-[0.98]' : 'border-white/[0.06] active:transform active:scale-[0.98]'
       }`}
       style={{
-        borderLeftColor: agentColor || undefined,
-        borderLeftWidth: agentColor ? '4px' : undefined,
+        borderLeftColor: agentColor || fallbackBorderColor,
+        borderLeftWidth: '4px',
       }}
       onClick={(e) => {
         if ((e.target as HTMLElement).closest('button')) return
@@ -447,10 +474,10 @@ function MobileTaskCard({ task, isSelected, onSelect, onClick }: TaskCardProps) 
               {task.status?.replace('_', ' ')}
             </span>
           </div>
-          {(task.assignee || task.assignedTo) && (
+          {agentId && (
             <div className="mt-3 flex items-center gap-2 text-sm text-slate-400">
-              <AgentAvatar agentId={task.assignee || task.assignedTo || ''} size="sm" />
-              <span className="font-medium">{task.assignee || task.assignedTo}</span>
+              <AgentAvatar agentId={agentId} size="sm" />
+              <span className="font-medium">{agentId}</span>
               {/* Timestamp for active tasks */}
               {task.startedAt && (task.status === 'in_progress' || task.status === 'building') && (
                 <span className="text-xs text-slate-500">
@@ -491,6 +518,8 @@ function TaskRow({ task, isSelected, onSelect, onClick }: TaskCardProps) {
   const status = statusConfig[task.status] ?? statusConfig.queued
   const subtasks = task.subtasks || []
   const hasSubtasks = subtasks.length > 0
+  // Derive agent from workflow step as fallback
+  const derivedAgent = task.assignee || task.assignedTo || deriveAgentFromStep(task.currentWorkflowStep)
 
   return (
     <>
@@ -548,10 +577,10 @@ function TaskRow({ task, isSelected, onSelect, onClick }: TaskCardProps) {
           </span>
         </td>
         <td className="px-4 py-4">
-          {(task.assignee || task.assignedTo) ? (
+          {derivedAgent ? (
             <div className="flex items-center gap-2">
-              <AgentAvatar agentId={task.assignee || task.assignedTo || ''} size="sm" />
-              <span className="text-slate-300">{task.assignee || task.assignedTo}</span>
+              <AgentAvatar agentId={derivedAgent} size="sm" />
+              <span className="text-slate-300">{derivedAgent}</span>
             </div>
           ) : (
             <span className="text-slate-500">-</span>
