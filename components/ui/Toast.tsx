@@ -95,12 +95,10 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
   const [toasts, setToasts] = useState<Toast[]>([])
   const [soundEnabled, setSoundEnabled] = useState(false)
   
-  // Load sound preference from localStorage
+  // Sound is off by default — only enable if user explicitly toggled it on
   useEffect(() => {
-    const stored = localStorage.getItem('toast-sound-enabled')
-    if (stored !== null) {
-      setSoundEnabled(stored === 'true')
-    }
+    // Clear any old stored preference that had sound on
+    localStorage.removeItem('toast-sound-enabled')
   }, [])
 
   const toggleSound = useCallback(() => {

@@ -122,7 +122,7 @@ export function AgentFlowSection({
       </div>
 
       {/* Preset Ribbon */}
-      <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1 scrollbar-none">
+      <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1 scrollbar-hide">
         {DEFAULT_PRESETS.map((preset) => {
           const isSelected = selectedPresetId === preset.id
           const presetAgents = preset.agents.filter(a => a.enabled)
@@ -212,7 +212,7 @@ export function AgentFlowSection({
               <p className="text-xs text-slate-600 mt-1">Add agents from the palette below</p>
             </div>
           ) : (
-            <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+            <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide">
               {enabledAgents.map((agent, idx) => {
                 const agentData = getAgentById(agent.role)
                 const agentColor = agentData?.color || '#64748b'

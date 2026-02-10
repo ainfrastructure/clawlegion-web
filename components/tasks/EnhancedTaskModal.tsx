@@ -7,7 +7,6 @@ import { X, Loader2, Plus, Trash2, ChevronDown, ChevronUp, Sparkles, ArrowLeft }
 import { AgentFlowSection } from './AgentFlowSection'
 import {
   DEFAULT_PRESETS,
-  RESOURCE_LEVELS,
   applyPreset,
 } from '@/lib/flow-presets'
 import type {
@@ -23,14 +22,6 @@ type Step = 'prompt' | 'review'
 interface SuccessCriterion {
   id: string
   text: string
-}
-
-// Icons for presets
-const PRESET_ICONS: Record<string, React.ReactNode> = {
-  'quick-fix': <Zap size={16} />,
-  'standard': <BookOpen size={16} />,
-  'deep-work': <Microscope size={16} />,
-  'research-only': <Search size={16} />,
 }
 
 const DEFAULT_CRITERIA: SuccessCriterion[] = [
@@ -509,66 +500,14 @@ export function EnhancedTaskModal({ isOpen, onClose, onTaskCreated, repositories
                 </div>
 
                 {/* Agent Flow Builder */}
-                <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-3">
-                    Agent Flow
-                  </label>
-                  <div className="bg-slate-900/50 rounded-xl border border-white/[0.06] p-4">
-                    <div className="flex items-center justify-between gap-2 mb-4">
-                      {flowConfig.agents.map((agent, idx) => {
-                        const meta = AGENT_METADATA[agent.role]
-                        const colors = getAgentColorClasses(meta.color)
-                        return (
-                          <div key={agent.role} className="flex items-center flex-1">
-                            <div className={`flex-1 p-3 rounded-lg border-2 transition-all ${
-                              agent.enabled
-                                ? `${colors.bgLight} ${colors.border}`
-                                : 'glass-2 border-white/[0.06] opacity-50'
-                            }`}>
-                              <div className="flex items-center justify-between mb-2">
-                                <span className="text-lg">{meta.emoji}</span>
-                                <button
-                                  type="button"
-                                  onClick={() => handleAgentToggle(agent.role)}
-                                  className={`w-10 h-5 rounded-full transition-colors relative ${
-                                    agent.enabled ? 'bg-green-500' : 'bg-slate-600'
-                                  }`}
-                                >
-                                  <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-transform ${
-                                    agent.enabled ? 'left-5' : 'left-0.5'
-                                  }`} />
-                                </button>
-                              </div>
-                              <div className="text-xs font-medium text-slate-300 mb-1">{meta.name}</div>
-                              {agent.enabled && (
-                                <select
-                                  value={agent.resourceLevel}
-                                  onChange={(e) => handleResourceLevelChange(agent.role, e.target.value as ResourceLevel)}
-                                  className="w-full px-2 py-1 text-xs rounded bg-slate-800 border border-slate-600 text-slate-300"
-                                >
-                                  {RESOURCE_LEVELS.filter(l => l.value !== 'local').map((level) => (
-                                    <option key={level.value} value={level.value}>
-                                      {level.label}
-                                    </option>
-                                  ))}
-                                </select>
-                              )}
-                            </div>
-                            {idx < flowConfig.agents.length - 1 && (
-                              <div className="mx-1 text-slate-600">&rarr;</div>
-                            )}
-                          </div>
-                        )
-                      })}
-                    </div>
-
-                    <div className="flex gap-4 text-xs text-slate-500 border-t border-white/[0.06] pt-3">
-                      <span><strong>High:</strong> Deep reasoning</span>
-                      <span><strong>Medium:</strong> Balanced</span>
-                      <span><strong>Low:</strong> Fast</span>
-                    </div>
-                  </div>
-                </div>
+                <AgentFlowSection
+                  flowConfig={flowConfig}
+                  selectedPresetId={selectedPresetId}
+                  onPresetSelect={handlePresetSelect}
+                  onAgentToggle={handleAgentToggle}
+                  onResourceLevelChange={handleResourceLevelChange}
+                  onAgentsReorder={handleAgentsReorder}
+                />
 
                 {/* Success Criteria */}
                 <div>
