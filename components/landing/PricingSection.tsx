@@ -14,7 +14,6 @@ const valueItems = [
   'Bring your own API keys',
   'Platform integrations (social, messaging, more)',
   '1-on-1 mentoring & hands-on setup',
-  'All future features included',
 ]
 
 export function PricingSection() {
