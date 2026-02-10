@@ -1,137 +1,117 @@
 'use client'
 
-import { useState, useRef, useCallback } from 'react'
-import { Play, Maximize2, Minimize2, X, Volume2, VolumeX } from 'lucide-react'
+import { useState, useRef, useCallback, useEffect } from 'react'
+import { Play, X, Volume2 } from 'lucide-react'
 
 export function DemoSection() {
-  const [isFullscreen, setIsFullscreen] = useState(false)
-  const [isPlaying, setIsPlaying] = useState(false)
-  const [isMuted, setIsMuted] = useState(true)
+  const [modalOpen, setModalOpen] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [showUnmuteHint, setShowUnmuteHint] = useState(false)
   const videoRef = useRef<HTMLVideoElement>(null)
-  const fullscreenVideoRef = useRef<HTMLVideoElement>(null)
+  const modalRef = useRef<HTMLDivElement>(null)
 
-  const handlePlay = useCallback(() => {
-    const video = isFullscreen ? fullscreenVideoRef.current : videoRef.current
-    if (!video) return
-
-    if (video.paused) {
-      video.play()
-      setIsPlaying(true)
-      // Unmute after a brief moment so autoplay isn't blocked
-      setTimeout(() => {
-        video.muted = false
-        setIsMuted(false)
-      }, 300)
-    } else {
-      video.pause()
-      setIsPlaying(false)
-    }
-  }, [isFullscreen])
-
-  const toggleMute = useCallback((e: React.MouseEvent) => {
-    e.stopPropagation()
-    const video = isFullscreen ? fullscreenVideoRef.current : videoRef.current
-    if (!video) return
-    video.muted = !video.muted
-    setIsMuted(video.muted)
-  }, [isFullscreen])
-
-  const handleFullscreenOpen = useCallback((e: React.MouseEvent) => {
-    e.stopPropagation()
-    setIsFullscreen(true)
-    // Sync playback state to fullscreen video after mount
-    setTimeout(() => {
-      const fsVideo = fullscreenVideoRef.current
-      const mainVideo = videoRef.current
-      if (fsVideo && mainVideo) {
-        fsVideo.currentTime = mainVideo.currentTime
-        fsVideo.muted = mainVideo.muted
-        if (isPlaying) {
-          fsVideo.play()
-        }
-      }
-    }, 100)
-  }, [isPlaying])
-
-  const handleFullscreenClose = useCallback(() => {
-    const fsVideo = fullscreenVideoRef.current
-    const mainVideo = videoRef.current
-    if (fsVideo && mainVideo) {
-      mainVideo.currentTime = fsVideo.currentTime
-      mainVideo.muted = fsVideo.muted
-      if (isPlaying) {
-        mainVideo.play()
+  // Lock body scroll when modal is open
+  useEffect(() => {
+    if (modalOpen) {
+      const scrollY = window.scrollY
+      document.body.style.position = 'fixed'
+      document.body.style.top = `-${scrollY}px`
+      document.body.style.left = '0'
+      document.body.style.right = '0'
+      document.body.style.overflow = 'hidden'
+      return () => {
+        document.body.style.position = ''
+        document.body.style.top = ''
+        document.body.style.left = ''
+        document.body.style.right = ''
+        document.body.style.overflow = ''
+        window.scrollTo(0, scrollY)
       }
     }
-    setIsFullscreen(false)
-  }, [isPlaying])
+  }, [modalOpen])
 
-  const handleVideoEnd = useCallback(() => {
-    setIsPlaying(false)
+  // ESC to close
+  useEffect(() => {
+    if (!modalOpen) return
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') closeModal()
+    }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [modalOpen])
+
+  const openModal = useCallback(() => {
+    setIsLoading(true)
+    setShowUnmuteHint(false)
+    setModalOpen(true)
   }, [])
 
-  const VideoContent = ({ fullscreen = false }: { fullscreen?: boolean }) => {
-    const ref = fullscreen ? fullscreenVideoRef : videoRef
+  const closeModal = useCallback(() => {
+    const video = videoRef.current
+    if (video) {
+      video.pause()
+      video.currentTime = 0
+    }
+    setModalOpen(false)
+    setIsLoading(false)
+    setShowUnmuteHint(false)
+  }, [])
 
-    return (
-      <div
-        className={`${fullscreen ? '' : 'glass-3 rounded-2xl overflow-hidden'} relative group cursor-pointer`}
-        onClick={handlePlay}
-      >
-        <div className={`${fullscreen ? 'w-full h-full flex items-center justify-center bg-black' : 'aspect-video'} relative overflow-hidden`}>
-          <video
-            ref={ref}
-            className={`${fullscreen ? 'max-w-full max-h-full' : 'w-full h-full object-cover'}`}
-            poster="/demo-poster.jpg"
-            muted
-            playsInline
-            preload="metadata"
-            onEnded={handleVideoEnd}
-            controls={isPlaying}
-          >
-            <source src="/demo-video.webm" type="video/webm" />
-            <source src="/demo-video.mp4" type="video/mp4" />
-          </video>
+  // Auto-play with sound when modal opens; fall back to muted
+  useEffect(() => {
+    if (!modalOpen) return
+    const video = videoRef.current
+    if (!video) return
 
-          {/* Play button overlay — visible when not playing */}
-          {!isPlaying && (
-            <div className="absolute inset-0 flex items-center justify-center z-10 bg-black/30 transition-opacity">
-              <div className="w-20 h-20 rounded-full bg-blue-600/90 flex items-center justify-center shadow-lg shadow-blue-500/30 hover:bg-blue-500 hover:scale-105 transition-all">
-                <Play className="w-8 h-8 text-white ml-1" />
-              </div>
-            </div>
-          )}
+    const tryPlay = async () => {
+      video.currentTime = 0
+      video.muted = false
 
-          {/* Top-right controls */}
-          <div className="absolute top-3 right-3 z-20 flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-            {isPlaying && (
-              <button
-                onClick={toggleMute}
-                className="p-2 glass-2 rounded-lg text-slate-400 hover:text-white transition-colors"
-                title={isMuted ? 'Unmute' : 'Mute'}
-              >
-                {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
-              </button>
-            )}
-            {!fullscreen && (
-              <button
-                onClick={handleFullscreenOpen}
-                className="p-2 glass-2 rounded-lg text-slate-400 hover:text-white transition-colors"
-                title="View fullscreen"
-              >
-                <Maximize2 className="w-4 h-4" />
-              </button>
-            )}
-          </div>
-        </div>
-      </div>
-    )
-  }
+      try {
+        await video.play()
+        setIsLoading(false)
+      } catch {
+        // Browser blocked unmuted autoplay — fall back to muted
+        video.muted = true
+        try {
+          await video.play()
+          setShowUnmuteHint(true)
+          setIsLoading(false)
+        } catch {
+          // Autoplay completely blocked — user will use native controls
+          setIsLoading(false)
+        }
+      }
+    }
+
+    // Small delay to let the modal render and video element mount properly
+    const timer = setTimeout(tryPlay, 150)
+    return () => clearTimeout(timer)
+  }, [modalOpen])
+
+  const handleUnmute = useCallback(() => {
+    const video = videoRef.current
+    if (video) {
+      video.muted = false
+      setShowUnmuteHint(false)
+    }
+  }, [])
+
+  const handleOverlayClick = useCallback(
+    (e: React.MouseEvent) => {
+      // Close only if clicking the overlay backdrop, not the video area
+      if (e.target === modalRef.current) {
+        closeModal()
+      }
+    },
+    [closeModal]
+  )
 
   return (
     <>
       <section id="demo" className="px-4 sm:px-6 py-24 border-t border-white/[0.04]">
         <div className="max-w-4xl mx-auto">
+          {/* Heading */}
           <div className="text-center mb-12">
             <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4 tracking-tight">
               Watch It Work
@@ -141,28 +121,108 @@ export function DemoSection() {
             </p>
           </div>
 
-          <VideoContent />
+          {/* Thumbnail card */}
+          <button
+            type="button"
+            onClick={openModal}
+            className="group relative w-full glass-3 rounded-2xl overflow-hidden cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-[#020617] touch-manipulation"
+            aria-label="Play demo video"
+          >
+            {/* Aspect-ratio container — prevents layout shift */}
+            <div className="aspect-video relative overflow-hidden">
+              {/* Poster image */}
+              <img
+                src="/demo-poster.jpg"
+                alt="AI Legion dashboard preview"
+                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+                loading="lazy"
+                decoding="async"
+              />
 
+              {/* Dark gradient overlay for depth */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/20 to-black/10 transition-opacity duration-300 group-hover:opacity-80" />
+
+              {/* Play button — large, centered, touch-friendly */}
+              <div className="absolute inset-0 flex items-center justify-center z-10">
+                <div className="relative">
+                  {/* Pulse ring */}
+                  <div className="absolute inset-0 rounded-full bg-blue-500/20 animate-ping" style={{ animationDuration: '2s' }} />
+                  {/* Button */}
+                  <div className="relative w-[72px] h-[72px] sm:w-20 sm:h-20 rounded-full bg-blue-600/90 backdrop-blur-sm flex items-center justify-center shadow-lg shadow-blue-500/30 transition-all duration-300 group-hover:bg-blue-500 group-hover:scale-110 group-active:scale-95">
+                    <Play className="w-7 h-7 sm:w-8 sm:h-8 text-white ml-1" fill="currentColor" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </button>
+
+          {/* Caption */}
           <p className="text-center text-sm text-slate-500 mt-4">
             2-minute walkthrough of the AI Legion dashboard
           </p>
         </div>
       </section>
 
-      {/* Fullscreen overlay */}
-      {isFullscreen && (
-        <div className="fixed inset-0 z-[100] bg-black flex items-center justify-center">
+      {/* Fullscreen video modal */}
+      {modalOpen && (
+        <div
+          ref={modalRef}
+          onClick={handleOverlayClick}
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 backdrop-blur-sm animate-fade-in"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Demo video"
+          style={{ touchAction: 'none' }}
+        >
+          {/* Close button — large touch target */}
           <button
-            onClick={handleFullscreenClose}
-            className="absolute top-4 right-4 z-[110] p-3 glass-2 rounded-full text-slate-400 hover:text-white transition-colors"
+            onClick={closeModal}
+            className="absolute top-3 right-3 sm:top-5 sm:right-5 z-[110] p-3 sm:p-3 rounded-full bg-white/10 hover:bg-white/20 active:bg-white/25 transition-colors backdrop-blur-sm touch-manipulation"
+            aria-label="Close video"
+            style={{ minWidth: 48, minHeight: 48 }}
           >
-            <X className="w-6 h-6" />
+            <X className="w-6 h-6 text-white" />
           </button>
-          <div className="w-[95vw] h-[90vh]">
-            <VideoContent fullscreen />
+
+          {/* Video container — mobile: near-full screen, desktop: centered with padding */}
+          <div className="w-[96vw] sm:w-[90vw] max-w-5xl aspect-video relative">
+            {/* Loading spinner */}
+            {isLoading && (
+              <div className="absolute inset-0 flex items-center justify-center z-20">
+                <div className="w-12 h-12 border-[3px] border-white/20 border-t-white rounded-full animate-spin" />
+              </div>
+            )}
+
+            {/* Video */}
+            <video
+              ref={videoRef}
+              className="w-full h-full rounded-lg sm:rounded-xl object-contain bg-black"
+              poster="/demo-poster.jpg"
+              playsInline
+              controls
+              preload="auto"
+              onCanPlay={() => setIsLoading(false)}
+              onWaiting={() => setIsLoading(true)}
+              onPlaying={() => setIsLoading(false)}
+            >
+              <source src="/demo-video.webm" type="video/webm" />
+              <source src="/demo-video.mp4" type="video/mp4" />
+            </video>
+
+            {/* Unmute hint — shows when autoplay fell back to muted */}
+            {showUnmuteHint && (
+              <button
+                onClick={handleUnmute}
+                className="absolute bottom-16 sm:bottom-20 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2 px-5 py-3 rounded-full bg-blue-600/90 hover:bg-blue-500 active:bg-blue-400 text-white text-sm font-medium shadow-lg shadow-blue-500/25 backdrop-blur-sm transition-all touch-manipulation animate-fade-in"
+              >
+                <Volume2 className="w-4 h-4" />
+                Tap to unmute
+              </button>
+            )}
           </div>
         </div>
       )}
+
     </>
   )
 }

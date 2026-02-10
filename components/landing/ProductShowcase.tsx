@@ -1,5 +1,3 @@
-import { Bot } from 'lucide-react'
-
 export function ProductShowcase() {
   return (
     <section className="relative px-4 sm:px-6 pb-24 mt-16">
@@ -21,12 +19,15 @@ export function ProductShowcase() {
               </div>
             </div>
 
-            {/* Screenshot placeholder */}
-            <div className="aspect-video flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900">
-              <div className="text-center">
-                <Bot className="w-16 h-16 text-slate-600 mx-auto mb-4" />
-                <p className="text-slate-500 text-sm">Dashboard Screenshot</p>
-              </div>
+            {/* Dashboard screenshot */}
+            <div className="aspect-video relative overflow-hidden bg-slate-950">
+              <img
+                src="/demo-poster.jpg"
+                alt="AI Legion dashboard — multi-agent coordination interface"
+                className="w-full h-full object-cover"
+                loading="lazy"
+                decoding="async"
+              />
             </div>
           </div>
         </div>
