@@ -322,7 +322,7 @@ export default function DashboardPage() {
             </p>
           </div>
           <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
-            <Link href="/agents/fleet" data-testid="btn-quick-actions" className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg flex items-center justify-center gap-2 transition-colors text-sm sm:text-base">
+            <Link href="/agents/org" data-testid="btn-quick-actions" className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg flex items-center justify-center gap-2 transition-colors text-sm sm:text-base">
               <Bot size={18} /> Quick Actions
             </Link>
           </div>

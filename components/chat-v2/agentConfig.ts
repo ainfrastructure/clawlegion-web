@@ -79,7 +79,7 @@ export const ARMY_AGENTS: AgentConfig[] = [
     name: 'Janus',
     role: 'Verifier',
     emoji: '\u{1F9EA}',
-    color: '#1E40AF', // Blue/Gold
+    color: '#D4A017', // Blue/Gold
     avatar: '/agents/janus.png',
     tier: 'army',
     description: 'The quality gate. Runs tests, captures proof screenshots, and validates every deliverable.',
@@ -109,7 +109,7 @@ export const ARMY_AGENTS: AgentConfig[] = [
     name: 'Cato',
     role: 'DevOps Engineer',
     emoji: '🗿',
-    color: '#78716C', // Stone Gray
+    color: '#8B5E3C', // Stone Gray
     avatar: '/agents/cato.png',
     tier: 'army',
     description: 'The bridge between built and shipped. Handles CI/CD, deployment, infrastructure, and monitoring.',

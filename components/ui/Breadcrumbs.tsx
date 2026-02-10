@@ -22,7 +22,6 @@ const routeNames: Record<string, string> = {
   repositories: 'Repositories',
   graph: 'Graph View',
   leaderboard: 'Leaderboard',
-  fleet: 'Fleet',
   org: 'Organization',
   sprint: 'Sprint',
   loops: 'Loops',

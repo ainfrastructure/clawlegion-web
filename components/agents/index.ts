@@ -16,7 +16,6 @@ export { AgentProfilePanel } from './AgentProfilePanel';
 export { SoulEditorModal } from './SoulEditorModal';
 
 // Redesigned agent cards
-export { FleetAgentCard } from './FleetAgentCard';
 export { OrgAgentCard } from './OrgAgentCard';
 export { AgentDetailModal } from './AgentDetailModal';
 export { AddAgentModal } from './AddAgentModal';
@@ -24,5 +23,4 @@ export { InjectTaskModal } from './InjectTaskModal';
 
 // Activity streaming
 export { AgentCardWithActivity } from './AgentCardWithActivity';
-export { FleetAgentCardWithActivity } from './FleetAgentCardWithActivity';
 export { AgentActivityPopover } from './AgentActivityPopover';

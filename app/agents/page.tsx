@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation'
 
 export default function AgentsIndexPage() {
-  redirect('/agents/fleet')
+  redirect('/agents/org')
 }

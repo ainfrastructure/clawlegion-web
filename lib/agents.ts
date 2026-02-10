@@ -42,18 +42,18 @@ const AGENT_COLORS: Record<string, string> = {
   caesar: '#DC2626',    // Crimson - Orchestrator
   athena: '#06B6D4',    // Teal - Planner
   vulcan: '#EA580C',    // Amber - Builder
-  janus: '#1E40AF',     // Blue/Gold - Verifier
+  janus: '#D4A017',     // Blue/Gold - Verifier
   minerva: '#10B981',   // Emerald - Researcher
   mercury: '#C0C0C0',   // Silver - Messenger
   apollo: '#EAB308',    // Golden - Creative Director
   cicero: '#7C3AED',    // Purple - Content Creator
   oracle: '#4338CA',    // Indigo - Data Analyst
-  cato: '#78716C',      // Stone Gray - DevOps
+  cato: '#8B5E3C',      // Stone Gray - DevOps
   // Role-based IDs from OpenClaw config
   main: '#DC2626',      // Red - Orchestrator (caesar)
   planner: '#06B6D4',   // Teal - Planner (athena)
   builder: '#EA580C',   // Amber - Builder (vulcan)
-  verifier: '#1E40AF',  // Blue - Verifier (janus)
+  verifier: '#D4A017',  // Blue - Verifier (janus)
   researcher: '#10B981', // Emerald - Researcher (minerva)
 }
 
@@ -219,13 +219,13 @@ export const FALLBACK_BOT_ARMY: AgentDisplay[] = [
   ...FALLBACK_COUNCIL,
   { id: 'athena', name: 'Athena', emoji: '🩵', avatar: '/agents/athena.png', role: 'Planner', color: '#06B6D4', status: 'online' },
   { id: 'vulcan', name: 'Vulcan', emoji: '🔥', avatar: '/agents/vulcan.png', role: 'Builder', color: '#EA580C', status: 'online' },
-  { id: 'janus', name: 'Janus', emoji: '🌗', avatar: '/agents/janus.png', role: 'Verifier', color: '#1E40AF', status: 'online' },
+  { id: 'janus', name: 'Janus', emoji: '🌗', avatar: '/agents/janus.png', role: 'Verifier', color: '#D4A017', status: 'online' },
   { id: 'minerva', name: 'Minerva', emoji: '💚', avatar: '/agents/minerva.png', role: 'Researcher', color: '#10B981', status: 'online' },
   { id: 'mercury', name: 'Mercury', emoji: '⚡️', avatar: '/agents/mercury.png', role: 'Messenger', color: '#C0C0C0', status: 'online' },
   { id: 'apollo', name: 'Apollo', emoji: '☀️', avatar: '/agents/apollo.png', role: 'Creative Director', color: '#EAB308', status: 'online' },
   { id: 'cicero', name: 'Cicero', emoji: '🟣', avatar: '/agents/cicero.png', role: 'Content Creator', color: '#7C3AED', status: 'online' },
   { id: 'oracle', name: 'Oracle', emoji: '🔮', avatar: '/agents/oracle.png', role: 'Data Analyst', color: '#4338CA', status: 'online' },
-  { id: 'cato', name: 'Cato', emoji: '🗿', avatar: '/agents/cato.png', role: 'DevOps Engineer', color: '#78716C', status: 'online' },
+  { id: 'cato', name: 'Cato', emoji: '🗿', avatar: '/agents/cato.png', role: 'DevOps Engineer', color: '#8B5E3C', status: 'online' },
 ]
 
 export async function checkAgentHealth(port: number, timeoutMs: number = 2000): Promise<boolean> {

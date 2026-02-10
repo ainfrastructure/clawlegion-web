@@ -55,7 +55,7 @@ const navItems: NavItem[] = [
     icon: Bot, 
     label: 'Agents',
     subItems: [
-      { href: '/agents/fleet', label: 'Fleet' },
+      { href: '/agents/org', label: 'Agents' },
       { href: '/agents/sessions', label: 'Sessions' },
       { href: '/agents/org', label: 'Organization' },
     ]

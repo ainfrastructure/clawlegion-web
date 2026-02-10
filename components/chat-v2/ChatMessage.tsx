@@ -80,13 +80,13 @@ const AGENT_COLORS: Record<string, string> = {
   'main': '#DC2626',
   'athena': '#06B6D4',
   'vulcan': '#EA580C',
-  'janus': '#1E40AF',
+  'janus': '#D4A017',
   'minerva': '#10B981',
   'mercury': '#C0C0C0',
   'apollo': '#EAB308',
   'cicero': '#7C3AED',
   'oracle': '#4338CA',
-  'cato': '#78716C',
+  'cato': '#8B5E3C',
 }
 
 function getAgentAvatar(senderId: string): string | undefined {
