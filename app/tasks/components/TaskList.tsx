@@ -356,11 +356,11 @@ function TaskCard({ task, isSelected, onSelect, onClick }: TaskCardProps) {
         </div>
         <div className={`${prio.color} flex-shrink-0 mt-1`}>{prio.icon}</div>
       </div>
-      {/* Domain + Repo info */}
-      {(task.domain || task.repository) && (
-        <div className="mt-2 flex items-center gap-2 flex-wrap">
+      {/* Domain + Repo + Workflow step — single compact row */}
+      {(task.domain || task.repository || task.currentWorkflowStep) && (
+        <div className="mt-2 flex items-center gap-1.5 flex-wrap">
           {task.domain && (
-            <span className={`px-2 py-0.5 rounded-md text-[10px] uppercase tracking-wider font-semibold ${
+            <span className={`px-1.5 py-0.5 rounded text-[10px] uppercase tracking-wider font-semibold ${
               task.domain === 'dev' || task.domain === 'code' ? 'bg-blue-500/15 text-blue-400' :
               task.domain === 'research' ? 'bg-emerald-500/15 text-emerald-400' :
               task.domain === 'marketing' || task.domain === 'content' ? 'bg-purple-500/15 text-purple-400' :
@@ -371,13 +371,24 @@ function TaskCard({ task, isSelected, onSelect, onClick }: TaskCardProps) {
             </span>
           )}
           {task.repository?.name && (
-            <span className="text-[10px] text-slate-500 font-mono">{task.repository.name}</span>
+            <span className="px-1.5 py-0.5 rounded bg-slate-800/80 text-[10px] text-slate-400 font-mono">{task.repository.name}</span>
+          )}
+          {task.currentWorkflowStep && task.currentWorkflowStep !== 'pending' && task.currentWorkflowStep !== 'done' && (
+            <span
+              className="px-1.5 py-0.5 rounded text-[10px] uppercase tracking-wide font-semibold"
+              style={{
+                backgroundColor: agentColor ? `${agentColor}20` : 'rgba(96,165,250,0.15)',
+                color: agentColor || '#93c5fd',
+              }}
+            >
+              {task.currentWorkflowStep}
+            </span>
           )}
         </div>
       )}
       {/* Subtask progress chip */}
       {subtaskTotal > 0 && (
-        <div className="mt-3 flex items-center gap-2">
+        <div className="mt-2 flex items-center gap-2">
           <div className="flex items-center gap-1.5 px-2.5 py-1 bg-slate-800 rounded-full text-xs text-slate-400">
             <span>{subtaskDone}/{subtaskTotal} subtasks</span>
             <div className="w-14 h-1.5 bg-slate-700 rounded-full overflow-hidden">
@@ -387,21 +398,6 @@ function TaskCard({ task, isSelected, onSelect, onClick }: TaskCardProps) {
               />
             </div>
           </div>
-        </div>
-      )}
-      
-      {/* Workflow step badge */}
-      {task.currentWorkflowStep && task.currentWorkflowStep !== 'pending' && task.currentWorkflowStep !== 'done' && (
-        <div className="mt-3 flex items-center gap-2 flex-wrap">
-          <span
-            className="px-2 py-1 rounded-md text-[11px] uppercase tracking-wide font-medium"
-            style={{
-              backgroundColor: agentColor ? `${agentColor}20` : 'rgba(96,165,250,0.15)',
-              color: agentColor || '#93c5fd',
-            }}
-          >
-            {task.currentWorkflowStep}
-          </span>
         </div>
       )}
       
