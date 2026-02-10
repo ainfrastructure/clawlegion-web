@@ -79,7 +79,7 @@ export const ARMY_AGENTS: AgentConfig[] = [
     name: 'Janus',
     role: 'Verifier',
     emoji: '\u{1F9EA}',
-    color: '#8B5CF6', // Purple
+    color: '#1E40AF', // Blue/Gold
     avatar: '/agents/janus.png',
     tier: 'army',
     description: 'The quality gate. Runs tests, captures proof screenshots, and validates every deliverable.',
@@ -93,8 +93,8 @@ export const ARMY_AGENTS: AgentConfig[] = [
     id: 'minerva',
     name: 'Minerva',
     role: 'Researcher',
-    emoji: '\u{1F52D}',
-    color: '#06B6D4', // Cyan
+    emoji: '💚',
+    color: '#10B981', // Emerald
     avatar: '/agents/minerva.png',
     tier: 'army',
     description: 'The investigator. Researches solutions, explores APIs, and gathers intelligence before the build.',
@@ -109,7 +109,7 @@ export const ARMY_AGENTS: AgentConfig[] = [
     name: 'Cato',
     role: 'DevOps Engineer',
     emoji: '\u{1F525}',
-    color: '#FF6B00', // Orange/Flame
+    color: '#78716C', // Stone Gray
     avatar: '/agents/cato.png',
     tier: 'army',
     description: 'The bridge between built and shipped. Handles CI/CD, deployment, infrastructure, and monitoring.',
@@ -124,7 +124,7 @@ export const ARMY_AGENTS: AgentConfig[] = [
     name: 'Mercury',
     role: 'Messenger',
     emoji: '\u{1F4E1}',
-    color: '#3B82F6', // Blue
+    color: '#C0C0C0', // Silver
     avatar: '/agents/mercury.png',
     tier: 'army',
     description: 'The voice that reaches the outside world. Handles outreach, support, community, and trend monitoring.',
@@ -139,7 +139,7 @@ export const ARMY_AGENTS: AgentConfig[] = [
     name: 'Cicero',
     role: 'Content Creator',
     emoji: '\u{1FAB6}',
-    color: '#F97316', // Orange
+    color: '#7C3AED', // Purple
     avatar: '/agents/cicero.png',
     tier: 'army',
     description: 'The wordsmith. Crafts blog posts, docs, release notes, social copy, and marketing content.',
@@ -154,7 +154,7 @@ export const ARMY_AGENTS: AgentConfig[] = [
     name: 'Apollo',
     role: 'Creative Director',
     emoji: '\u{1F3A8}',
-    color: '#D946EF', // Fuchsia
+    color: '#EAB308', // Golden
     avatar: '/agents/apollo.png',
     tier: 'army',
     description: 'The visual thinker. Critiques UI/UX, ensures brand consistency, and shapes the look and feel.',
@@ -169,7 +169,7 @@ export const ARMY_AGENTS: AgentConfig[] = [
     name: 'Oracle',
     role: 'Data Analyst',
     emoji: '\u{1F4CA}',
-    color: '#14B8A6', // Teal
+    color: '#4338CA', // Indigo
     avatar: '/agents/sage-avatar.jpg',
     tier: 'army',
     description: 'The numbers whisperer. Tracks metrics, spots trends, and turns raw data into decisions.',

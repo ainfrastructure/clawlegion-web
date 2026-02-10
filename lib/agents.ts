@@ -3,15 +3,15 @@ import type { OpenClawAgent } from '@/hooks/useAgentConfig'
 // Agent definitions with OpenClaw ports
 export const AGENTS = [
   { id: 'caesar', name: 'Caesar', port: 18789, role: 'Orchestrator' },
-  { id: 'lux', name: 'Lux', port: 18796, role: 'Council Member' },
   { id: 'athena', name: 'Athena', port: 18790, role: 'Planner' },
   { id: 'vulcan', name: 'Vulcan', port: 18791, role: 'Builder' },
   { id: 'janus', name: 'Janus', port: 18792, role: 'Verifier' },
   { id: 'minerva', name: 'Minerva', port: 18793, role: 'Researcher' },
-  { id: 'ralph', name: 'Ralph', port: 18794, role: 'Loop Orchestrator' },
-  { id: 'cicero', name: 'Cicero', port: 18797, role: 'Content Creator' },
+  { id: 'mercury', name: 'Mercury', port: 18795, role: 'Messenger' },
   { id: 'apollo', name: 'Apollo', port: 18798, role: 'Creative Director' },
+  { id: 'cicero', name: 'Cicero', port: 18797, role: 'Content Creator' },
   { id: 'oracle', name: 'Oracle', port: 18799, role: 'Data Analyst' },
+  { id: 'cato', name: 'Cato', port: 18800, role: 'DevOps Engineer' },
 ] as const;
 
 export type AgentId = typeof AGENTS[number]['id'];
@@ -39,22 +39,22 @@ export interface AgentDisplay {
 // Default agent colors by role - map both friendly names AND role-based IDs
 const AGENT_COLORS: Record<string, string> = {
   // Friendly names
-  caesar: '#DC2626',    // Red - Orchestrator
-  lux: '#A855F7',       // Purple - Council Member
-  athena: '#06B6D4',    // Cyan - Planner
+  caesar: '#DC2626',    // Crimson - Orchestrator
+  athena: '#06B6D4',    // Teal - Planner
   vulcan: '#F59E0B',    // Amber - Builder
-  janus: '#1E40AF',       // Emerald - Verifier
-  minerva: '#10B981',     // Emerald - Researcher (Minerva)
-  ralph: '#EC4899',     // Pink - Loop Orchestrator
-  quill: '#F97316',     // Orange - Content Creator
-  apollo: '#EAB308',     // Fuchsia - Creative Director
-  sage: '#14B8A6',      // Teal - Data Analyst
+  janus: '#1E40AF',     // Blue/Gold - Verifier
+  minerva: '#10B981',   // Emerald - Researcher
+  mercury: '#C0C0C0',   // Silver - Messenger
+  apollo: '#EAB308',    // Golden - Creative Director
+  cicero: '#7C3AED',    // Purple - Content Creator
+  oracle: '#4338CA',    // Indigo - Data Analyst
+  cato: '#78716C',      // Stone Gray - DevOps
   // Role-based IDs from OpenClaw config
   main: '#DC2626',      // Red - Orchestrator (caesar)
-  planner: '#06B6D4',   // Cyan - Planner (athena)
+  planner: '#06B6D4',   // Teal - Planner (athena)
   builder: '#F59E0B',   // Amber - Builder (vulcan)
-  verifier: '#10B981',  // Emerald - Verifier (Vex)
-  researcher: '#06B6D4', // Emerald - Researcher (Minerva) (Scout)
+  verifier: '#1E40AF',  // Blue - Verifier (janus)
+  researcher: '#10B981', // Emerald - Researcher (minerva)
 }
 
 // Agent avatars - map both friendly names AND role-based IDs from API
@@ -65,11 +65,11 @@ const AGENT_AVATARS: Record<string, string> = {
   vulcan: '/agents/vulcan.png',
   janus: '/agents/janus.png',
   minerva: '/agents/minerva.png',
-  ralph: '/agents/ralph.jpg',
-  lux: '/agents/lux-lobster.png',
-  cicero: '/agents/cicero.png',
+  mercury: '/agents/mercury.png',
   apollo: '/agents/apollo.png',
-  sage: '/agents/oracle.png',
+  cicero: '/agents/cicero.png',
+  oracle: '/agents/oracle.png',
+  cato: '/agents/cato.png',
   // Role-based IDs from OpenClaw config
   main: '/agents/caesar.png',
   planner: '/agents/athena.png',
@@ -86,17 +86,17 @@ const AGENT_EMOJIS: Record<string, string> = {
   vulcan: '🔥',
   janus: '🌗',
   minerva: '💚',
-  ralph: '🔄',
-  lux: '✨',
-  quill: '🪶',
+  mercury: '⚡️',
   apollo: '☀️',
-  sage: '📊',
+  cicero: '🟣',
+  oracle: '🔮',
+  cato: '🗿',
   // Role-based IDs from OpenClaw config
   main: '🔴',
   planner: '🩵',
   builder: '🔥',
-  verifier: '🧪',
-  researcher: '🔭',
+  verifier: '🌗',
+  researcher: '💚',
 }
 
 // Default avatar URL (fallback)
@@ -134,10 +134,10 @@ function toAgentDisplay(agent: OpenClawAgent): AgentDisplay {
   }
 }
 
-// Council members are Caesar and Lux
+// Council members are Caesar only (Lux dropped)
 // Map both friendly names AND role-based IDs (main = caesar)
-const COUNCIL_AGENT_IDS = ['caesar', 'lux', 'main']
-const COUNCIL_DISPLAY_ORDER = ['caesar', 'lux']
+const COUNCIL_AGENT_IDS = ['caesar', 'main']
+const COUNCIL_DISPLAY_ORDER = ['caesar']
 
 // Normalize agent ID to friendly name
 function normalizeAgentId(id: string): string {
@@ -213,19 +213,19 @@ export function getBotArmy(agents: OpenClawAgent[]): AgentDisplay[] {
 // Fallback data when API is unavailable - Council is Caesar and Lux
 export const FALLBACK_COUNCIL: AgentDisplay[] = [
   { id: 'caesar', name: 'Caesar', emoji: '🔴', avatar: '/agents/caesar.png', role: 'Orchestrator', color: '#DC2626', status: 'online' },
-  { id: 'lux', name: 'Lux', emoji: '✨', avatar: '/agents/lux-lobster.png', role: 'Council Member', color: '#A855F7', status: 'online' },
 ]
 
 export const FALLBACK_BOT_ARMY: AgentDisplay[] = [
   ...FALLBACK_COUNCIL,
   { id: 'athena', name: 'Athena', emoji: '🩵', avatar: '/agents/athena.png', role: 'Planner', color: '#06B6D4', status: 'online' },
   { id: 'vulcan', name: 'Vulcan', emoji: '🔥', avatar: '/agents/vulcan.png', role: 'Builder', color: '#F59E0B', status: 'online' },
-  { id: 'janus', name: 'Janus', emoji: '🧪', avatar: '/agents/vex.jpg', role: 'Verifier', color: '#10B981', status: 'online' },
-  { id: 'minerva', name: 'Minerva', emoji: '🔭', avatar: '/agents/scout.jpg', role: 'Researcher', color: '#06B6D4', status: 'online' },
-  { id: 'ralph', name: 'Ralph', emoji: '🔄', avatar: '/agents/ralph.jpg', role: 'Loop Orchestrator', color: '#EC4899', status: 'online' },
-  { id: 'cicero', name: 'Cicero', emoji: '🪶', avatar: '/agents/quill-writer.svg', role: 'Content Creator', color: '#F97316', status: 'online' },
-  { id: 'apollo', name: 'Apollo', emoji: '🎨', avatar: '/agents/apollo.png', role: 'Creative Director', color: '#D946EF', status: 'online' },
-  { id: 'oracle', name: 'Oracle', emoji: '📊', avatar: '/agents/oracle.png', role: 'Data Analyst', color: '#14B8A6', status: 'online' },
+  { id: 'janus', name: 'Janus', emoji: '🌗', avatar: '/agents/janus.png', role: 'Verifier', color: '#1E40AF', status: 'online' },
+  { id: 'minerva', name: 'Minerva', emoji: '💚', avatar: '/agents/minerva.png', role: 'Researcher', color: '#10B981', status: 'online' },
+  { id: 'mercury', name: 'Mercury', emoji: '⚡️', avatar: '/agents/mercury.png', role: 'Messenger', color: '#C0C0C0', status: 'online' },
+  { id: 'apollo', name: 'Apollo', emoji: '☀️', avatar: '/agents/apollo.png', role: 'Creative Director', color: '#EAB308', status: 'online' },
+  { id: 'cicero', name: 'Cicero', emoji: '🟣', avatar: '/agents/cicero.png', role: 'Content Creator', color: '#7C3AED', status: 'online' },
+  { id: 'oracle', name: 'Oracle', emoji: '🔮', avatar: '/agents/oracle.png', role: 'Data Analyst', color: '#4338CA', status: 'online' },
+  { id: 'cato', name: 'Cato', emoji: '🗿', avatar: '/agents/cato.png', role: 'DevOps Engineer', color: '#78716C', status: 'online' },
 ]
 
 export async function checkAgentHealth(port: number, timeoutMs: number = 2000): Promise<boolean> {

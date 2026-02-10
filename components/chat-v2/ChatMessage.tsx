@@ -63,30 +63,30 @@ function formatTime(timestamp: string): string {
 const AGENT_AVATARS: Record<string, string> = {
   'caesar': '/agents/caesar.png',
   'main': '/agents/caesar.png',
-  'lux': '/agents/lux-lobster.png',
   'athena': '/agents/athena.png',
   'vulcan': '/agents/vulcan.png',
   'janus': '/agents/janus.png',
-  'hermes': '/agents/minerva.png',
-  'ralph': '/agents/ralph.png',
-  'cicero': '/agents/cicero.png',
+  'minerva': '/agents/minerva.png',
+  'mercury': '/agents/mercury.png',
   'apollo': '/agents/apollo.png',
+  'cicero': '/agents/cicero.png',
   'oracle': '/agents/oracle.png',
+  'cato': '/agents/cato.png',
 }
 
 // Default colors for agents
 const AGENT_COLORS: Record<string, string> = {
   'caesar': '#DC2626',
   'main': '#DC2626',
-  'lux': '#22C55E',
   'athena': '#06B6D4',
   'vulcan': '#F59E0B',
   'janus': '#1E40AF',
   'minerva': '#10B981',
-  'ralph': '#EC4899',
+  'mercury': '#C0C0C0',
+  'apollo': '#EAB308',
   'cicero': '#7C3AED',
-  'apollo': '/agents/apollo.png',
   'oracle': '#4338CA',
+  'cato': '#78716C',
 }
 
 function getAgentAvatar(senderId: string): string | undefined {
@@ -113,15 +113,15 @@ function getSenderIcon(senderType: 'human' | 'agent', senderId: string): string 
   const agentIcons: Record<string, string> = {
     'caesar': '🔴',
     'main': '🔴',
-    'lux': '✨',
     'athena': '🩵',
     'vulcan': '🔥',
     'janus': '🌗',
     'minerva': '💚',
-    'ralph': '🔄',
+    'mercury': '⚡️',
+    'apollo': '☀️',
     'cicero': '🟣',
-    'apollo': '/agents/apollo.png',
     'oracle': '🔮',
+    'cato': '🗿',
   }
   return agentIcons[senderId.toLowerCase()] || '🤖'
 }
