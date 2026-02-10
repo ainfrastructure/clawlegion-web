@@ -473,6 +473,15 @@ export function HowItWorks() {
     return () => clearTimeout(timeout)
   }, [visible])
 
+  // Mobile auto-rotate templates every 5s
+  useEffect(() => {
+    if (!visible) return
+    const interval = setInterval(() => {
+      setReducedMotionIdx(prev => (prev + 1) % TEMPLATES.length)
+    }, 5000)
+    return () => clearInterval(interval)
+  }, [visible])
+
   // Hover pause/resume
   const handleMouseEnter = useCallback(() => setPaused(true), [])
   const handleMouseLeave = useCallback(() => setPaused(false), [])
