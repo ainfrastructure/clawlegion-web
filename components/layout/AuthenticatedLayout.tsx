@@ -15,6 +15,7 @@ import { CommandPalette } from '@/components/ui/CommandPalette'
 import { KeyboardShortcutsHelp } from '@/components/ui/KeyboardShortcutsHelp'
 import { GlobalKeyboardShortcuts } from '@/components/ui/GlobalKeyboardShortcuts'
 import { NotificationCenter } from '@/components/notifications/NotificationCenter'
+import { TaskNotificationManager } from '@/components/features/TaskNotificationManager'
 import { useNotificationSocket } from '@/hooks/useNotificationSocket'
 
 function LiveClock() {
@@ -37,21 +38,14 @@ function LiveClock() {
   )
 }
 
-export function AuthenticatedLayout({ children }: { children: React.ReactNode }) {
+function AuthenticatedContent({ children }: { children: React.ReactNode }) {
   const { status } = useSession()
   const pathname = usePathname()
   const isMobile = useMobile()
   const [drawerOpen, setDrawerOpen] = useState(false)
 
-  // Global real-time notification listener
+  // Global real-time notification listener (only runs for authenticated pages)
   useNotificationSocket()
-
-  // Don't show sidebar/chrome on public pages
-  const isPublicPage = pathname === '/login' || pathname === '/' || pathname === '/auth/error'
-
-  if (isPublicPage) {
-    return <>{children}</>
-  }
 
   // Auth guard for protected pages
   if (status === 'loading') {
@@ -71,6 +65,7 @@ export function AuthenticatedLayout({ children }: { children: React.ReactNode })
       <CommandPalette />
       <KeyboardShortcutsHelp />
       <GlobalKeyboardShortcuts />
+      <TaskNotificationManager />
     </>
   )
 
@@ -131,4 +126,17 @@ export function AuthenticatedLayout({ children }: { children: React.ReactNode })
       {overlays}
     </SidebarProvider>
   )
+}
+
+export function AuthenticatedLayout({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname()
+
+  // Don't show sidebar/chrome/notifications on public pages
+  const isPublicPage = pathname === '/login' || pathname === '/' || pathname === '/auth/error'
+
+  if (isPublicPage) {
+    return <>{children}</>
+  }
+
+  return <AuthenticatedContent>{children}</AuthenticatedContent>
 }
