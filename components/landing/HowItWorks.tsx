@@ -24,12 +24,12 @@ const AGENT_POOL: Record<string, Agent> = {
     avatar: '/agents/athena.png',
     avatarType: 'png',
   },
-  scout: {
+  minerva: {
     id: 'minerva',
-    name: 'Hermes',
+    name: 'Minerva',
     role: 'Researcher',
-    color: '#06B6D4',
-    avatar: '/agents/hermes.png',
+    color: '#10B981',
+    avatar: '/agents/minerva.png',
     avatarType: 'png',
   },
   vulcan: {
@@ -40,53 +40,53 @@ const AGENT_POOL: Record<string, Agent> = {
     avatar: '/agents/vulcan.png',
     avatarType: 'png',
   },
-  vex: {
+  janus: {
     id: 'janus',
     name: 'Janus',
     role: 'Verifier',
-    color: '#8B5CF6',
-    avatar: '/agents/verifier.svg',
-    avatarType: 'svg',
-  },
-  forge: {
-    id: 'cato',
-    name: 'Forge',
-    role: 'DevOps Engineer',
-    color: '#FF6B00',
-    avatar: '/agents/forge-avatar.jpg',
+    color: '#1E40AF',
+    avatar: '/agents/janus.png',
     avatarType: 'png',
   },
-  echo: {
+  cato: {
+    id: 'cato',
+    name: 'Cato',
+    role: 'DevOps Engineer',
+    color: '#78716C',
+    avatar: '/agents/cato.png',
+    avatarType: 'png',
+  },
+  mercury: {
     id: 'mercury',
     name: 'Mercury',
-    role: 'Comms Manager',
-    color: '#3B82F6',
+    role: 'Messenger',
+    color: '#C0C0C0',
     avatar: '/agents/mercury.png',
     avatarType: 'png',
   },
-  quill: {
+  cicero: {
     id: 'cicero',
-    name: 'Quill',
+    name: 'Cicero',
     role: 'Content Creator',
-    color: '#F97316',
-    avatar: '/agents/quill-writer.svg',
-    avatarType: 'svg',
+    color: '#7C3AED',
+    avatar: '/agents/cicero.png',
+    avatarType: 'png',
   },
-  pixel: {
+  apollo: {
     id: 'apollo',
-    name: 'Pixel',
+    name: 'Apollo',
     role: 'Creative Director',
-    color: '#D946EF',
-    avatar: '/agents/pixel-designer.svg',
-    avatarType: 'svg',
+    color: '#EAB308',
+    avatar: '/agents/apollo.png',
+    avatarType: 'png',
   },
-  sage: {
+  oracle: {
     id: 'oracle',
-    name: 'Sage',
+    name: 'Oracle',
     role: 'Data Analyst',
-    color: '#14B8A6',
-    avatar: '/agents/sage-analyst.svg',
-    avatarType: 'svg',
+    color: '#4338CA',
+    avatar: '/agents/oracle.png',
+    avatarType: 'png',
   },
 }
 
@@ -195,7 +195,7 @@ const TEMPLATES: Template[] = [
 ]
 
 function getTemplateAgents(template: Template): Agent[] {
-  return template.pipeline.map((id) => AGENT_POOL[id])
+  return template.pipeline.map((id) => AGENT_POOL[id]).filter(Boolean)
 }
 
 const CAESAR = {

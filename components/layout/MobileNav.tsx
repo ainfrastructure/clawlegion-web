@@ -25,7 +25,7 @@ const mainTabs: NavTab[] = [
   { href: '/', icon: Home, label: 'Home' },
   { href: '/tasks', icon: ListTodo, label: 'Tasks' },
   { href: '/chat', icon: MessageSquare, label: 'Chat' },
-  { href: '/agents/fleet', icon: Bot, label: 'Agents' },
+  { href: '/agents/org', icon: Bot, label: 'Agents' },
   { href: '#more', icon: MoreHorizontal, label: 'More', isMenu: true },
 ]
 
@@ -40,7 +40,7 @@ export function MobileNav() {
 
   const isActive = (href: string) => {
     if (href === '/') return pathname === '/'
-    if (href === '/agents/fleet') return pathname.startsWith('/agents')
+    if (href === '/agents/org') return pathname.startsWith('/agents')
     return pathname.startsWith(href)
   }
 

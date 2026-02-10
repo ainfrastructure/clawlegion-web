@@ -51,7 +51,7 @@ const EASY_NAV_ITEMS: NavItem[] = [
     label: 'Work'
   },
   {
-    href: '/agents/fleet',
+    href: '/agents/org',
     icon: <Bot className="w-5 h-5" />,
     label: 'Team'
   },
@@ -94,9 +94,8 @@ const POWER_NAV_ITEMS: NavItem[] = [
     icon: <Bot className="w-5 h-5" />,
     label: 'Agents',
     subItems: [
-      { href: '/agents/fleet', label: 'Fleet' },
-      { href: '/flows', label: 'Flows' },
       { href: '/agents/org', label: 'Organization' },
+      { href: '/flows', label: 'Flows' },
     ]
   },
   {

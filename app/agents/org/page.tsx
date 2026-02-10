@@ -8,6 +8,7 @@ import { PageContainer } from '@/components/layout'
 import { AgentProfilePanel, type AgentData, type AgentStatus } from '@/components/agents'
 import { OrgAgentCard } from '@/components/agents/OrgAgentCard'
 import { AgentDetailModal } from '@/components/agents/AgentDetailModal'
+import { AddAgentModal } from '@/components/agents/AddAgentModal'
 import { DEFAULT_PRESETS, AGENT_METADATA } from '@/lib/flow-presets'
 import type { FlowPreset } from '@/components/flow-config/types'
 import { getAgentByName, getAgentById, ALL_AGENTS } from '@/components/chat-v2/agentConfig'
@@ -19,6 +20,7 @@ import {
   ArrowRight,
   Bot,
   Lock,
+  Plus,
 } from 'lucide-react'
 
 // ============================================
@@ -72,6 +74,7 @@ export default function AgentOrgPage() {
   const [selectedAgent, setSelectedAgent] = useState<AgentData | null>(null)
   const [showDetailModal, setShowDetailModal] = useState(false)
   const [configAgentId, setConfigAgentId] = useState<string | null>(null)
+  const [showAddAgent, setShowAddAgent] = useState(false)
 
   const {
     data: agents,
@@ -170,12 +173,21 @@ export default function AgentOrgPage() {
               Team structure and flow presets
             </p>
           </div>
-          <button
-            onClick={handleRefresh}
-            className="flex items-center gap-2 px-4 py-2 glass-2 rounded-lg text-sm text-white hover:bg-slate-700/50 transition-colors"
-          >
-            <RefreshCw size={16} /> Refresh
-          </button>
+          <div className="flex gap-2 sm:gap-3">
+            <button
+              data-testid="btn-add-agent"
+              onClick={() => setShowAddAgent(true)}
+              className="px-3 sm:px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg flex items-center justify-center gap-2 transition-colors text-sm font-medium"
+            >
+              <Plus size={16} /> Add Agent
+            </button>
+            <button
+              onClick={handleRefresh}
+              className="flex items-center gap-2 px-4 py-2 glass-2 rounded-lg text-sm text-white hover:bg-slate-700/50 transition-colors"
+            >
+              <RefreshCw size={16} /> Refresh
+            </button>
+          </div>
         </div>
       </div>
 
@@ -381,6 +393,16 @@ export default function AgentOrgPage() {
           onClose={() => setConfigAgentId(null)}
         />
       )}
+
+      {/* Add Agent Modal */}
+      <AddAgentModal
+        open={showAddAgent}
+        onClose={() => setShowAddAgent(false)}
+        onCreated={() => {
+          refetchAgents()
+          refetchHealth()
+        }}
+      />
     </PageContainer>
   )
 }
