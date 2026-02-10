@@ -41,7 +41,7 @@ const AGENT_COLORS: Record<string, string> = {
   // Friendly names
   caesar: '#DC2626',    // Crimson - Orchestrator
   athena: '#06B6D4',    // Teal - Planner
-  vulcan: '#F59E0B',    // Amber - Builder
+  vulcan: '#EA580C',    // Amber - Builder
   janus: '#1E40AF',     // Blue/Gold - Verifier
   minerva: '#10B981',   // Emerald - Researcher
   mercury: '#C0C0C0',   // Silver - Messenger
@@ -52,7 +52,7 @@ const AGENT_COLORS: Record<string, string> = {
   // Role-based IDs from OpenClaw config
   main: '#DC2626',      // Red - Orchestrator (caesar)
   planner: '#06B6D4',   // Teal - Planner (athena)
-  builder: '#F59E0B',   // Amber - Builder (vulcan)
+  builder: '#EA580C',   // Amber - Builder (vulcan)
   verifier: '#1E40AF',  // Blue - Verifier (janus)
   researcher: '#10B981', // Emerald - Researcher (minerva)
 }
@@ -218,7 +218,7 @@ export const FALLBACK_COUNCIL: AgentDisplay[] = [
 export const FALLBACK_BOT_ARMY: AgentDisplay[] = [
   ...FALLBACK_COUNCIL,
   { id: 'athena', name: 'Athena', emoji: '🩵', avatar: '/agents/athena.png', role: 'Planner', color: '#06B6D4', status: 'online' },
-  { id: 'vulcan', name: 'Vulcan', emoji: '🔥', avatar: '/agents/vulcan.png', role: 'Builder', color: '#F59E0B', status: 'online' },
+  { id: 'vulcan', name: 'Vulcan', emoji: '🔥', avatar: '/agents/vulcan.png', role: 'Builder', color: '#EA580C', status: 'online' },
   { id: 'janus', name: 'Janus', emoji: '🌗', avatar: '/agents/janus.png', role: 'Verifier', color: '#1E40AF', status: 'online' },
   { id: 'minerva', name: 'Minerva', emoji: '💚', avatar: '/agents/minerva.png', role: 'Researcher', color: '#10B981', status: 'online' },
   { id: 'mercury', name: 'Mercury', emoji: '⚡️', avatar: '/agents/mercury.png', role: 'Messenger', color: '#C0C0C0', status: 'online' },

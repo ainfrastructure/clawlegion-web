@@ -48,7 +48,7 @@ export const BOT_ARMY: BotMember[] = [
     name: 'Vulcan',
     role: 'Builder',
     emoji: '🔥',
-    color: '#F59E0B', // Amber
+    color: '#EA580C', // Orange
     avatar: '/agents/vulcan.png',
   },
   {

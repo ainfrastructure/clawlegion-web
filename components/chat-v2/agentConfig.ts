@@ -64,7 +64,7 @@ export const ARMY_AGENTS: AgentConfig[] = [
     name: 'Vulcan',
     role: 'Builder',
     emoji: '\u{1F525}',
-    color: '#F59E0B', // Amber
+    color: '#EA580C', // Orange
     avatar: '/agents/vulcan.png',
     tier: 'army',
     description: 'The craftsman. Writes production-grade code following Athena\'s plans to the letter.',

@@ -16,7 +16,7 @@ const hexToColorName: Record<string, AgentMetadata['color']> = {
   '#DC2626': 'red',
   '#22C55E': 'emerald',
   '#3B82F6': 'blue',
-  '#F59E0B': 'amber',
+  '#EA580C': 'orange',
   '#8B5CF6': 'purple',
   '#06B6D4': 'cyan',
   '#EC4899': 'pink',

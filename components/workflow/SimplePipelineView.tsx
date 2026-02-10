@@ -15,7 +15,7 @@ interface Agent {
 
 const AGENTS: Agent[] = [
   { id: 'athena', name: 'Athena', role: 'Plan', avatar: '/agents/athena.png', primaryColor: '#06B6D4', status: 'pending' },
-  { id: 'vulcan', name: 'Vulcan', role: 'Build', avatar: '/agents/vulcan.png', primaryColor: '#F59E0B', status: 'pending' },
+  { id: 'vulcan', name: 'Vulcan', role: 'Build', avatar: '/agents/vulcan.png', primaryColor: '#EA580C', status: 'pending' },
   { id: 'sentinel', name: 'Sentinel', role: 'Scan', avatar: '/agents/minerva.png', primaryColor: '#3B82F6', status: 'pending' },
   { id: 'critic', name: 'Critic', role: 'Review', avatar: '/agents/athena.png', primaryColor: '#991B1B', status: 'pending' },
   { id: 'janus', name: 'Janus', role: 'Verify', avatar: '/agents/janus.png', primaryColor: '#10B981', status: 'pending' },

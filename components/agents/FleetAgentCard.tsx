@@ -34,12 +34,25 @@ export function FleetAgentCard({ agent, onClick }: FleetAgentCardProps) {
 
   return (
     <div
-      className="glass-2 rounded-2xl p-5 hover:-translate-y-0.5 transition-all duration-200 cursor-pointer group"
+      className="glass-2 rounded-2xl p-5 hover:-translate-y-0.5 transition-all duration-200 cursor-pointer group relative overflow-hidden"
       onClick={onClick}
       role={onClick ? 'button' : undefined}
       tabIndex={onClick ? 0 : undefined}
       onKeyDown={onClick ? (e) => e.key === 'Enter' && onClick() : undefined}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.boxShadow = `0 0 24px ${agentColor}20`
+        e.currentTarget.style.borderColor = `${agentColor}40`
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.boxShadow = 'none'
+        e.currentTarget.style.borderColor = ''
+      }}
     >
+      {/* Colored bottom bar */}
+      <div 
+        className="absolute bottom-0 left-0 right-0 h-[2px]"
+        style={{ backgroundColor: agentColor }}
+      />
       {/* Avatar + Status */}
       <div className="flex flex-col items-center mb-4">
         <div className="relative">

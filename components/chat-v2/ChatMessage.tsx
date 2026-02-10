@@ -79,7 +79,7 @@ const AGENT_COLORS: Record<string, string> = {
   'caesar': '#DC2626',
   'main': '#DC2626',
   'athena': '#06B6D4',
-  'vulcan': '#F59E0B',
+  'vulcan': '#EA580C',
   'janus': '#1E40AF',
   'minerva': '#10B981',
   'mercury': '#C0C0C0',

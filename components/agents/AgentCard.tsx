@@ -171,20 +171,37 @@ function FullCard({ agent, showStats, showHealth, showActions, onPause, onConfig
 
 // Compact variant - medium-sized card for lists
 function CompactCard({ agent, showHealth, onClick }: AgentCardProps) {
-  // Use agent hex color for border, or fall back to generic
+  // Use agent hex color for border + accent
   const agentHexColor = agent.color && agent.color.startsWith('#') ? agent.color : undefined
   
   return (
     <div 
-      className={`bg-slate-900/50 rounded-xl border p-4 transition-colors ${onClick ? 'cursor-pointer hover:bg-slate-800/50' : ''}`}
+      className={`relative bg-slate-900/50 rounded-xl border overflow-hidden p-4 transition-all duration-200 group ${onClick ? 'cursor-pointer' : ''}`}
       style={{
-        borderColor: agentHexColor ? `${agentHexColor}40` : 'rgba(255,255,255,0.06)',
+        borderColor: agentHexColor ? `${agentHexColor}30` : 'rgba(255,255,255,0.06)',
       }}
       onClick={onClick}
       role={onClick ? 'button' : undefined}
       tabIndex={onClick ? 0 : undefined}
       onKeyDown={onClick ? (e) => e.key === 'Enter' && onClick() : undefined}
+      onMouseEnter={(e) => {
+        if (agentHexColor) {
+          e.currentTarget.style.borderColor = `${agentHexColor}60`
+          e.currentTarget.style.boxShadow = `0 0 20px ${agentHexColor}15`
+        }
+      }}
+      onMouseLeave={(e) => {
+        if (agentHexColor) {
+          e.currentTarget.style.borderColor = `${agentHexColor}30`
+          e.currentTarget.style.boxShadow = 'none'
+        }
+      }}
     >
+      {/* Colored bottom bar */}
+      <div 
+        className="absolute bottom-0 left-0 right-0 h-[2px]"
+        style={{ backgroundColor: agentHexColor || 'transparent' }}
+      />
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-3 min-w-0">
           <AgentAvatar agent={agent} size="md" />
