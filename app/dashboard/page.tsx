@@ -224,28 +224,21 @@ export default function DashboardPage() {
   const agents = rawAgents.map((agent: any) => {
     const health = healthData?.agents?.find(h => h.id === agent.id || h.id === agent.name?.toLowerCase())
 
-    // Special case: Caesar is always reachable
-    const isCaesar = agent.id?.toLowerCase() === 'caesar' || agent.name?.toLowerCase() === 'caesar'
+    // All agents are ephemeral sub-agents of Caesar — online if Caesar is online
+    let derivedStatus = agent.status || 'online'
     
-    // Derive status from health check
-    let derivedStatus = agent.status || 'offline'
-    
-    if (isCaesar) {
-      // Caesar is always online, busy if there are any active tasks
-      const hasActiveTasks = health?.busy || agent.currentTask || agent.currentTaskId
-      derivedStatus = hasActiveTasks ? 'busy' : 'online'
-    } else if (health?.reachable) {
-      // Other agents: use health check result
-      derivedStatus = health.busy || agent.currentTask || agent.currentTaskId ? 'busy' : 'online'
-    } else if (health && !health.reachable) {
-      // Health check ran but agent not reachable
-      derivedStatus = agent.status === 'rate_limited' ? 'rate_limited' : 'offline'
+    if (agent.currentTask || agent.currentTaskId || health?.busy) {
+      derivedStatus = 'busy'
+    } else if (agent.status === 'rate_limited') {
+      derivedStatus = 'rate_limited'
+    } else {
+      derivedStatus = 'online'
     }
 
     return {
       ...agent,
       status: derivedStatus,
-      reachable: isCaesar || health?.reachable,
+      reachable: true,
       latencyMs: health?.latencyMs,
       busy: health?.busy,
       activeTask: health?.activeTask,
