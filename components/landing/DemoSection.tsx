@@ -1,62 +1,132 @@
 'use client'
 
-import { useState } from 'react'
-import { Play, Maximize2, X } from 'lucide-react'
+import { useState, useRef, useCallback } from 'react'
+import { Play, Maximize2, Minimize2, X, Volume2, VolumeX } from 'lucide-react'
 
 export function DemoSection() {
   const [isFullscreen, setIsFullscreen] = useState(false)
+  const [isPlaying, setIsPlaying] = useState(false)
+  const [isMuted, setIsMuted] = useState(true)
+  const videoRef = useRef<HTMLVideoElement>(null)
+  const fullscreenVideoRef = useRef<HTMLVideoElement>(null)
 
-  const VideoContent = ({ fullscreen = false }: { fullscreen?: boolean }) => (
-    <div className={`${fullscreen ? '' : 'glass-3 rounded-2xl overflow-hidden'} relative group`}>
-      <div className={`${fullscreen ? 'w-full h-full' : 'aspect-video'} flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900 relative cursor-pointer`}>
-        {/* Placeholder — replace with actual video/embed */}
-        <div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
-          {/* Fake browser chrome */}
-          <div className={`${fullscreen ? 'w-[90%] h-[85%]' : 'w-[85%] h-[80%]'} glass-2 rounded-xl overflow-hidden border border-white/[0.06]`}>
-            <div className="h-8 bg-slate-800/80 flex items-center px-3 gap-2 border-b border-white/[0.04]">
-              <div className="flex gap-1.5">
-                <div className="w-2.5 h-2.5 rounded-full bg-red-500/60" />
-                <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/60" />
-                <div className="w-2.5 h-2.5 rounded-full bg-green-500/60" />
-              </div>
-              <div className="flex-1 flex justify-center">
-                <div className="px-3 py-0.5 rounded bg-slate-700/50 text-[10px] text-slate-400">
-                  app.clawlegion.com/dashboard
-                </div>
-              </div>
-            </div>
-            <div className="flex-1 flex items-center justify-center h-[calc(100%-2rem)]">
-              <div className="text-center">
-                <div className="text-4xl mb-2 opacity-20">🤖</div>
-                <p className="text-sm text-slate-600">Dashboard Screenshot</p>
-              </div>
-            </div>
-          </div>
-        </div>
+  const handlePlay = useCallback(() => {
+    const video = isFullscreen ? fullscreenVideoRef.current : videoRef.current
+    if (!video) return
 
-        {/* Play button overlay */}
-        <div className="absolute inset-0 flex items-center justify-center z-10">
-          <div className="w-20 h-20 rounded-full bg-blue-600/90 flex items-center justify-center shadow-lg shadow-blue-500/30 group-hover:bg-blue-500 transition-colors">
-            <Play className="w-8 h-8 text-white ml-1" />
-          </div>
-        </div>
+    if (video.paused) {
+      video.play()
+      setIsPlaying(true)
+      // Unmute after a brief moment so autoplay isn't blocked
+      setTimeout(() => {
+        video.muted = false
+        setIsMuted(false)
+      }, 300)
+    } else {
+      video.pause()
+      setIsPlaying(false)
+    }
+  }, [isFullscreen])
 
-        {/* Expand button */}
-        {!fullscreen && (
-          <button
-            onClick={(e) => {
-              e.stopPropagation()
-              setIsFullscreen(true)
-            }}
-            className="absolute top-3 right-3 z-20 p-2 glass-2 rounded-lg text-slate-400 hover:text-white transition-colors opacity-0 group-hover:opacity-100"
-            title="View fullscreen"
+  const toggleMute = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation()
+    const video = isFullscreen ? fullscreenVideoRef.current : videoRef.current
+    if (!video) return
+    video.muted = !video.muted
+    setIsMuted(video.muted)
+  }, [isFullscreen])
+
+  const handleFullscreenOpen = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation()
+    setIsFullscreen(true)
+    // Sync playback state to fullscreen video after mount
+    setTimeout(() => {
+      const fsVideo = fullscreenVideoRef.current
+      const mainVideo = videoRef.current
+      if (fsVideo && mainVideo) {
+        fsVideo.currentTime = mainVideo.currentTime
+        fsVideo.muted = mainVideo.muted
+        if (isPlaying) {
+          fsVideo.play()
+        }
+      }
+    }, 100)
+  }, [isPlaying])
+
+  const handleFullscreenClose = useCallback(() => {
+    const fsVideo = fullscreenVideoRef.current
+    const mainVideo = videoRef.current
+    if (fsVideo && mainVideo) {
+      mainVideo.currentTime = fsVideo.currentTime
+      mainVideo.muted = fsVideo.muted
+      if (isPlaying) {
+        mainVideo.play()
+      }
+    }
+    setIsFullscreen(false)
+  }, [isPlaying])
+
+  const handleVideoEnd = useCallback(() => {
+    setIsPlaying(false)
+  }, [])
+
+  const VideoContent = ({ fullscreen = false }: { fullscreen?: boolean }) => {
+    const ref = fullscreen ? fullscreenVideoRef : videoRef
+
+    return (
+      <div
+        className={`${fullscreen ? '' : 'glass-3 rounded-2xl overflow-hidden'} relative group cursor-pointer`}
+        onClick={handlePlay}
+      >
+        <div className={`${fullscreen ? 'w-full h-full flex items-center justify-center bg-black' : 'aspect-video'} relative overflow-hidden`}>
+          <video
+            ref={ref}
+            className={`${fullscreen ? 'max-w-full max-h-full' : 'w-full h-full object-cover'}`}
+            poster="/demo-poster.jpg"
+            muted
+            playsInline
+            preload="metadata"
+            onEnded={handleVideoEnd}
+            controls={isPlaying}
           >
-            <Maximize2 className="w-4 h-4" />
-          </button>
-        )}
+            <source src="/demo-video.webm" type="video/webm" />
+            <source src="/demo-video.mp4" type="video/mp4" />
+          </video>
+
+          {/* Play button overlay — visible when not playing */}
+          {!isPlaying && (
+            <div className="absolute inset-0 flex items-center justify-center z-10 bg-black/30 transition-opacity">
+              <div className="w-20 h-20 rounded-full bg-blue-600/90 flex items-center justify-center shadow-lg shadow-blue-500/30 hover:bg-blue-500 hover:scale-105 transition-all">
+                <Play className="w-8 h-8 text-white ml-1" />
+              </div>
+            </div>
+          )}
+
+          {/* Top-right controls */}
+          <div className="absolute top-3 right-3 z-20 flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+            {isPlaying && (
+              <button
+                onClick={toggleMute}
+                className="p-2 glass-2 rounded-lg text-slate-400 hover:text-white transition-colors"
+                title={isMuted ? 'Unmute' : 'Mute'}
+              >
+                {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+              </button>
+            )}
+            {!fullscreen && (
+              <button
+                onClick={handleFullscreenOpen}
+                className="p-2 glass-2 rounded-lg text-slate-400 hover:text-white transition-colors"
+                title="View fullscreen"
+              >
+                <Maximize2 className="w-4 h-4" />
+              </button>
+            )}
+          </div>
+        </div>
       </div>
-    </div>
-  )
+    )
+  }
 
   return (
     <>
@@ -81,9 +151,9 @@ export function DemoSection() {
 
       {/* Fullscreen overlay */}
       {isFullscreen && (
-        <div className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center">
+        <div className="fixed inset-0 z-[100] bg-black flex items-center justify-center">
           <button
-            onClick={() => setIsFullscreen(false)}
+            onClick={handleFullscreenClose}
             className="absolute top-4 right-4 z-[110] p-3 glass-2 rounded-full text-slate-400 hover:text-white transition-colors"
           >
             <X className="w-6 h-6" />
