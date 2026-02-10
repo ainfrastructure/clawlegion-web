@@ -32,26 +32,21 @@ export function MascotHero() {
 
         .council-hero-glow {
           position: absolute;
-          inset: -20px;
-          border-radius: 24px;
+          inset: -30px;
+          border-radius: 50%;
           background: radial-gradient(
             ellipse at center,
-            rgba(220, 38, 38, 0.25) 0%,
-            rgba(6, 182, 212, 0.15) 30%,
-            rgba(245, 158, 11, 0.15) 60%,
-            transparent 80%
+            rgba(220, 38, 38, 0.2) 0%,
+            rgba(6, 182, 212, 0.12) 35%,
+            rgba(67, 56, 202, 0.1) 55%,
+            transparent 75%
           );
-          box-shadow:
-            0 0 60px rgba(220, 38, 38, 0.3),
-            0 0 120px rgba(6, 182, 212, 0.15),
-            0 0 120px rgba(245, 158, 11, 0.15);
           animation: heroGlow 3s ease-in-out infinite;
           z-index: -1;
-          filter: blur(8px);
+          filter: blur(20px);
         }
 
         .council-hero-image {
-          border-radius: 16px;
           filter: brightness(1.05) contrast(1.05);
         }
 
