@@ -57,7 +57,7 @@ export function DemoSection() {
     setShowUnmuteHint(false)
   }, [])
 
-  // Auto-play with sound when modal opens; fall back to muted
+  // Auto-play with sound when modal opens; request native fullscreen on mobile
   useEffect(() => {
     if (!modalOpen) return
     const video = videoRef.current
@@ -82,12 +82,50 @@ export function DemoSection() {
           setIsLoading(false)
         }
       }
+
+      // On mobile, request native fullscreen on the video element
+      // This triggers the phone's landscape fullscreen player
+      try {
+        const isMobile = window.innerWidth < 768
+        if (isMobile) {
+          const videoEl = video as HTMLVideoElement & {
+            webkitEnterFullscreen?: () => Promise<void>
+            webkitRequestFullscreen?: () => Promise<void>
+          }
+          if (videoEl.requestFullscreen) {
+            await videoEl.requestFullscreen()
+          } else if (videoEl.webkitEnterFullscreen) {
+            // iOS Safari uses webkitEnterFullscreen on video elements
+            await videoEl.webkitEnterFullscreen()
+          } else if (videoEl.webkitRequestFullscreen) {
+            await videoEl.webkitRequestFullscreen()
+          }
+        }
+      } catch {
+        // Fullscreen request failed — that's ok, modal still works
+      }
     }
 
     // Small delay to let the modal render and video element mount properly
     const timer = setTimeout(tryPlay, 150)
     return () => clearTimeout(timer)
   }, [modalOpen])
+
+  // Close our modal when native fullscreen exits (user pressed done/back)
+  useEffect(() => {
+    if (!modalOpen) return
+    const handleFullscreenExit = () => {
+      if (!document.fullscreenElement) {
+        closeModal()
+      }
+    }
+    document.addEventListener('fullscreenchange', handleFullscreenExit)
+    document.addEventListener('webkitfullscreenchange', handleFullscreenExit)
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenExit)
+      document.removeEventListener('webkitfullscreenchange', handleFullscreenExit)
+    }
+  }, [modalOpen, closeModal])
 
   const handleUnmute = useCallback(() => {
     const video = videoRef.current
