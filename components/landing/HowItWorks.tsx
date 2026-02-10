@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState, useCallback } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { CheckCircle2, XCircle, ChevronRight } from 'lucide-react'
 import Image from 'next/image'
 import { ALL_AGENTS, getAgentById } from '@/components/chat-v2/agentConfig'
@@ -149,7 +149,51 @@ const CAESAR = {
 
 /* ─── Sub-components ─── */
 
-function SlideOrchestratorCard({ template, visible }: { template: Template; visible: boolean }) {
+function SlideOrchestratorCard({ template, visible, compact = false }: { template: Template; visible: boolean; compact?: boolean }) {
+  if (compact) {
+    return (
+      <div
+        className={`flex flex-col items-center transition-all duration-700 ${
+          visible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'
+        }`}
+      >
+        <div
+          className="glass-2 rounded-xl p-2 flex items-center gap-2 animate-card-breathe w-full"
+          style={{
+            boxShadow: `0 0 14px -4px ${CAESAR.color}33`,
+            borderColor: `${CAESAR.color}30`,
+          }}
+        >
+          <div
+            className="w-8 h-8 rounded-lg overflow-hidden flex-shrink-0 flex items-center justify-center"
+            style={{ background: `${CAESAR.color}18` }}
+          >
+            <Image
+              src={CAESAR.avatar}
+              alt={CAESAR.name}
+              width={22}
+              height={22}
+              className="object-contain"
+              loading="eager"
+            />
+          </div>
+          <div className="min-w-0">
+            <div className="flex items-center gap-1">
+              <span className="text-white font-semibold text-[10px]">{CAESAR.name}</span>
+              <span
+                className="text-[7px] font-mono uppercase tracking-wider px-1 py-px rounded"
+                style={{ color: CAESAR.color, background: `${CAESAR.color}18` }}
+              >
+                {CAESAR.role}
+              </span>
+            </div>
+            <p className="text-[9px] text-slate-400 mt-0.5 line-clamp-1">{template.descriptions.caesar}</p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div
       className={`flex flex-col items-center transition-all duration-700 ${
@@ -193,17 +237,20 @@ function SlideOrchestratorCard({ template, visible }: { template: Template; visi
   )
 }
 
-function SlideOversightLine({ visible }: { visible: boolean }) {
+function SlideOversightLine({ visible, compact = false }: { visible: boolean; compact?: boolean }) {
   return (
     <div
-      className={`flex justify-center py-1 transition-all duration-500 delay-200 ${
-        visible ? 'opacity-100' : 'opacity-0'
-      }`}
+      className={`flex justify-center transition-all duration-500 delay-200 ${
+        compact ? 'py-0.5' : 'py-1'
+      } ${visible ? 'opacity-100' : 'opacity-0'}`}
     >
       <div className="flex flex-col items-center gap-0.5">
-        <div className="w-px h-5 border-l border-dashed" style={{ borderColor: `${CAESAR.color}40` }} />
         <div
-          className="w-1.5 h-1.5 rounded-full animate-glow-border-pulse"
+          className={`w-px border-l border-dashed ${compact ? 'h-3' : 'h-5'}`}
+          style={{ borderColor: `${CAESAR.color}40` }}
+        />
+        <div
+          className={`rounded-full animate-glow-border-pulse ${compact ? 'w-1 h-1' : 'w-1.5 h-1.5'}`}
           style={{ background: CAESAR.color }}
         />
       </div>
@@ -216,12 +263,52 @@ function SlideAgentCard({
   index,
   visible,
   description,
+  compact = false,
 }: {
   agent: Agent
   index: number
   visible: boolean
   description: string
+  compact?: boolean
 }) {
+  if (compact) {
+    return (
+      <div
+        className={`relative transition-all duration-600 ${
+          visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+        }`}
+        style={{ transitionDelay: `${300 + index * 100}ms` }}
+      >
+        <div
+          className="glass-2 rounded-xl p-2 flex flex-col items-center text-center"
+          style={{ boxShadow: `0 0 14px -4px ${agent.color}22` }}
+        >
+          <div
+            className="w-9 h-9 rounded-lg overflow-hidden flex items-center justify-center mb-1.5 relative"
+            style={{ background: `${agent.color}12` }}
+          >
+            <Image
+              src={agent.avatar}
+              alt={agent.name}
+              width={24}
+              height={24}
+              className={agent.avatarType === 'svg' ? 'object-contain' : 'object-cover rounded-md'}
+              loading="eager"
+            />
+          </div>
+          <span className="text-white font-semibold text-[10px] leading-tight">{agent.name}</span>
+          <span
+            className="text-[7px] font-mono uppercase tracking-wider mt-0.5 px-1 py-px rounded"
+            style={{ color: agent.color, background: `${agent.color}18` }}
+          >
+            {agent.role}
+          </span>
+          <p className="text-[9px] text-slate-400 mt-1 leading-tight line-clamp-2">{description}</p>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div
       className={`relative transition-all duration-600 ${
@@ -268,31 +355,31 @@ function SlideAgentCard({
   )
 }
 
-function SlideConnectionArrow({ color, delay = 0, visible }: { color: string; delay?: number; visible: boolean }) {
+function SlideConnectionArrow({ color, delay = 0, visible, compact = false }: { color: string; delay?: number; visible: boolean; compact?: boolean }) {
   return (
     <div
-      className={`hidden md:flex items-center justify-center transition-opacity duration-500 ${
+      className={`flex items-center justify-center transition-opacity duration-500 ${
         visible ? 'opacity-100' : 'opacity-0'
       }`}
       style={{ transitionDelay: `${delay}ms` }}
     >
-      <div className="relative w-12 flex items-center">
+      <div className={`relative flex items-center ${compact ? 'w-5' : 'w-12'}`}>
         <div
           className="absolute inset-y-1/2 left-0 right-0 h-px"
           style={{ background: `${color}40` }}
         />
         <div
-          className="absolute w-1.5 h-1.5 rounded-full animate-flow-particle"
+          className={`absolute rounded-full animate-flow-particle ${compact ? 'w-1 h-1' : 'w-1.5 h-1.5'}`}
           style={{
             background: color,
-            boxShadow: `0 0 6px ${color}`,
+            boxShadow: `0 0 ${compact ? '4px' : '6px'} ${color}`,
             top: '50%',
             transform: 'translateY(-50%)',
             animationDelay: `${delay}ms`,
           }}
         />
         <ChevronRight
-          className="absolute -right-1 w-3 h-3"
+          className={`absolute -right-0.5 ${compact ? 'w-2 h-2' : 'w-3 h-3'}`}
           style={{ color: `${color}80` }}
         />
       </div>
@@ -300,28 +387,46 @@ function SlideConnectionArrow({ color, delay = 0, visible }: { color: string; de
   )
 }
 
-function SlideMobileFlowArrow({ color, visible }: { color: string; visible: boolean }) {
-  return (
-    <div
-      className={`flex md:hidden justify-center py-2 transition-opacity duration-500 ${
-        visible ? 'opacity-100' : 'opacity-0'
-      }`}
-    >
-      <div className="relative flex flex-col items-center">
-        <div
-          className="w-px h-6"
-          style={{ background: `${color}40` }}
-        />
-        <div
-          className="w-1.5 h-1.5 rounded-full"
-          style={{ background: color, boxShadow: `0 0 6px ${color}` }}
-        />
+function SlideBranchFork({ visible, outcomes, compact = false }: { visible: boolean; outcomes: Template['outcomes']; compact?: boolean }) {
+  if (compact) {
+    return (
+      <div
+        className={`mt-2 transition-all duration-700 ${
+          visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+        }`}
+        style={{ transitionDelay: '900ms' }}
+      >
+        <div className="flex justify-center mb-1.5">
+          <div className="flex flex-col items-center">
+            <div className="w-px h-3 bg-purple-500/30" />
+            <div className="w-1.5 h-1.5 rounded-full bg-purple-500/50" />
+          </div>
+        </div>
+        <div className="flex items-center justify-center gap-2">
+          <div
+            className="glass-2 rounded-lg px-2 py-1.5 flex items-center gap-1.5"
+            style={{ boxShadow: '0 0 10px -4px rgb(34 197 94 / 0.2)' }}
+          >
+            <CheckCircle2 className="w-3 h-3 text-emerald-400 flex-shrink-0" />
+            <span className="text-[8px] font-semibold text-emerald-400">{outcomes.success.label}</span>
+            <span className="text-slate-500 text-[8px]">&rarr;</span>
+            <span className="text-[8px] text-slate-300">{outcomes.success.action}</span>
+          </div>
+          <span className="text-[8px] text-slate-600 font-mono">or</span>
+          <div
+            className="glass-2 rounded-lg px-2 py-1.5 flex items-center gap-1.5"
+            style={{ boxShadow: '0 0 10px -4px rgb(239 68 68 / 0.2)' }}
+          >
+            <XCircle className="w-3 h-3 text-red-400 flex-shrink-0" />
+            <span className="text-[8px] font-semibold text-red-400">{outcomes.failure.label}</span>
+            <span className="text-slate-500 text-[8px]">&rarr;</span>
+            <span className="text-[8px] text-slate-300">{outcomes.failure.action}</span>
+          </div>
+        </div>
       </div>
-    </div>
-  )
-}
+    )
+  }
 
-function SlideBranchFork({ visible, outcomes }: { visible: boolean; outcomes: Template['outcomes'] }) {
   return (
     <div
       className={`mt-3 transition-all duration-700 ${
@@ -342,7 +447,7 @@ function SlideBranchFork({ visible, outcomes }: { visible: boolean; outcomes: Te
           <CheckCircle2 className="w-5 h-5 text-emerald-400 flex-shrink-0" />
           <div>
             <span className="text-xs font-semibold text-emerald-400">{outcomes.success.label}</span>
-            <span className="text-slate-500 mx-2">→</span>
+            <span className="text-slate-500 mx-2">&rarr;</span>
             <span className="text-xs text-slate-300">{outcomes.success.action}</span>
           </div>
         </div>
@@ -353,7 +458,7 @@ function SlideBranchFork({ visible, outcomes }: { visible: boolean; outcomes: Te
           <XCircle className="w-5 h-5 text-red-400 flex-shrink-0" />
           <div>
             <span className="text-xs font-semibold text-red-400">{outcomes.failure.label}</span>
-            <span className="text-slate-500 mx-2">→</span>
+            <span className="text-slate-500 mx-2">&rarr;</span>
             <span className="text-xs text-slate-300">{outcomes.failure.action}</span>
           </div>
         </div>
@@ -362,7 +467,7 @@ function SlideBranchFork({ visible, outcomes }: { visible: boolean; outcomes: Te
   )
 }
 
-/** A complete pipeline visualization for one template */
+/** Desktop: full pipeline visualization for one template */
 function SlideContent({ template, visible }: { template: Template; visible: boolean }) {
   const agents = getTemplateAgents(template)
 
@@ -383,8 +488,8 @@ function SlideContent({ template, visible }: { template: Template; visible: bool
         {/* Oversight line */}
         <SlideOversightLine visible={visible} />
 
-        {/* Agent pipeline — Desktop: horizontal, Mobile: vertical */}
-        <div className="hidden md:flex items-center justify-center flex-wrap lg:flex-nowrap gap-1">
+        {/* Agent pipeline — horizontal */}
+        <div className="flex items-center justify-center flex-wrap lg:flex-nowrap gap-1">
           {agents.map((agent, i) => (
             <div key={agent.id} className="flex items-center">
               <div className="w-[140px] lg:w-[160px] xl:w-[180px]">
@@ -406,25 +511,61 @@ function SlideContent({ template, visible }: { template: Template; visible: bool
           ))}
         </div>
 
-        {/* Mobile vertical stack */}
-        <div className="flex md:hidden flex-col items-center gap-1">
+        {/* Branch fork */}
+        <SlideBranchFork visible={visible} outcomes={template.outcomes} />
+      </div>
+    </div>
+  )
+}
+
+/** Mobile: compact horizontal pipeline for one template */
+function MobileSlideContent({ template, visible }: { template: Template; visible: boolean }) {
+  const agents = getTemplateAgents(template)
+
+  return (
+    <div className="flex-shrink-0" style={{ width: '20%' }}>
+      <div className="px-3">
+        {/* Template label — compact */}
+        <div className="text-center mb-2">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full glass-2 border border-white/[0.06]">
+            <span className="text-[11px] font-semibold text-white">{template.name}</span>
+          </div>
+          <p className="text-[10px] text-slate-500 mt-0.5 italic">{template.tagline}</p>
+        </div>
+
+        {/* Orchestrator — compact */}
+        <SlideOrchestratorCard template={template} visible={visible} compact />
+
+        {/* Oversight line — compact */}
+        <SlideOversightLine visible={visible} compact />
+
+        {/* Agent pipeline — compact horizontal row */}
+        <div className="flex items-center justify-center gap-0.5">
           {agents.map((agent, i) => (
-            <div key={agent.id} className="w-full max-w-[200px]">
-              <SlideAgentCard
-                agent={agent}
-                index={i}
-                visible={visible}
-                description={template.descriptions[agent.id]}
-              />
+            <div key={agent.id} className="flex items-center">
+              <div className="w-[72px]">
+                <SlideAgentCard
+                  agent={agent}
+                  index={i}
+                  visible={visible}
+                  description={template.descriptions[agent.id]}
+                  compact
+                />
+              </div>
               {i < agents.length - 1 && (
-                <SlideMobileFlowArrow color={agent.color} visible={visible} />
+                <SlideConnectionArrow
+                  color={agent.color}
+                  delay={400 + i * 100}
+                  visible={visible}
+                  compact
+                />
               )}
             </div>
           ))}
         </div>
 
-        {/* Branch fork */}
-        <SlideBranchFork visible={visible} outcomes={template.outcomes} />
+        {/* Branch fork — compact */}
+        <SlideBranchFork visible={visible} outcomes={template.outcomes} compact />
       </div>
     </div>
   )
@@ -436,18 +577,6 @@ export function HowItWorks() {
   const sectionRef = useRef<HTMLDivElement>(null)
   const [visible, setVisible] = useState(false)
   const [entryDone, setEntryDone] = useState(false)
-  const [paused, setPaused] = useState(false)
-  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false)
-  const [reducedMotionIdx, setReducedMotionIdx] = useState(0)
-
-  // Detect prefers-reduced-motion
-  useEffect(() => {
-    const mql = window.matchMedia('(prefers-reduced-motion: reduce)')
-    setPrefersReducedMotion(mql.matches)
-    const handler = (e: MediaQueryListEvent) => setPrefersReducedMotion(e.matches)
-    mql.addEventListener('change', handler)
-    return () => mql.removeEventListener('change', handler)
-  }, [])
 
   // Visibility observer
   useEffect(() => {
@@ -474,28 +603,6 @@ export function HowItWorks() {
     const timeout = setTimeout(() => setEntryDone(true), 1500)
     return () => clearTimeout(timeout)
   }, [visible])
-
-  // Mobile auto-rotate templates every 5s
-  useEffect(() => {
-    if (!visible) return
-    const interval = setInterval(() => {
-      setReducedMotionIdx(prev => (prev + 1) % TEMPLATES.length)
-    }, 5000)
-    return () => clearInterval(interval)
-  }, [visible])
-
-  // Hover pause/resume
-  const handleMouseEnter = useCallback(() => setPaused(true), [])
-  const handleMouseLeave = useCallback(() => setPaused(false), [])
-
-  // Reduced-motion fallback: discrete rotation
-  useEffect(() => {
-    if (!prefersReducedMotion || !entryDone || paused) return
-    const interval = setInterval(() => {
-      setReducedMotionIdx((prev) => (prev + 1) % TEMPLATES.length)
-    }, 5000)
-    return () => clearInterval(interval)
-  }, [prefersReducedMotion, entryDone, paused])
 
   return (
     <section
@@ -528,26 +635,17 @@ export function HowItWorks() {
         </div>
       </div>
 
-      {/* Pipeline strip — full width, edge to edge */}
-      {/* Mobile: single template with nav dots */}
-      <div className="md:hidden w-full overflow-hidden">
-        <div style={{ width: '500%' }}>
-          <div style={{ width: '20%' }}>
-            <SlideContent
-              template={TEMPLATES[reducedMotionIdx]}
+      {/* Mobile: compact horizontal scrolling strip */}
+      <div className="md:hidden overflow-hidden">
+        <div
+          className={`flex ${entryDone ? 'pipeline-strip-mobile' : ''}`}
+          style={{ width: '500%' }}
+        >
+          {[...TEMPLATES, ...TEMPLATES].map((tmpl, i) => (
+            <MobileSlideContent
+              key={`${tmpl.name}-${i < TEMPLATES.length ? 'a' : 'b'}`}
+              template={tmpl}
               visible={visible}
-            />
-          </div>
-        </div>
-        {/* Dot navigation */}
-        <div className="flex justify-center gap-2 mt-6">
-          {TEMPLATES.map((t, i) => (
-            <button
-              key={t.name}
-              onClick={() => setReducedMotionIdx(i)}
-              className={`w-2 h-2 rounded-full transition-all ${
-                i === reducedMotionIdx ? 'bg-blue-400 w-6' : 'bg-slate-600'
-              }`}
             />
           ))}
         </div>
@@ -555,33 +653,18 @@ export function HowItWorks() {
 
       {/* Desktop: scrolling strip */}
       <div className="hidden md:block overflow-hidden">
-        {prefersReducedMotion ? (
-          <div className="max-w-5xl mx-auto px-4 sm:px-6">
+        <div
+          className={`flex ${entryDone ? 'pipeline-strip' : ''}`}
+          style={{ width: '500%' }}
+        >
+          {[...TEMPLATES, ...TEMPLATES].map((tmpl, i) => (
             <SlideContent
-              template={TEMPLATES[reducedMotionIdx]}
+              key={`${tmpl.name}-${i < TEMPLATES.length ? 'a' : 'b'}`}
+              template={tmpl}
               visible={visible}
             />
-          </div>
-        ) : (
-          <div
-            className="overflow-hidden"
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
-          >
-            <div
-              className={`flex ${entryDone ? 'pipeline-strip' : ''} ${paused ? 'paused' : ''}`}
-              style={{ width: '500%' }}
-            >
-              {[...TEMPLATES, ...TEMPLATES].map((tmpl, i) => (
-                <SlideContent
-                  key={`${tmpl.name}-${i < TEMPLATES.length ? 'a' : 'b'}`}
-                  template={tmpl}
-                  visible={visible}
-                />
-              ))}
-            </div>
-          </div>
-        )}
+          ))}
+        </div>
       </div>
     </section>
   )

@@ -382,8 +382,9 @@
     will-change: transform;
   }
 
-  .pipeline-strip.paused {
-    animation-play-state: paused;
+  .pipeline-strip-mobile {
+    animation: slide-strip 35s linear infinite;
+    will-change: transform;
   }
 
   /* Agent pipeline animations */
@@ -445,7 +446,8 @@
 
 /* Reduced-motion: disable pipeline strip animation */
 @media (prefers-reduced-motion: reduce) {
-  .pipeline-strip {
+  .pipeline-strip,
+  .pipeline-strip-mobile {
     animation: none !important;
   }
 }

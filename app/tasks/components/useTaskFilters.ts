@@ -48,9 +48,9 @@ export function useTaskFilters(tasks: Task[]): UseTaskFiltersReturn {
   // Group tasks for Kanban view - map statuses to columns
   const columns: TaskColumns = {
     todo: filteredTasks.filter(t => t.status === 'todo' || t.status === 'backlog' || t.status === 'queued'),
-    building: filteredTasks.filter(t => t.status === 'building' || t.status === 'in_progress' || t.status === 'researching' || t.status === 'planning' || t.status === 'assigned'),
-    verifying: filteredTasks.filter(t => t.status === 'verifying'),
-    done: filteredTasks.filter(t => t.status === 'done' || t.status === 'completed'),
+    building: filteredTasks.filter(t => ['building', 'in_progress', 'researching', 'planning', 'assigned', 'build-failed', 'research-done', 'plan-done'].includes(t.status)),
+    verifying: filteredTasks.filter(t => ['verifying', 'verify-failed', 'build-done'].includes(t.status)),
+    done: filteredTasks.filter(t => ['done', 'completed', 'verify-done'].includes(t.status)),
   }
 
   return {
