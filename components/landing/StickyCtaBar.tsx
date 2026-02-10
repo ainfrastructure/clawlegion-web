@@ -67,7 +67,7 @@ export function StickyCtaBar() {
                 <Loader2 className="w-4 h-4 animate-spin" />
               ) : (
                 <>
-                  Claim Now
+                  Reserve Free
                   <ArrowRight className="w-3.5 h-3.5" />
                 </>
               )}
@@ -79,7 +79,7 @@ export function StickyCtaBar() {
             href="#pricing"
             className="md:hidden px-5 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-semibold transition-colors text-sm whitespace-nowrap shimmer-btn"
           >
-            Claim Now
+            Reserve Free
           </a>
 
           {/* Dismiss */}

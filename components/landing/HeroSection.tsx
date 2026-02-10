@@ -57,6 +57,7 @@ export function HeroSection() {
             Save {LAUNCH_CONFIG.discount}%
           </span>
         </div>
+        <p className="text-sm text-slate-500 mb-8 -mt-4">Reserve free today — pay only at launch</p>
 
         {/* Email form CTA */}
         {status === 'success' ? (

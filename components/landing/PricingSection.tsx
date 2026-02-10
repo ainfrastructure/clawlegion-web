@@ -1,6 +1,6 @@
 'use client'
 
-import { Check, Shield, Clock, Lock, ArrowRight, Loader2, CheckCircle } from 'lucide-react'
+import { Check, Sparkles, Clock, Lock, ArrowRight, Loader2, CheckCircle } from 'lucide-react'
 import { CountdownTimer } from './CountdownTimer'
 import { useEarlyAccessForm } from '@/hooks/useEarlyAccessForm'
 import { LAUNCH_CONFIG } from '@/lib/launch-config'
@@ -24,10 +24,10 @@ export function PricingSection() {
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4 tracking-tight">
-            One plan. Unlimited agents. Infinite workflows.
+            Reserve your spot. Pay only when we launch.
           </h2>
           <p className="text-lg text-slate-400 max-w-2xl mx-auto">
-            Early access includes 1-on-1 mentoring and hands-on setup. Limited spots available.
+            No credit card needed. Lock in early-bird pricing now — you only pay when ClawLegion goes live. Includes 1-on-1 mentoring and hands-on setup.
           </p>
         </div>
 
@@ -115,9 +115,9 @@ export function PricingSection() {
             {/* Trust signals */}
             <div className="mt-6 grid grid-cols-3 gap-2">
               {[
-                { icon: Shield, text: '30-day guarantee' },
+                { icon: Sparkles, text: 'No payment now' },
                 { icon: Clock, text: 'Cancel anytime' },
-                { icon: Lock, text: 'Secure checkout' },
+                { icon: Lock, text: 'Lock in price' },
               ].map(({ icon: Icon, text }) => (
                 <div key={text} className="flex flex-col items-center gap-1.5 text-center">
                   <Icon className="w-4 h-4 text-slate-500" />

@@ -24,7 +24,7 @@ export function UrgencyBanner() {
           href="#pricing"
           className="ml-1 sm:ml-2 px-3.5 py-1 bg-white text-blue-700 hover:bg-blue-50 rounded-full text-xs font-bold transition-colors shadow-sm"
         >
-          Claim Now
+          Reserve Free
         </a>
       </div>
     </div>

@@ -12,10 +12,10 @@ export const LAUNCH_CONFIG = {
   claimedSlots: 47,
 
   // Copy
-  badgeText: 'Limited Early Bird — 50% Off',
-  ctaText: 'Claim Your Spot — $49/mo',
-  navCtaText: '$49/mo — Claim Now',
-  guaranteeText: '30-day money-back guarantee. Cancel anytime.',
+  badgeText: 'Early Access — Reserve Free, Pay Later',
+  ctaText: 'Reserve Your Spot — Free',
+  navCtaText: 'Reserve Your Spot',
+  guaranteeText: 'No payment required. Reserve now, pay later when we launch.',
 } as const
 
 export type LaunchConfig = typeof LAUNCH_CONFIG

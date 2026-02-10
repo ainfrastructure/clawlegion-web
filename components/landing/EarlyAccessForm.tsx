@@ -17,11 +17,11 @@ export function EarlyAccessForm() {
 
       <div className="relative z-10 max-w-2xl mx-auto text-center">
         <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4 tracking-tight">
-          Limited Early Access — ${LAUNCH_CONFIG.earlyBirdPrice}/mo
+          Reserve Your Spot — Lock in ${LAUNCH_CONFIG.earlyBirdPrice}/mo
         </h2>
         <p className="text-lg text-slate-400 mb-4">
-          We&apos;re onboarding a small group of early users with 1-on-1 mentoring and hands-on setup.
-          Spots are limited — once they&apos;re filled, this deal is gone.
+          Join the early access list. No payment required — you&apos;ll only be charged when we officially launch.
+          Early birds lock in the discounted rate forever.
         </p>
 
         {/* Compact countdown */}
