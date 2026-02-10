@@ -345,25 +345,18 @@ function TaskCard({ task, isSelected, onSelect, onClick }: TaskCardProps) {
         </div>
       )}
       
-      {/* Domain + workflow step tags */}
-      {(task.domain || task.currentWorkflowStep) && (
+      {/* Workflow step badge */}
+      {task.currentWorkflowStep && task.currentWorkflowStep !== 'pending' && task.currentWorkflowStep !== 'done' && (
         <div className="mt-3 flex items-center gap-2 flex-wrap">
-          {task.domain && (
-            <span className="px-2 py-1 bg-slate-800 rounded-md text-[11px] text-slate-500 uppercase tracking-wide">
-              {task.domain}
-            </span>
-          )}
-          {task.currentWorkflowStep && task.currentWorkflowStep !== 'pending' && task.currentWorkflowStep !== 'done' && (
-            <span
-              className="px-2 py-1 rounded-md text-[11px] uppercase tracking-wide font-medium"
-              style={{
-                backgroundColor: agentColor ? `${agentColor}20` : 'rgba(96,165,250,0.15)',
-                color: agentColor || '#93c5fd',
-              }}
-            >
-              {task.currentWorkflowStep}
-            </span>
-          )}
+          <span
+            className="px-2 py-1 rounded-md text-[11px] uppercase tracking-wide font-medium"
+            style={{
+              backgroundColor: agentColor ? `${agentColor}20` : 'rgba(96,165,250,0.15)',
+              color: agentColor || '#93c5fd',
+            }}
+          >
+            {task.currentWorkflowStep}
+          </span>
         </div>
       )}
       
@@ -453,12 +446,6 @@ function MobileTaskCard({ task, isSelected, onSelect, onClick }: TaskCardProps) 
             <span className={`inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium ${status.bg} ${status.color}`}>
               {task.status?.replace('_', ' ')}
             </span>
-            {/* Domain tag */}
-            {task.domain && (
-              <span className="px-2.5 py-1 bg-slate-800 rounded-md text-xs text-slate-500 uppercase tracking-wide">
-                {task.domain}
-              </span>
-            )}
           </div>
           {(task.assignee || task.assignedTo) && (
             <div className="mt-3 flex items-center gap-2 text-sm text-slate-400">

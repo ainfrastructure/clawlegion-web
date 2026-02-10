@@ -1,5 +1,4 @@
 export { StatsBar } from './StatsBar'
-export { MiniKanban } from './MiniKanban'
 export { ActiveSessions } from './ActiveSessions'
 export { AgentGrid } from './AgentGrid'
 export { ActivityFeed } from './ActivityFeed'
