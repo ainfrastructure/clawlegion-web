@@ -115,9 +115,9 @@ const TEMPLATES: Template[] = [
     descriptions: {
       caesar: 'Routes tasks & manages the pipeline',
       athena: 'Decomposes tasks into implementation plans',
-      scout: 'Investigates APIs & technical discovery',
+      minerva: 'Investigates APIs & technical discovery',
       vulcan: 'Implements code & constructs features',
-      vex: 'Runtime verification with visual proof',
+      janus: 'Runtime verification with visual proof',
     },
     outcomes: {
       success: { label: 'Pass', action: 'Merge' },
@@ -131,10 +131,10 @@ const TEMPLATES: Template[] = [
     pipeline: ['minerva', 'cicero', 'apollo', 'mercury'],
     descriptions: {
       caesar: 'Routes briefs & coordinates the content pipeline',
-      scout: 'Researches trending topics & competitors',
-      quill: 'Writes blog posts, social copy, newsletters',
-      pixel: 'Designs graphics, thumbnails, and brand assets',
-      echo: 'Distributes content across all channels',
+      minerva: 'Researches trending topics & competitors',
+      cicero: 'Writes blog posts, social copy, newsletters',
+      apollo: 'Designs graphics, thumbnails, and brand assets',
+      mercury: 'Distributes content across all channels',
     },
     outcomes: {
       success: { label: 'Approved', action: 'Publish' },
@@ -148,10 +148,10 @@ const TEMPLATES: Template[] = [
     pipeline: ['minerva', 'oracle', 'athena', 'cicero'],
     descriptions: {
       caesar: 'Coordinates research streams & deliverables',
-      scout: 'Gathers market data, competitor intel, surveys',
-      sage: 'Analyzes trends, correlations, and key metrics',
+      minerva: 'Gathers market data, competitor intel, surveys',
+      oracle: 'Analyzes trends, correlations, and key metrics',
       athena: 'Structures findings into report frameworks',
-      quill: 'Writes executive summaries and slide decks',
+      cicero: 'Writes executive summaries and slide decks',
     },
     outcomes: {
       success: { label: 'Validated', action: 'Deliver' },
@@ -165,10 +165,10 @@ const TEMPLATES: Template[] = [
     pipeline: ['oracle', 'athena', 'apollo', 'mercury'],
     descriptions: {
       caesar: 'Manages the launch timeline & coordinates teams',
-      sage: 'Analyzes market fit & competitor positioning',
+      oracle: 'Analyzes market fit & competitor positioning',
       athena: 'Plans launch timeline, channels, messaging',
-      pixel: 'Creates landing pages, ads, and visual assets',
-      echo: 'Handles PR outreach, emails, and announcements',
+      apollo: 'Creates landing pages, ads, and visual assets',
+      mercury: 'Handles PR outreach, emails, and announcements',
     },
     outcomes: {
       success: { label: 'Ready', action: 'Launch' },
@@ -182,10 +182,10 @@ const TEMPLATES: Template[] = [
     pipeline: ['minerva', 'athena', 'cato', 'janus'],
     descriptions: {
       caesar: 'Oversees operational workflows & compliance',
-      scout: 'Audits current processes & regulations',
+      minerva: 'Audits current processes & regulations',
       athena: 'Creates compliance checklists & SOPs',
-      forge: 'Implements automation & infrastructure tooling',
-      vex: 'Validates completeness & flags compliance gaps',
+      cato: 'Implements automation & infrastructure tooling',
+      janus: 'Validates completeness & flags compliance gaps',
     },
     outcomes: {
       success: { label: 'Compliant', action: 'Certify' },
