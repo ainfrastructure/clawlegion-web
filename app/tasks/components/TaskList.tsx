@@ -356,6 +356,25 @@ function TaskCard({ task, isSelected, onSelect, onClick }: TaskCardProps) {
         </div>
         <div className={`${prio.color} flex-shrink-0 mt-1`}>{prio.icon}</div>
       </div>
+      {/* Domain + Repo info */}
+      {(task.domain || task.repository) && (
+        <div className="mt-2 flex items-center gap-2 flex-wrap">
+          {task.domain && (
+            <span className={`px-2 py-0.5 rounded-md text-[10px] uppercase tracking-wider font-semibold ${
+              task.domain === 'dev' || task.domain === 'code' ? 'bg-blue-500/15 text-blue-400' :
+              task.domain === 'research' ? 'bg-emerald-500/15 text-emerald-400' :
+              task.domain === 'marketing' || task.domain === 'content' ? 'bg-purple-500/15 text-purple-400' :
+              task.domain === 'ops' || task.domain === 'operations' ? 'bg-orange-500/15 text-orange-400' :
+              'bg-slate-500/15 text-slate-400'
+            }`}>
+              {task.domain}
+            </span>
+          )}
+          {task.repository?.name && (
+            <span className="text-[10px] text-slate-500 font-mono">{task.repository.name}</span>
+          )}
+        </div>
+      )}
       {/* Subtask progress chip */}
       {subtaskTotal > 0 && (
         <div className="mt-3 flex items-center gap-2">
