@@ -8,7 +8,7 @@ type DeliverablesTabProps = {
 
 export function DeliverablesTab({ taskId }: DeliverablesTabProps) {
   return (
-    <div className="p-4">
+    <div className="px-4 sm:px-6 py-5">
       <DeliverableViewer taskId={taskId} />
     </div>
   )
