@@ -157,7 +157,7 @@ function SlideOrchestratorCard({ template, visible }: { template: Template; visi
       }`}
     >
       <div
-        className="glass-2 rounded-2xl p-5 flex items-center gap-4 animate-card-breathe w-full max-w-xs"
+        className="glass-2 rounded-2xl p-3 flex items-center gap-3 animate-card-breathe w-full max-w-xs"
         style={{
           boxShadow: `0 0 24px -4px ${CAESAR.color}33, 0 0 8px -2px ${CAESAR.color}22`,
           borderColor: `${CAESAR.color}30`,
@@ -196,12 +196,12 @@ function SlideOrchestratorCard({ template, visible }: { template: Template; visi
 function SlideOversightLine({ visible }: { visible: boolean }) {
   return (
     <div
-      className={`flex justify-center py-3 transition-all duration-500 delay-200 ${
+      className={`flex justify-center py-1 transition-all duration-500 delay-200 ${
         visible ? 'opacity-100' : 'opacity-0'
       }`}
     >
-      <div className="flex flex-col items-center gap-1">
-        <div className="w-px h-8 border-l border-dashed" style={{ borderColor: `${CAESAR.color}40` }} />
+      <div className="flex flex-col items-center gap-0.5">
+        <div className="w-px h-5 border-l border-dashed" style={{ borderColor: `${CAESAR.color}40` }} />
         <div
           className="w-1.5 h-1.5 rounded-full animate-glow-border-pulse"
           style={{ background: CAESAR.color }}
@@ -324,14 +324,14 @@ function SlideMobileFlowArrow({ color, visible }: { color: string; visible: bool
 function SlideBranchFork({ visible, outcomes }: { visible: boolean; outcomes: Template['outcomes'] }) {
   return (
     <div
-      className={`mt-6 transition-all duration-700 ${
+      className={`mt-3 transition-all duration-700 ${
         visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
       }`}
       style={{ transitionDelay: '900ms' }}
     >
-      <div className="flex justify-center mb-4">
+      <div className="flex justify-center mb-2">
         <div className="flex flex-col items-center">
-          <div className="w-px h-6 bg-purple-500/30" />
+          <div className="w-px h-4 bg-purple-500/30" />
           <div className="w-2 h-2 rounded-full bg-purple-500/50" />
         </div>
       </div>
@@ -370,11 +370,11 @@ function SlideContent({ template, visible }: { template: Template; visible: bool
     <div className="flex-shrink-0" style={{ width: '20%' }}>
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Template label */}
-        <div className="text-center mb-6">
+        <div className="text-center mb-3">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-2 border border-white/[0.06]">
             <span className="text-sm font-semibold text-white">{template.name}</span>
           </div>
-          <p className="text-sm text-slate-500 mt-2 italic">{template.tagline}</p>
+          <p className="text-sm text-slate-500 mt-1 italic">{template.tagline}</p>
         </div>
 
         {/* Orchestrator */}
@@ -501,12 +501,12 @@ export function HowItWorks() {
     <section
       ref={sectionRef}
       id="pipeline"
-      className="py-24 border-t border-white/[0.04] overflow-hidden"
+      className="py-16 border-t border-white/[0.04] overflow-hidden"
     >
       {/* Header — constrained */}
       <div className="max-w-5xl mx-auto px-4 sm:px-6">
         <div
-          className={`text-center mb-14 transition-all duration-700 ${
+          className={`text-center mb-8 transition-all duration-700 ${
             visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
           }`}
         >
