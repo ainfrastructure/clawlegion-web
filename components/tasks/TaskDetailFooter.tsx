@@ -1,7 +1,7 @@
 'use client'
 
 import {
-  Play, Loader2, CheckCircle, Clock, Hammer,
+  Play, Loader2, CheckCircle, Clock, Hammer, Rocket,
 } from 'lucide-react'
 
 type TaskDetailFooterProps = {
@@ -10,6 +10,9 @@ type TaskDetailFooterProps = {
   // Start task (move to "todo")
   onStartTask: () => void
   isStarting: boolean
+  // Start pipeline (sprint engine)
+  onStartPipeline?: () => void
+  isStartingPipeline?: boolean
   // Execute
   canExecute: boolean
   onExecute: () => void
@@ -23,6 +26,8 @@ export function TaskDetailFooter({
   taskStatus,
   onStartTask,
   isStarting,
+  onStartPipeline,
+  isStartingPipeline,
   canExecute,
   onExecute,
   isExecuting,
@@ -31,6 +36,8 @@ export function TaskDetailFooter({
   const status = taskStatus || 'backlog'
 
   const isBacklog = status === 'backlog'
+  const isTodo = status === 'todo'
+  const isStartable = isBacklog || isTodo || status === 'queued'
   const isInProgress = status === 'in_progress' || status === 'assigned' || status === 'building' || status === 'researching' || status === 'planning' || status === 'verifying'
   const isDone = status === 'done' || status === 'completed'
 
@@ -54,6 +61,22 @@ export function TaskDetailFooter({
             </button>
           )}
 
+          {/* Start Pipeline — for tasks that can be started through sprint engine */}
+          {isStartable && onStartPipeline && (
+            <button
+              onClick={onStartPipeline}
+              disabled={isStartingPipeline}
+              className="px-4 py-2 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white rounded-lg flex items-center gap-2 text-sm font-medium disabled:opacity-50 transition-all shadow-[0_0_12px_rgba(245,158,11,0.2)]"
+            >
+              {isStartingPipeline ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Rocket className="w-4 h-4" />
+              )}
+              ▶️ Start Pipeline
+            </button>
+          )}
+
           {/* In-progress status indicator */}
           {isInProgress && (
             <div className="flex items-center gap-2 px-4 py-2 bg-amber-500/10 border border-amber-500/20 text-amber-400 rounded-lg text-sm font-medium">
@@ -71,7 +94,7 @@ export function TaskDetailFooter({
           )}
 
           {/* Todo status indicator (after starting) */}
-          {status === 'todo' && (
+          {isTodo && !onStartPipeline && (
             <div className="flex items-center gap-2 px-4 py-2 bg-blue-500/10 border border-blue-500/20 text-blue-400 rounded-lg text-sm font-medium">
               <Clock className="w-4 h-4" />
               Queued

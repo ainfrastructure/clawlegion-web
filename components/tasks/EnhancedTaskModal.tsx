@@ -3,7 +3,7 @@
 import { useState, useCallback } from 'react'
 import { useMutation } from '@tanstack/react-query'
 import api from '@/lib/api'
-import { X, Loader2, ChevronDown, ChevronUp, Sparkles, ArrowLeft, HelpCircle } from 'lucide-react'
+import { X, Loader2, ChevronDown, ChevronUp, Sparkles, ArrowLeft, HelpCircle, Zap } from 'lucide-react'
 import { AgentFlowSection } from './AgentFlowSection'
 import { SuccessCriteriaSection } from './SuccessCriteriaSection'
 import {
@@ -61,6 +61,9 @@ export function EnhancedTaskModal({ isOpen, onClose, onTaskCreated, repositories
   // Success criteria
   const [successCriteria, setSuccessCriteria] = useState<SuccessCriterion[]>(DEFAULT_CRITERIA)
 
+  // Start immediately toggle
+  const [startImmediately, setStartImmediately] = useState(false)
+
   // Collapsible sections
   const [showAdvanced, setShowAdvanced] = useState(false)
   const [showTechnical, setShowTechnical] = useState(false)
@@ -79,6 +82,7 @@ export function EnhancedTaskModal({ isOpen, onClose, onTaskCreated, repositories
     setSpecs('')
     setApproach('')
     setCreateLinearIssue(true)
+    setStartImmediately(false)
     setError(null)
     setSelectedPresetId('standard')
     const preset = DEFAULT_PRESETS.find(p => p.id === 'standard')!
@@ -222,7 +226,16 @@ export function EnhancedTaskModal({ isOpen, onClose, onTaskCreated, repositories
       const response = await api.post('/task-tracking/tasks', payload, { headers })
       return response.data
     },
-    onSuccess: () => {
+    onSuccess: async (data) => {
+      // If "Start Immediately" is on, trigger the sprint engine pipeline
+      if (startImmediately && data?.task?.id) {
+        try {
+          await api.post(`/task-tracking/tasks/${data.task.id}/start-pipeline`)
+        } catch (err) {
+          // Non-blocking — task was created successfully, pipeline start is best-effort
+          console.warn('Failed to start pipeline immediately:', err)
+        }
+      }
       resetForm()
       onTaskCreated()
     },
@@ -582,6 +595,31 @@ export function EnhancedTaskModal({ isOpen, onClose, onTaskCreated, repositories
 
                 {showAdvanced && (
                   <div className="space-y-4 pl-4 border-l-2 border-white/[0.06]">
+                    {/* Start Immediately Toggle */}
+                    <label className="flex items-center gap-3 cursor-pointer group">
+                      <div className="relative">
+                        <input
+                          type="checkbox"
+                          checked={startImmediately}
+                          onChange={(e) => setStartImmediately(e.target.checked)}
+                          className="sr-only peer"
+                        />
+                        <div className="w-10 h-5 bg-slate-700 rounded-full peer-checked:bg-amber-600 transition-colors" />
+                        <div className="absolute left-0.5 top-0.5 w-4 h-4 bg-white rounded-full transition-transform peer-checked:translate-x-5 shadow-sm" />
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Zap className={`w-4 h-4 ${startImmediately ? 'text-amber-400' : 'text-slate-500'} transition-colors`} />
+                        <span className="text-sm text-slate-300">
+                          ⚡ Start Immediately
+                        </span>
+                      </div>
+                    </label>
+                    {startImmediately && (
+                      <p className="text-xs text-amber-400/70 ml-[52px] -mt-2">
+                        Task will be queued in the active sprint and the pipeline (research → plan → build → verify) will start automatically.
+                      </p>
+                    )}
+
                     <label className="flex items-center gap-3 cursor-pointer">
                       <input
                         type="checkbox"
@@ -623,15 +661,22 @@ export function EnhancedTaskModal({ isOpen, onClose, onTaskCreated, repositories
                 <button
                   onClick={handleSubmit}
                   disabled={createTaskMutation.isPending}
-                  className="px-4 py-2 text-sm font-medium text-white bg-amber-600 rounded-lg hover:bg-amber-700 transition-colors disabled:opacity-50 flex items-center gap-2"
+                  className={`px-4 py-2 text-sm font-medium text-white rounded-lg transition-colors disabled:opacity-50 flex items-center gap-2 ${
+                    startImmediately
+                      ? 'bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 shadow-[0_0_12px_rgba(245,158,11,0.15)]'
+                      : 'bg-amber-600 hover:bg-amber-700'
+                  }`}
                 >
                   {createTaskMutation.isPending ? (
                     <>
                       <Loader2 className="w-4 h-4 animate-spin" />
-                      Creating...
+                      {startImmediately ? 'Creating & Starting...' : 'Creating...'}
                     </>
                   ) : (
-                    'Create Task'
+                    <>
+                      {startImmediately && <Zap className="w-4 h-4" />}
+                      {startImmediately ? 'Create & Start' : 'Create Task'}
+                    </>
                   )}
                 </button>
               </div>

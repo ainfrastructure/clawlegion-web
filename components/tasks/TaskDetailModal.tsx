@@ -133,6 +133,19 @@ export function TaskDetailModal({ taskId, task: initialTask, isOpen, onClose, in
     },
   })
 
+  const startPipelineMutation = useMutation({
+    mutationFn: async () => {
+      const response = await api.post(`/task-tracking/tasks/${taskId}/start-pipeline`)
+      return response.data
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['trackedTasks'] })
+      queryClient.invalidateQueries({ queryKey: ['task-tracking-tasks'] })
+      queryClient.invalidateQueries({ queryKey: ['task-queue'] })
+      queryClient.invalidateQueries({ queryKey: ['task-detail', taskId] })
+    },
+  })
+
   // --- Effects ---
 
   // Sync active tab when initialTab or taskId changes
@@ -270,6 +283,8 @@ export function TaskDetailModal({ taskId, task: initialTask, isOpen, onClose, in
             taskStatus={task?.status}
             onStartTask={() => statusMutation.mutate({ status: 'todo' })}
             isStarting={statusMutation.isPending}
+            onStartPipeline={() => startPipelineMutation.mutate()}
+            isStartingPipeline={startPipelineMutation.isPending}
             canExecute={canExecute}
             onExecute={() => executeMutation.mutate()}
             isExecuting={executeMutation.isPending}

@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useMutation } from '@tanstack/react-query'
 import api from '@/lib/api'
-import { X, Loader2 } from 'lucide-react'
+import { X, Loader2, Zap } from 'lucide-react'
 import { priorityOptions } from './config'
 import type { CreateTaskModalProps } from './types'
 
@@ -13,6 +13,7 @@ export function NewTaskModal({ isOpen, onClose, onTaskCreated, repositories }: C
   const [repositoryId, setRepositoryId] = useState('')
   const [priority, setPriority] = useState('P2')
   const [createLinearIssue, setCreateLinearIssue] = useState(true)
+  const [startImmediately, setStartImmediately] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   const hasLinearApiKey = typeof window !== 'undefined' && !!localStorage.getItem('linearApiKey')
@@ -35,13 +36,22 @@ export function NewTaskModal({ isOpen, onClose, onTaskCreated, repositories }: C
 
       return response.data
     },
-    onSuccess: () => {
+    onSuccess: async (data) => {
+      // If "Start Immediately" is on, trigger the sprint engine pipeline
+      if (startImmediately && data?.task?.id) {
+        try {
+          await api.post(`/task-tracking/tasks/${data.task.id}/start-pipeline`)
+        } catch (err) {
+          console.warn('Failed to start pipeline immediately:', err)
+        }
+      }
       // Reset form
       setTitle('')
       setDescription('')
       setRepositoryId('')
       setPriority('P2')
       setCreateLinearIssue(true)
+      setStartImmediately(false)
       setError(null)
       onTaskCreated()
     },
@@ -169,6 +179,31 @@ export function NewTaskModal({ isOpen, onClose, onTaskCreated, repositories }: C
 
             {/* Options */}
             <div className="space-y-3">
+              {/* Start Immediately Toggle */}
+              <label className="flex items-center gap-3 cursor-pointer">
+                <div className="relative">
+                  <input
+                    type="checkbox"
+                    checked={startImmediately}
+                    onChange={(e) => setStartImmediately(e.target.checked)}
+                    className="sr-only peer"
+                  />
+                  <div className="w-10 h-5 bg-gray-300 dark:bg-slate-700 rounded-full peer-checked:bg-amber-600 transition-colors" />
+                  <div className="absolute left-0.5 top-0.5 w-4 h-4 bg-white rounded-full transition-transform peer-checked:translate-x-5 shadow-sm" />
+                </div>
+                <div className="flex items-center gap-2">
+                  <Zap className={`w-4 h-4 ${startImmediately ? 'text-amber-500' : 'text-gray-400 dark:text-slate-500'} transition-colors`} />
+                  <span className="text-sm text-gray-700 dark:text-slate-300">
+                    ⚡ Start Immediately
+                  </span>
+                </div>
+              </label>
+              {startImmediately && (
+                <p className="text-xs text-amber-600 dark:text-amber-400/70 ml-[52px] -mt-1">
+                  Pipeline will start automatically after creation (research → plan → build → verify)
+                </p>
+              )}
+
               <label className="flex items-center gap-3 cursor-pointer">
                 <input
                   type="checkbox"
@@ -208,15 +243,22 @@ export function NewTaskModal({ isOpen, onClose, onTaskCreated, repositories }: C
               <button
                 type="submit"
                 disabled={createTaskMutation.isPending}
-                className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 flex items-center gap-2"
+                className={`px-4 py-2 text-sm font-medium text-white rounded-lg transition-colors disabled:opacity-50 flex items-center gap-2 ${
+                  startImmediately
+                    ? 'bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700'
+                    : 'bg-blue-600 hover:bg-blue-700'
+                }`}
               >
                 {createTaskMutation.isPending ? (
                   <>
                     <Loader2 className="w-4 h-4 animate-spin" />
-                    Creating...
+                    {startImmediately ? 'Creating & Starting...' : 'Creating...'}
                   </>
                 ) : (
-                  'Create Task'
+                  <>
+                    {startImmediately && <Zap className="w-4 h-4" />}
+                    {startImmediately ? 'Create & Start' : 'Create Task'}
+                  </>
                 )}
               </button>
             </div>
