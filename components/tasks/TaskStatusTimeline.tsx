@@ -231,7 +231,7 @@ export function TaskStatusTimeline({
 
               {/* Hover popover */}
               {isHovered && (isComplete || isCurrent) && (
-                <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 z-50 w-56 bg-[#0c1a30] border border-blue-500/20 rounded-xl shadow-[0_8px_32px_-8px_rgb(0_0_0/0.8)] p-3 pointer-events-none">
+                <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 z-50 w-60 bg-[#0c1a30] border border-blue-500/20 rounded-xl shadow-[0_8px_32px_-8px_rgb(0_0_0/0.8)] p-3">
                   {/* Arrow */}
                   <div className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-[#0c1a30] border-l border-t border-blue-500/20 rotate-45" />
 
@@ -241,7 +241,9 @@ export function TaskStatusTimeline({
                       <AgentAvatar agentId={agent} size="sm" />
                       <div>
                         <p className="text-xs font-semibold text-white capitalize">{agent}</p>
-                        <p className="text-[10px] text-slate-500">{status.label} phase</p>
+                        <p className="text-[10px] text-slate-500">
+                          {isComplete ? `Completed ${status.label.toLowerCase()}` : `Working on ${status.label.toLowerCase()}`}
+                        </p>
                       </div>
                     </div>
                   )}
@@ -250,7 +252,7 @@ export function TaskStatusTimeline({
                   {duration && (
                     <div className="flex items-center gap-1.5 mb-2 text-[10px]">
                       <Clock size={10} className="text-slate-400" />
-                      <span className="text-slate-400">Duration:</span>
+                      <span className="text-slate-400">{isComplete ? 'Took:' : 'Elapsed:'}</span>
                       <span className="text-white font-mono">{duration}</span>
                     </div>
                   )}
@@ -266,14 +268,14 @@ export function TaskStatusTimeline({
                     </div>
                   )}
 
-                  {/* Session link for current phase */}
-                  {isCurrent && sessionId && (
+                  {/* Session link */}
+                  {sessionId && (
                     <div className="border-t border-white/[0.06] pt-2 mt-2">
                       <a
                         href={`/sessions/${sessionId}`}
-                        className="text-[10px] text-blue-400 hover:text-blue-300 flex items-center gap-1 pointer-events-auto transition-colors"
+                        className="text-[10px] text-blue-400 hover:text-blue-300 flex items-center gap-1 transition-colors"
                       >
-                        View live logs <ExternalLink size={8} />
+                        {isCurrent ? '🔴 View live session' : 'View session logs'} <ExternalLink size={8} />
                       </a>
                     </div>
                   )}
