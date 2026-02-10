@@ -2,7 +2,7 @@ import { Bot } from 'lucide-react'
 
 export function ProductShowcase() {
   return (
-    <section className="relative px-4 sm:px-6 pb-24 -mt-8">
+    <section className="relative px-4 sm:px-6 pb-24 mt-16">
       <div className="max-w-5xl mx-auto">
         <div className="animate-float">
           {/* Browser frame */}
