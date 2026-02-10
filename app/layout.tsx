@@ -8,6 +8,7 @@ import { ToastProvider } from '@/components/ui/Toast'
 import { AuthenticatedLayout } from '@/components/layout'
 import { SessionProvider } from '@/components/auth'
 import { BuildInfo } from '@/components/BuildInfo'
+import { TaskNotificationManager } from '@/components/features/TaskNotificationManager'
 // HealthStatusBanner removed - info now on /health page
 
 const dmSans = DM_Sans({
@@ -61,6 +62,7 @@ export default function RootLayout({
         <SessionProvider>
           <Providers>
             <ToastProvider>
+              <TaskNotificationManager />
               <AuthenticatedLayout>
                 {children}
               </AuthenticatedLayout>

@@ -639,7 +639,7 @@ export function HowItWorks() {
       <div className="md:hidden overflow-hidden">
         <div
           className={`flex ${entryDone ? 'pipeline-strip-mobile' : ''}`}
-          style={{ width: '500%' }}
+          style={{ width: '500%', transform: entryDone ? undefined : 'translateX(-50%)' }}
         >
           {[...TEMPLATES, ...TEMPLATES].map((tmpl, i) => (
             <MobileSlideContent
@@ -655,7 +655,7 @@ export function HowItWorks() {
       <div className="hidden md:block overflow-hidden">
         <div
           className={`flex ${entryDone ? 'pipeline-strip' : ''}`}
-          style={{ width: '500%' }}
+          style={{ width: '500%', transform: entryDone ? undefined : 'translateX(-50%)' }}
         >
           {[...TEMPLATES, ...TEMPLATES].map((tmpl, i) => (
             <SlideContent

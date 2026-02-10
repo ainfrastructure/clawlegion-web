@@ -296,7 +296,7 @@ function TaskCard({ task, isSelected, onSelect, onClick }: TaskCardProps) {
   
   return (
     <div
-      className={`bg-slate-900/50 rounded-lg p-4 border transition-all duration-200 cursor-pointer touch-manipulation ${
+      className={`group bg-slate-900/50 rounded-lg p-4 border transition-all duration-200 cursor-pointer touch-manipulation ${
         isSelected
           ? 'border-amber-500 bg-amber-500/10 shadow-lg'
           : 'border-white/[0.06] hover:border-slate-600 active:border-slate-500'
@@ -312,15 +312,18 @@ function TaskCard({ task, isSelected, onSelect, onClick }: TaskCardProps) {
     >
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-start gap-3 min-w-0 flex-1">
+          {/* Checkbox: visible on hover or when selected */}
           <button
             onClick={(e) => { e.stopPropagation(); onSelect(e.shiftKey) }}
-            className="mt-1 flex-shrink-0 min-h-[44px] min-w-[44px] flex items-center justify-center -m-2 rounded-lg hover:bg-slate-800/50 active:bg-slate-800/70 transition-colors"
+            className={`mt-0.5 flex-shrink-0 w-5 h-5 flex items-center justify-center rounded transition-all duration-150 ${
+              isSelected ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+            }`}
             aria-label={isSelected ? 'Deselect task' : 'Select task'}
           >
             {isSelected ? (
-              <CheckSquare size={18} className="text-amber-400" />
+              <CheckSquare size={16} className="text-amber-400" />
             ) : (
-              <Square size={18} className="text-slate-500" />
+              <Square size={16} className="text-slate-500" />
             )}
           </button>
           <span className="text-sm text-white font-medium line-clamp-2 leading-relaxed">{task.title}</span>
@@ -329,7 +332,7 @@ function TaskCard({ task, isSelected, onSelect, onClick }: TaskCardProps) {
       </div>
       {/* Subtask progress chip */}
       {subtaskTotal > 0 && (
-        <div className="mt-3 ml-14 flex items-center gap-2">
+        <div className="mt-3 flex items-center gap-2">
           <div className="flex items-center gap-1.5 px-2.5 py-1 bg-slate-800 rounded-full text-xs text-slate-400">
             <span>{subtaskDone}/{subtaskTotal} subtasks</span>
             <div className="w-14 h-1.5 bg-slate-700 rounded-full overflow-hidden">
@@ -344,7 +347,7 @@ function TaskCard({ task, isSelected, onSelect, onClick }: TaskCardProps) {
       
       {/* Domain + workflow step tags */}
       {(task.domain || task.currentWorkflowStep) && (
-        <div className="mt-3 ml-14 flex items-center gap-2 flex-wrap">
+        <div className="mt-3 flex items-center gap-2 flex-wrap">
           {task.domain && (
             <span className="px-2 py-1 bg-slate-800 rounded-md text-[11px] text-slate-500 uppercase tracking-wide">
               {task.domain}
@@ -366,11 +369,11 @@ function TaskCard({ task, isSelected, onSelect, onClick }: TaskCardProps) {
       
       {/* Agent assignment with timestamp */}
       {(task.assignee || task.assignedTo) && (
-        <div className="mt-3 ml-14 flex items-center gap-2 text-xs text-slate-500">
+        <div className="mt-3 flex items-center gap-2 text-xs text-slate-500">
           <AgentAvatar agentId={task.assignee || task.assignedTo || ''} size="xs" />
-          <span>{task.assignee || task.assignedTo}</span>
+          <span className="capitalize">{task.assignee || task.assignedTo}</span>
           {/* Timestamp for active tasks */}
-          {task.startedAt && (task.status === 'in_progress' || task.status === 'building') && (
+          {task.startedAt && (task.status !== 'done' && task.status !== 'verifying') && (
             <span className="text-[10px] text-slate-500">
               · started {formatTimeAgo(task.startedAt)}
             </span>
@@ -397,7 +400,7 @@ function TaskCard({ task, isSelected, onSelect, onClick }: TaskCardProps) {
       )}
       
       {task.tags && task.tags.length > 0 && (
-        <div className="mt-3 ml-14 flex gap-1.5 flex-wrap">
+        <div className="mt-3 flex gap-1.5 flex-wrap">
           {task.tags.slice(0, 2).map((tag) => (
             <span key={tag} className="px-2 py-1 bg-slate-800 rounded-md text-xs text-slate-400">{tag}</span>
           ))}
