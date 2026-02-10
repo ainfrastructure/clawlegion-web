@@ -1,6 +1,6 @@
 'use client'
 
-import { Check, Shield, Clock, Lock, ArrowRight, Loader2, CheckCircle } from 'lucide-react'
+import { Check, Lock, ArrowRight, Loader2, CheckCircle } from 'lucide-react'
 import { CountdownTimer } from './CountdownTimer'
 import { useEarlyAccessForm } from '@/hooks/useEarlyAccessForm'
 import { LAUNCH_CONFIG } from '@/lib/launch-config'
@@ -117,17 +117,11 @@ export function PricingSection() {
             )}
 
             {/* Trust signals */}
-            <div className="mt-6 grid grid-cols-3 gap-2">
-              {[
-                { icon: Shield, text: '30-day guarantee' },
-                { icon: Clock, text: 'Cancel anytime' },
-                { icon: Lock, text: 'Secure checkout' },
-              ].map(({ icon: Icon, text }) => (
-                <div key={text} className="flex flex-col items-center gap-1.5 text-center">
-                  <Icon className="w-4 h-4 text-slate-400" />
-                  <span className="text-[11px] text-slate-400">{text}</span>
-                </div>
-              ))}
+            <div className="mt-6 flex justify-center">
+              <div className="flex flex-col items-center gap-1.5 text-center">
+                <Lock className="w-4 h-4 text-slate-400" />
+                <span className="text-[11px] text-slate-400">No payment required — just claim your spot</span>
+              </div>
             </div>
           </div>
         </div>
