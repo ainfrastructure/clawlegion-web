@@ -442,6 +442,16 @@
   .animate-node-appear {
     animation: node-appear 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
   }
+
+  /* Activity entry fade-in */
+  @keyframes fade-in-entry {
+    0% { opacity: 0; transform: translateY(6px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+
+  .animate-fade-in-entry {
+    animation: fade-in-entry 0.25s ease-out;
+  }
 }
 
 /* Reduced-motion: disable pipeline strip animation */

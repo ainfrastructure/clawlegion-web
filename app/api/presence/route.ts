@@ -5,20 +5,23 @@ export async function GET() {
   try {
     const now = new Date().toISOString();
     
-    // Check all agents in parallel
-    const healthChecks = await Promise.all(
-      AGENTS.map(async (agent) => {
-        const isOnline = await checkAgentHealth(agent.port);
-        return {
-          id: agent.id,
-          name: agent.name,
-          role: agent.role,
-          status: isOnline ? "online" : "offline",
-          port: agent.port,
-          lastChecked: now
-        } as AgentPresence;
-      })
-    );
+    // Check if Caesar (the orchestrator) is online — all agents are ephemeral sub-agents
+    const caesarAgent = AGENTS.find(a => a.name === 'Caesar')
+    const caesarOnline = caesarAgent ? await checkAgentHealth(caesarAgent.port) : false
+    
+    // If Caesar is online, all agents are available (they run as sub-agents)
+    const healthChecks = AGENTS.map((agent) => {
+      const isCaesar = agent.name === 'Caesar'
+      const isOnline = caesarOnline // All agents are online if Caesar is
+      return {
+        id: agent.id,
+        name: agent.name,
+        role: agent.role,
+        status: isOnline ? "online" : "offline",
+        port: agent.port,
+        lastChecked: now
+      } as AgentPresence;
+    });
     
     return NextResponse.json({ 
       agents: healthChecks, 
