@@ -20,7 +20,6 @@ const pageTitles: Record<string, string> = {
   '/agents/sessions': 'Sessions',
   '/agents/org': 'Organization',
   '/health': 'System Health',
-  '/watchdog': 'Watchdog',
   '/flows': 'Flows',
   '/settings': 'Settings',
   '/profile': 'Profile',
@@ -64,7 +63,7 @@ export function MobileHeader({ onMenuClick }: MobileHeaderProps) {
 
         {/* Notification bell */}
         <Link
-          href="/notifications"
+          href="/audit?view=activity"
           className="flex items-center justify-center w-11 h-11 -mr-2 text-slate-400 hover:text-white rounded-lg transition-colors"
           aria-label="Notifications"
         >

@@ -29,10 +29,10 @@ export default function LandingPage() {
       <LandingNav bannerVisible onContactClick={() => setContactOpen(true)} />
       <div className="pt-[41px]">
         <HeroSection />
+        <HowItWorks />
         <ProductShowcase />
         <FeaturesGrid />
         <PricingSection />
-        <HowItWorks />
         <DemoSection />
         <EarlyAccessForm />
         <LandingFooter onContactClick={() => setContactOpen(true)} />

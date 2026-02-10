@@ -185,7 +185,7 @@ export default function NotificationCenter() {
             {/* Footer */}
             <div className="px-4 py-2 border-t border-white/[0.06] bg-slate-800/50">
               <a 
-                href="/notifications" 
+                href="/audit?view=activity" 
                 className="text-xs text-slate-400 hover:text-white transition-colors flex items-center justify-center gap-1"
               >
                 📜 View all notifications

@@ -44,7 +44,7 @@ interface AgentProfilePanelProps {
 
 export function AgentProfilePanel({ agentId, onClose, agentStatus = 'offline' }: AgentProfilePanelProps) {
   // Resolve enriched data from agentConfig (always available)
-  // Try by ID first (e.g., "mason"), then by name (e.g., "Mason")
+  // Try by ID first (e.g., "vulcan"), then by name (e.g., "Vulcan")
   const enriched = agentId ? (getAgentById(agentId) || getAgentByName(agentId)) : undefined
   // Use openclaw agent ID for backend calls (if available)
   const openclawId = enriched?.openclawAgentId || agentId

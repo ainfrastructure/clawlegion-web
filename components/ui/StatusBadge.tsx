@@ -12,9 +12,6 @@ export type Status =
 // Agent-specific status alias
 export type AgentStatus = 'online' | 'busy' | 'idle' | 'offline' | 'rate_limited'
 
-// Watchdog-specific status alias
-export type WatchdogStatus = 'healthy' | 'warning' | 'stale' | 'failed'
-
 interface StatusBadgeProps {
   status: Status
   label?: string
@@ -186,9 +183,5 @@ export function StatusDot({
     />
   )
 }
-
-// Backward-compatible aliases for watchdog usage
-export const WatchdogStatusBadge = StatusBadge
-export const WatchdogStatusDot = StatusDot
 
 export default StatusBadge

@@ -371,6 +371,21 @@
     pointer-events: none;
   }
 
+  /* Pipeline strip continuous scroll — flows left to right */
+  @keyframes slide-strip {
+    0%   { transform: translateX(-50%); }
+    100% { transform: translateX(0%); }
+  }
+
+  .pipeline-strip {
+    animation: slide-strip 50s linear infinite;
+    will-change: transform;
+  }
+
+  .pipeline-strip.paused {
+    animation-play-state: paused;
+  }
+
   /* Agent pipeline animations */
   @keyframes flow-particle {
     0% { left: 0%; opacity: 0; }
@@ -417,36 +432,6 @@
     animation: flow-edge-dash 0.6s linear infinite;
   }
 
-  /* React Flow dark theme overrides */
-  .react-flow__controls {
-    box-shadow: none !important;
-    border: 1px solid rgb(255 255 255 / 0.06) !important;
-    border-radius: 12px !important;
-    overflow: hidden;
-  }
-
-  .react-flow__controls-button {
-    background: rgb(15 23 42 / 0.9) !important;
-    border-bottom: 1px solid rgb(255 255 255 / 0.06) !important;
-    fill: rgb(148 163 184) !important;
-    width: 32px !important;
-    height: 32px !important;
-  }
-
-  .react-flow__controls-button:hover {
-    background: rgb(30 41 59 / 0.9) !important;
-    fill: rgb(226 232 240) !important;
-  }
-
-  .react-flow__background {
-    background-color: transparent !important;
-  }
-
-  .react-flow__node.selected > div {
-    ring: 2px solid rgb(6 182 212 / 0.5);
-    box-shadow: 0 0 16px -4px rgb(6 182 212 / 0.3);
-  }
-
   /* Node appear animation */
   @keyframes node-appear {
     0% { opacity: 0; transform: scale(0.8); }
@@ -456,6 +441,59 @@
   .animate-node-appear {
     animation: node-appear 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
   }
+}
+
+/* Reduced-motion: disable pipeline strip animation */
+@media (prefers-reduced-motion: reduce) {
+  .pipeline-strip {
+    animation: none !important;
+  }
+}
+
+/* React Flow dark theme overrides — outside @layer so they beat the library styles */
+.react-flow.dark {
+  --xy-background-color-default: #0f172a;
+  --xy-background-color: #0f172a;
+}
+
+.react-flow.dark .react-flow__controls {
+  box-shadow: 0 4px 12px -2px rgb(0 0 0 / 0.5) !important;
+  border: 1px solid rgb(255 255 255 / 0.08) !important;
+  border-radius: 10px !important;
+  overflow: hidden !important;
+  background: transparent !important;
+}
+
+.react-flow.dark .react-flow__controls-button {
+  background: rgb(15 23 42 / 0.95) !important;
+  border: none !important;
+  border-bottom: 1px solid rgb(255 255 255 / 0.06) !important;
+  width: 34px !important;
+  height: 34px !important;
+}
+
+.react-flow.dark .react-flow__controls-button svg {
+  fill: rgb(148 163 184) !important;
+}
+
+.react-flow.dark .react-flow__controls-button:hover {
+  background: rgb(30 41 59 / 0.95) !important;
+}
+
+.react-flow.dark .react-flow__controls-button:hover svg {
+  fill: rgb(226 232 240) !important;
+}
+
+.react-flow.dark .react-flow__controls-button:last-child {
+  border-bottom: none !important;
+}
+
+.react-flow__background {
+  background-color: transparent !important;
+}
+
+.react-flow__node.selected > div {
+  box-shadow: 0 0 16px -4px rgb(6 182 212 / 0.3);
 }
 
 /* Line clamp utilities */

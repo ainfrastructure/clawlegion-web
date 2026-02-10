@@ -3,7 +3,14 @@
 import { useState, useEffect } from 'react'
 import { useSystemSettings, useUpdateSystemSettings } from '@/hooks/useSystemSettings'
 import type { NotificationPreferences } from '@/hooks/useSystemSettings'
-import { Bell, Monitor, MessageSquare, Send } from 'lucide-react'
+import { Monitor, MessageSquare, Send } from 'lucide-react'
+
+const CATEGORY_COLORS: Record<string, string> = {
+  lifecycle: 'bg-blue-400',
+  failure: 'bg-red-400',
+  verification: 'bg-green-400',
+  system: 'bg-amber-400',
+}
 
 const CATEGORIES = [
   { id: 'lifecycle', label: 'Lifecycle', description: 'Task creation, status changes, assignments, handoffs' },
@@ -24,12 +31,19 @@ function Toggle({ checked, onChange, disabled }: { checked: boolean; onChange: (
       type="button"
       onClick={() => !disabled && onChange(!checked)}
       disabled={disabled}
-      className={`w-9 h-5 rounded-full transition-colors ${
-        disabled ? 'bg-blue-500/50 cursor-not-allowed' : checked ? 'bg-blue-500' : 'bg-slate-700 hover:bg-slate-600'
+      className={`w-10 h-5.5 rounded-full transition-all duration-200 ${
+        disabled ? 'bg-blue-500/50 cursor-not-allowed' : checked ? 'bg-blue-500 shadow-md shadow-blue-500/20' : 'bg-slate-700 hover:bg-slate-600'
       }`}
+      style={{ width: '40px', height: '22px' }}
     >
       <div
-        className={`w-3.5 h-3.5 bg-white rounded-full transition-transform mx-0.5 ${checked ? 'translate-x-4' : 'translate-x-0'}`}
+        className="bg-white rounded-full transition-transform shadow-sm"
+        style={{
+          width: '16px',
+          height: '16px',
+          marginTop: '3px',
+          marginLeft: checked ? '21px' : '3px',
+        }}
       />
     </button>
   )
@@ -74,35 +88,31 @@ export function NotificationsTab() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg sm:text-xl font-semibold text-white flex items-center gap-2">
-          <Bell className="text-orange-400" /> Notification Channels
-        </h2>
-        {hasChanges && (
+      {/* Save bar */}
+      {hasChanges && (
+        <div className="flex justify-end mb-5">
           <button
             onClick={handleSave}
             disabled={updateSettings.isPending}
-            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-sm font-medium transition-colors disabled:opacity-50"
+            className="px-5 py-2.5 bg-blue-600 hover:bg-blue-500 rounded-xl text-sm font-medium transition-colors disabled:opacity-50 shadow-lg shadow-blue-500/10"
           >
             {updateSettings.isPending ? 'Saving...' : 'Save Changes'}
           </button>
-        )}
-      </div>
+        </div>
+      )}
 
-      <p className="text-sm text-slate-400 mb-6">
-        Configure which notification channels are active for each event category. In-App notifications are always enabled.
-      </p>
-
-      <div className="glass-2 rounded-xl border border-white/[0.06] overflow-hidden">
+      <div className="glass-2 rounded-2xl border border-white/[0.06] overflow-hidden">
         {/* Header row */}
-        <div className="grid grid-cols-[1fr_repeat(3,80px)] gap-2 px-5 py-3 border-b border-white/[0.06] bg-white/[0.02]">
+        <div className="grid grid-cols-[1fr_repeat(3,80px)] gap-2 px-5 py-3.5 border-b border-white/[0.06] bg-white/[0.02]">
           <div className="text-xs font-medium text-slate-400 uppercase tracking-wider">Category</div>
           {CHANNELS.map(ch => {
             const Icon = ch.icon
             return (
-              <div key={ch.id} className="text-xs font-medium text-slate-400 text-center flex flex-col items-center gap-1">
-                <Icon size={14} />
-                {ch.label}
+              <div key={ch.id} className="flex justify-center">
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/[0.04] border border-white/[0.06]">
+                  <Icon size={12} className="text-slate-400" />
+                  <span className="text-xs font-medium text-slate-400">{ch.label}</span>
+                </div>
               </div>
             )
           })}
@@ -112,13 +122,16 @@ export function NotificationsTab() {
         {CATEGORIES.map((cat, i) => (
           <div
             key={cat.id}
-            className={`grid grid-cols-[1fr_repeat(3,80px)] gap-2 px-5 py-4 items-center ${
+            className={`grid grid-cols-[1fr_repeat(3,80px)] gap-2 px-5 py-4 items-center hover:bg-white/[0.02] transition-colors ${
               i < CATEGORIES.length - 1 ? 'border-b border-white/[0.04]' : ''
             }`}
           >
-            <div>
-              <p className="text-sm font-medium text-white">{cat.label}</p>
-              <p className="text-xs text-slate-500 mt-0.5">{cat.description}</p>
+            <div className="flex items-start gap-3">
+              <div className={`w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0 ${CATEGORY_COLORS[cat.id]}`} />
+              <div>
+                <p className="text-sm font-medium text-white">{cat.label}</p>
+                <p className="text-xs text-slate-500 mt-0.5">{cat.description}</p>
+              </div>
             </div>
             {CHANNELS.map(ch => (
               <div key={ch.id} className="flex justify-center">

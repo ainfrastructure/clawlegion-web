@@ -20,10 +20,10 @@ interface ActivityItem {
 }
 
 const AGENT_EMOJIS: Record<string, string> = {
-  jarvis: '🦞',
+  caesar: '🔴',
   lux: '✨',
-  archie: '🏛️',
-  mason: '🔨',
+  athena: '🩵',
+  vulcan: '🔥',
   vex: '🧪',
   scout: '🔭',
   ralph: '🔄',

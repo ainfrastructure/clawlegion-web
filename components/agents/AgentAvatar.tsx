@@ -55,7 +55,7 @@ const iconSizes = {
 }
 
 export interface AgentAvatarProps {
-  /** Agent ID (e.g., 'jarvis', 'lux', 'mason') */
+  /** Agent ID (e.g., 'caesar', 'lux', 'vulcan') */
   agentId: string
   /** Size of the avatar */
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl'

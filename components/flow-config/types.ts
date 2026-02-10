@@ -1,7 +1,7 @@
 // Agent Flow Customization & Resource Allocation Types
 
 // Agent role types - expanded agent pool
-export type AgentRole = 'scout' | 'archie' | 'mason' | 'vex' | 'jarvis' | 'forge' | 'echo' | 'quill' | 'pixel' | 'sage'
+export type AgentRole = 'scout' | 'athena' | 'vulcan' | 'vex' | 'caesar' | 'forge' | 'echo' | 'quill' | 'pixel' | 'sage'
 
 // Resource allocation levels
 export type ResourceLevel = 'high' | 'medium' | 'low' | 'local'
@@ -14,7 +14,7 @@ export interface AgentConfig {
 }
 
 // Flow preset identifiers (system presets)
-export type FlowPresetId = 'quick-fix' | 'standard' | 'deep-work' | 'research-only' | 'custom'
+export type FlowPresetId = 'quick-fix' | 'standard' | 'deep-work' | 'research-only' | 'content-pipeline' | 'brand-launch' | 'growth-analytics' | 'full-stack-deploy' | 'custom'
 
 // ClawLegion loop checkpoint
 export interface Checkpoint {

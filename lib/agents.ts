@@ -2,10 +2,10 @@ import type { OpenClawAgent } from '@/hooks/useAgentConfig'
 
 // Agent definitions with OpenClaw ports
 export const AGENTS = [
-  { id: 'jarvis', name: 'Jarvis', port: 18789, role: 'Orchestrator' },
+  { id: 'caesar', name: 'Caesar', port: 18789, role: 'Orchestrator' },
   { id: 'lux', name: 'Lux', port: 18796, role: 'Council Member' },
-  { id: 'archie', name: 'Archie', port: 18790, role: 'Planner' },
-  { id: 'mason', name: 'Mason', port: 18791, role: 'Builder' },
+  { id: 'athena', name: 'Athena', port: 18790, role: 'Planner' },
+  { id: 'vulcan', name: 'Vulcan', port: 18791, role: 'Builder' },
   { id: 'vex', name: 'Vex', port: 18792, role: 'Verifier' },
   { id: 'scout', name: 'Scout', port: 18793, role: 'Researcher' },
   { id: 'ralph', name: 'Ralph', port: 18794, role: 'Loop Orchestrator' },
@@ -39,10 +39,10 @@ export interface AgentDisplay {
 // Default agent colors by role - map both friendly names AND role-based IDs
 const AGENT_COLORS: Record<string, string> = {
   // Friendly names
-  jarvis: '#3B82F6',    // Blue - Orchestrator
+  caesar: '#DC2626',    // Red - Orchestrator
   lux: '#A855F7',       // Purple - Council Member
-  archie: '#8B5CF6',    // Purple - Planner
-  mason: '#F59E0B',     // Amber - Builder
+  athena: '#06B6D4',    // Cyan - Planner
+  vulcan: '#F59E0B',    // Amber - Builder
   vex: '#10B981',       // Emerald - Verifier
   scout: '#06B6D4',     // Cyan - Researcher
   ralph: '#EC4899',     // Pink - Loop Orchestrator
@@ -50,9 +50,9 @@ const AGENT_COLORS: Record<string, string> = {
   pixel: '#D946EF',     // Fuchsia - Creative Director
   sage: '#14B8A6',      // Teal - Data Analyst
   // Role-based IDs from OpenClaw config
-  main: '#3B82F6',      // Blue - Orchestrator (Jarvis)
-  planner: '#8B5CF6',   // Purple - Planner (Archie)
-  builder: '#F59E0B',   // Amber - Builder (Mason)
+  main: '#DC2626',      // Red - Orchestrator (caesar)
+  planner: '#06B6D4',   // Cyan - Planner (athena)
+  builder: '#F59E0B',   // Amber - Builder (vulcan)
   verifier: '#10B981',  // Emerald - Verifier (Vex)
   researcher: '#06B6D4', // Cyan - Researcher (Scout)
 }
@@ -60,9 +60,9 @@ const AGENT_COLORS: Record<string, string> = {
 // Agent avatars - map both friendly names AND role-based IDs from API
 const AGENT_AVATARS: Record<string, string> = {
   // Friendly names
-  jarvis: '/agents/jarvis.jpg',
-  archie: '/agents/archie.jpg',
-  mason: '/agents/mason.jpg',
+  caesar: '/agents/caesar.png',
+  athena: '/agents/athena.png',
+  vulcan: '/agents/vulcan.png',
   vex: '/agents/vex.jpg',
   scout: '/agents/scout.jpg',
   ralph: '/agents/ralph.jpg',
@@ -71,9 +71,9 @@ const AGENT_AVATARS: Record<string, string> = {
   pixel: '/agents/pixel-designer.svg',
   sage: '/agents/sage-analyst.svg',
   // Role-based IDs from OpenClaw config
-  main: '/agents/jarvis.jpg',
-  planner: '/agents/archie.jpg',
-  builder: '/agents/mason.jpg',
+  main: '/agents/caesar.png',
+  planner: '/agents/athena.png',
+  builder: '/agents/vulcan.png',
   verifier: '/agents/vex.jpg',
   researcher: '/agents/scout.jpg',
 }
@@ -81,9 +81,9 @@ const AGENT_AVATARS: Record<string, string> = {
 // Agent emojis - map both friendly names AND role-based IDs
 const AGENT_EMOJIS: Record<string, string> = {
   // Friendly names
-  jarvis: '🦞',
-  archie: '🏛️',
-  mason: '🔨',
+  caesar: '🔴',
+  athena: '🩵',
+  vulcan: '🔥',
   vex: '🧪',
   scout: '🔭',
   ralph: '🔄',
@@ -92,9 +92,9 @@ const AGENT_EMOJIS: Record<string, string> = {
   pixel: '🎨',
   sage: '📊',
   // Role-based IDs from OpenClaw config
-  main: '🦞',
-  planner: '🏛️',
-  builder: '🔨',
+  main: '🔴',
+  planner: '🩵',
+  builder: '🔥',
   verifier: '🧪',
   researcher: '🔭',
 }
@@ -134,17 +134,17 @@ function toAgentDisplay(agent: OpenClawAgent): AgentDisplay {
   }
 }
 
-// Council members are Jarvis and Lux
-// Map both friendly names AND role-based IDs (main = jarvis)
-const COUNCIL_AGENT_IDS = ['jarvis', 'lux', 'main']
-const COUNCIL_DISPLAY_ORDER = ['jarvis', 'lux']
+// Council members are Caesar and Lux
+// Map both friendly names AND role-based IDs (main = caesar)
+const COUNCIL_AGENT_IDS = ['caesar', 'lux', 'main']
+const COUNCIL_DISPLAY_ORDER = ['caesar', 'lux']
 
 // Normalize agent ID to friendly name
 function normalizeAgentId(id: string): string {
   const idMap: Record<string, string> = {
-    main: 'jarvis',
-    planner: 'archie',
-    builder: 'mason',
+    main: 'caesar',
+    planner: 'athena',
+    builder: 'vulcan',
     verifier: 'vex',
     researcher: 'scout',
   }
@@ -210,16 +210,16 @@ export function getBotArmy(agents: OpenClawAgent[]): AgentDisplay[] {
   return result.sort((a, b) => (orderMap[a.id] ?? 99) - (orderMap[b.id] ?? 99))
 }
 
-// Fallback data when API is unavailable - Council is Jarvis and Lux
+// Fallback data when API is unavailable - Council is Caesar and Lux
 export const FALLBACK_COUNCIL: AgentDisplay[] = [
-  { id: 'jarvis', name: 'Jarvis', emoji: '🦞', avatar: '/agents/jarvis.jpg', role: 'Orchestrator', color: '#3B82F6', status: 'online' },
+  { id: 'caesar', name: 'Caesar', emoji: '🔴', avatar: '/agents/caesar.png', role: 'Orchestrator', color: '#DC2626', status: 'online' },
   { id: 'lux', name: 'Lux', emoji: '✨', avatar: '/agents/lux-lobster.png', role: 'Council Member', color: '#A855F7', status: 'online' },
 ]
 
 export const FALLBACK_BOT_ARMY: AgentDisplay[] = [
   ...FALLBACK_COUNCIL,
-  { id: 'archie', name: 'Archie', emoji: '🏛️', avatar: '/agents/archie.jpg', role: 'Planner', color: '#8B5CF6', status: 'online' },
-  { id: 'mason', name: 'Mason', emoji: '🔨', avatar: '/agents/mason.jpg', role: 'Builder', color: '#F59E0B', status: 'online' },
+  { id: 'athena', name: 'Athena', emoji: '🩵', avatar: '/agents/athena.png', role: 'Planner', color: '#06B6D4', status: 'online' },
+  { id: 'vulcan', name: 'Vulcan', emoji: '🔥', avatar: '/agents/vulcan.png', role: 'Builder', color: '#F59E0B', status: 'online' },
   { id: 'vex', name: 'Vex', emoji: '🧪', avatar: '/agents/vex.jpg', role: 'Verifier', color: '#10B981', status: 'online' },
   { id: 'scout', name: 'Scout', emoji: '🔭', avatar: '/agents/scout.jpg', role: 'Researcher', color: '#06B6D4', status: 'online' },
   { id: 'ralph', name: 'Ralph', emoji: '🔄', avatar: '/agents/ralph.jpg', role: 'Loop Orchestrator', color: '#EC4899', status: 'online' },

@@ -1,10 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, Suspense } from 'react'
+import { useSearchParams, useRouter } from 'next/navigation'
 import { formatDate } from '@/lib/utils'
 import { useQuery } from '@tanstack/react-query'
 import { PageContainer } from '@/components/layout'
 import { ExportButton } from '@/components/ExportButton'
+import { ActivityFeed } from '@/components/audit/ActivityFeed'
 import {
   ScrollText,
   Filter,
@@ -25,6 +27,7 @@ import {
   Calendar,
   List,
   Activity,
+  Bell,
   LayoutList
 } from 'lucide-react'
 
@@ -77,6 +80,26 @@ const entityTypeConfig: Record<string, { icon: React.ReactNode; color: string }>
 }
 
 export default function AuditPage() {
+  return (
+    <Suspense fallback={
+      <PageContainer>
+        <div className="text-center text-slate-400 py-12">Loading...</div>
+      </PageContainer>
+    }>
+      <AuditPageContent />
+    </Suspense>
+  )
+}
+
+function AuditPageContent() {
+  const searchParams = useSearchParams()
+  const router = useRouter()
+  const activeTab = searchParams.get('view') === 'activity' ? 'activity' : 'audit'
+
+  const setActiveTab = (tab: 'audit' | 'activity') => {
+    router.replace(tab === 'activity' ? '/audit?view=activity' : '/audit', { scroll: false })
+  }
+
   const [searchQuery, setSearchQuery] = useState('')
   const [actorFilter, setActorFilter] = useState('')
   const [actionFilter, setActionFilter] = useState('')
@@ -130,117 +153,157 @@ export default function AuditPage() {
   return (
     <PageContainer>
       {/* Header */}
-      <div className="mb-6">
-        <div className="flex items-center justify-between mb-4">
+      <div className="mb-6 sm:mb-8">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-5">
           <div>
-            <h1 className="text-3xl font-bold text-white flex items-center gap-3">
-              <ScrollText className="text-purple-400" /> Audit Log
+            <h1 className="text-2xl sm:text-3xl font-bold text-white flex items-center gap-2 sm:gap-3">
+              <ScrollText className="text-purple-400" size={28} />
+              {activeTab === 'audit' ? 'Audit Log' : 'Activity Feed'}
             </h1>
-            <p className="text-slate-400">{total} events tracked</p>
+            <p className="text-sm text-slate-400 mt-1">
+              {activeTab === 'audit' ? `${total} events tracked` : 'All task events and system notifications'}
+            </p>
           </div>
-          <div className="flex gap-3">
-            <ExportButton
-              data={entries as unknown as Record<string, unknown>[]}
-              filename="audit_log"
-              columns={['id', 'timestamp', 'action', 'actor', 'entityType', 'entityId', 'entityName']}
-              allowColumnSelection
-            />
-            <button 
-              onClick={() => refetch()} 
-              className="px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg flex items-center gap-2 transition-colors"
-            >
-              <RefreshCw size={18} /> Refresh
-            </button>
+          <div className="flex items-center gap-3">
+            {/* Tab toggle */}
+            <div className="flex items-center p-1 rounded-lg bg-slate-800/40 border border-slate-700/50">
+              <button
+                onClick={() => setActiveTab('audit')}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-200 ${
+                  activeTab === 'audit'
+                    ? 'bg-white/[0.08] text-white shadow-sm border border-white/[0.06]'
+                    : 'text-slate-400 hover:text-slate-200 hover:bg-white/[0.04]'
+                }`}
+              >
+                <ScrollText size={14} />
+                Audit Log
+              </button>
+              <button
+                onClick={() => setActiveTab('activity')}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-200 ${
+                  activeTab === 'activity'
+                    ? 'bg-white/[0.08] text-white shadow-sm border border-white/[0.06]'
+                    : 'text-slate-400 hover:text-slate-200 hover:bg-white/[0.04]'
+                }`}
+              >
+                <Bell size={14} />
+                Activity
+              </button>
+            </div>
+            {activeTab === 'audit' && (
+              <>
+                <ExportButton
+                  data={entries as unknown as Record<string, unknown>[]}
+                  filename="audit_log"
+                  columns={['id', 'timestamp', 'action', 'actor', 'entityType', 'entityId', 'entityName']}
+                  allowColumnSelection
+                />
+                <button
+                  onClick={() => refetch()}
+                  className="flex items-center gap-2 px-4 py-2 glass-2 rounded-lg text-sm text-white hover:bg-slate-700/50 transition-colors"
+                >
+                  <RefreshCw size={16} /> Refresh
+                </button>
+              </>
+            )}
           </div>
         </div>
+      </div>
 
-        {/* Filters */}
-        <div className="flex flex-wrap items-center gap-4 glass-2 rounded-xl p-4">
-          {/* Search */}
-          <div className="relative flex-1 min-w-[200px] max-w-md">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-            <input
-              type="text"
-              placeholder="Search actors, actions, entities..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 bg-slate-900 border border-white/[0.06] rounded-lg text-white placeholder-slate-400 focus:border-purple-500 focus:outline-none"
-            />
-          </div>
-          
-          {/* Actor Filter */}
-          <select
-            value={actorFilter}
-            onChange={(e) => { setActorFilter(e.target.value); setPage(0) }}
-            className="px-4 py-2 bg-slate-900 border border-white/[0.06] rounded-lg text-white focus:border-purple-500 focus:outline-none"
+      {activeTab === 'activity' ? (
+        <ActivityFeed />
+      ) : (
+      <>
+      {/* Filters */}
+      <div className="flex flex-wrap items-center gap-3 glass-2 rounded-xl p-4 mb-6">
+        {/* Search */}
+        <div className="relative flex-1 min-w-[200px] max-w-md">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={16} />
+          <input
+            type="text"
+            placeholder="Search actors, actions, entities..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-9 pr-4 py-2 text-sm bg-slate-800/50 border border-slate-700/50 rounded-lg text-white placeholder:text-slate-500 focus:border-slate-600 focus:outline-none transition-colors"
+          />
+        </div>
+
+        {/* Actor Filter */}
+        <select
+          value={actorFilter}
+          onChange={(e) => { setActorFilter(e.target.value); setPage(0) }}
+          className="px-3 py-2 text-sm bg-slate-800/50 border border-slate-700/50 rounded-lg text-white focus:border-slate-600 focus:outline-none transition-colors"
+        >
+          <option value="">All Actors</option>
+          {filters.actors.map(actor => (
+            <option key={actor} value={actor}>{actor}</option>
+          ))}
+        </select>
+
+        {/* Action Filter */}
+        <select
+          value={actionFilter}
+          onChange={(e) => { setActionFilter(e.target.value); setPage(0) }}
+          className="px-3 py-2 text-sm bg-slate-800/50 border border-slate-700/50 rounded-lg text-white focus:border-slate-600 focus:outline-none transition-colors"
+        >
+          <option value="">All Actions</option>
+          {filters.actions.map(action => (
+            <option key={action} value={action}>
+              {actionConfig[action]?.label ?? action}
+            </option>
+          ))}
+        </select>
+
+        {/* Entity Type Filter */}
+        <select
+          value={entityTypeFilter}
+          onChange={(e) => { setEntityTypeFilter(e.target.value); setPage(0) }}
+          className="px-3 py-2 text-sm bg-slate-800/50 border border-slate-700/50 rounded-lg text-white focus:border-slate-600 focus:outline-none transition-colors"
+        >
+          <option value="">All Types</option>
+          {filters.entityTypes.map(type => (
+            <option key={type} value={type}>{type}</option>
+          ))}
+        </select>
+
+        {/* Clear Filters */}
+        {(searchQuery || actorFilter || actionFilter || entityTypeFilter) && (
+          <button
+            onClick={() => {
+              setSearchQuery('')
+              setActorFilter('')
+              setActionFilter('')
+              setEntityTypeFilter('')
+              setPage(0)
+            }}
+            className="px-3 py-2 text-xs font-medium text-slate-400 hover:text-white transition-colors"
           >
-            <option value="">All Actors</option>
-            {filters.actors.map(actor => (
-              <option key={actor} value={actor}>{actor}</option>
-            ))}
-          </select>
-          
-          {/* Action Filter */}
-          <select
-            value={actionFilter}
-            onChange={(e) => { setActionFilter(e.target.value); setPage(0) }}
-            className="px-4 py-2 bg-slate-900 border border-white/[0.06] rounded-lg text-white focus:border-purple-500 focus:outline-none"
+            Clear filters
+          </button>
+        )}
+
+        {/* View Toggle */}
+        <div className="flex p-1 rounded-lg bg-slate-800/40 border border-slate-700/50 ml-auto">
+          <button
+            onClick={() => setViewMode('table')}
+            className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-200 flex items-center gap-1.5 ${
+              viewMode === 'table'
+                ? 'bg-white/[0.08] text-white shadow-sm border border-white/[0.06]'
+                : 'text-slate-400 hover:text-slate-200 hover:bg-white/[0.04]'
+            }`}
           >
-            <option value="">All Actions</option>
-            {filters.actions.map(action => (
-              <option key={action} value={action}>
-                {actionConfig[action]?.label ?? action}
-              </option>
-            ))}
-          </select>
-          
-          {/* Entity Type Filter */}
-          <select
-            value={entityTypeFilter}
-            onChange={(e) => { setEntityTypeFilter(e.target.value); setPage(0) }}
-            className="px-4 py-2 bg-slate-900 border border-white/[0.06] rounded-lg text-white focus:border-purple-500 focus:outline-none"
+            <LayoutList size={14} /> Table
+          </button>
+          <button
+            onClick={() => setViewMode('timeline')}
+            className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-200 flex items-center gap-1.5 ${
+              viewMode === 'timeline'
+                ? 'bg-white/[0.08] text-white shadow-sm border border-white/[0.06]'
+                : 'text-slate-400 hover:text-slate-200 hover:bg-white/[0.04]'
+            }`}
           >
-            <option value="">All Types</option>
-            {filters.entityTypes.map(type => (
-              <option key={type} value={type}>{type}</option>
-            ))}
-          </select>
-          
-          {/* Clear Filters */}
-          {(searchQuery || actorFilter || actionFilter || entityTypeFilter) && (
-            <button
-              onClick={() => {
-                setSearchQuery('')
-                setActorFilter('')
-                setActionFilter('')
-                setEntityTypeFilter('')
-                setPage(0)
-              }}
-              className="px-3 py-2 text-slate-400 hover:text-white text-sm"
-            >
-              Clear filters
-            </button>
-          )}
-          
-          {/* View Toggle */}
-          <div className="flex bg-slate-900 rounded-lg p-1 ml-auto">
-            <button
-              onClick={() => setViewMode('table')}
-              className={`px-3 py-1.5 rounded text-sm transition-colors flex items-center gap-1.5 ${
-                viewMode === 'table' ? 'bg-purple-600 text-white' : 'text-slate-400 hover:text-white'
-              }`}
-            >
-              <LayoutList size={14} /> Table
-            </button>
-            <button
-              onClick={() => setViewMode('timeline')}
-              className={`px-3 py-1.5 rounded text-sm transition-colors flex items-center gap-1.5 ${
-                viewMode === 'timeline' ? 'bg-purple-600 text-white' : 'text-slate-400 hover:text-white'
-              }`}
-            >
-              <Activity size={14} /> Timeline
-            </button>
-          </div>
+            <Activity size={14} /> Timeline
+          </button>
         </div>
       </div>
 
@@ -494,6 +557,8 @@ export default function AuditPage() {
         <p className="text-center text-slate-500 text-sm mt-4">
           Last updated: {new Date(data.lastUpdated).toLocaleString()}
         </p>
+      )}
+      </>
       )}
     </PageContainer>
   )

@@ -31,8 +31,8 @@ const features = [
   },
   {
     icon: Shield,
-    title: 'Health & Watchdog',
-    description: 'Automated health checks, heartbeat monitoring, and alerting when agents go offline.',
+    title: 'Health Monitoring',
+    description: 'Automated health checks, heartbeat monitoring, and system status overview.',
     accent: 'text-amber-400',
     glow: 'group-hover:shadow-amber-500/20',
   },

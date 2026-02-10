@@ -14,8 +14,8 @@ type AgentPaletteProps = {
 }
 
 const GROUPS: { label: string; tier: AgentTier[] }[] = [
-  { label: 'Workers', tier: ['worker'] },
   { label: 'Specialists', tier: ['council', 'orchestrator'] },
+  { label: 'Workers', tier: ['worker'] },
 ]
 
 export function AgentPalette({ onAddAgent, currentStepCount, maxSteps = 12 }: AgentPaletteProps) {
@@ -43,60 +43,69 @@ export function AgentPalette({ onAddAgent, currentStepCount, maxSteps = 12 }: Ag
                   const agentColor = agent?.color || '#64748b'
                   const isExpanded = expandedAgent === role
                   return (
-                    <div key={role} className="relative">
-                      <div className="flex items-center gap-0">
-                        <button
-                          disabled={isMaxed}
-                          onClick={() => onAddAgent(role)}
-                          className={`
-                            group/chip flex items-center gap-2 px-3 py-2 rounded-xl glass-2
-                            transition-all duration-200
-                            ${isMaxed
-                              ? 'opacity-40 cursor-not-allowed'
-                              : 'hover:scale-105 hover:shadow-lg'
-                            }
-                          `}
-                          style={!isMaxed ? { ['--hover-border' as string]: agentColor } : undefined}
+                    <div key={role} className="relative group/chip">
+                      {/* Card — uses div[role=button] to avoid nested <button> */}
+                      <div
+                        role="button"
+                        tabIndex={isMaxed ? -1 : 0}
+                        aria-disabled={isMaxed}
+                        onClick={() => !isMaxed && onAddAgent(role)}
+                        onKeyDown={(e) => { if (!isMaxed && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); onAddAgent(role) } }}
+                        className={`
+                          relative flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl glass-2
+                          border border-transparent transition-all duration-200 select-none
+                          ${isMaxed
+                            ? 'opacity-40 cursor-not-allowed'
+                            : 'cursor-pointer hover:scale-[1.04] hover:shadow-lg hover:shadow-black/20 hover:border-white/[0.08]'
+                          }
+                        `}
+                      >
+                        <div
+                          className="w-9 h-9 rounded-full overflow-hidden ring-1 ring-offset-1 ring-offset-slate-900 flex-shrink-0"
+                          style={{ ['--tw-ring-color' as string]: agentColor }}
                         >
-                          <div
-                            className="w-7 h-7 rounded-full overflow-hidden ring-1 ring-offset-1 ring-offset-slate-900 flex-shrink-0"
-                            style={{ ['--tw-ring-color' as string]: agentColor }}
-                          >
-                            {avatarSrc ? (
-                              <Image
-                                src={avatarSrc}
-                                alt={meta.name}
-                                width={28}
-                                height={28}
-                                className="w-full h-full object-cover"
-                              />
-                            ) : (
-                              <div className="w-full h-full bg-slate-800 flex items-center justify-center">
-                                <Bot className="w-3.5 h-3.5 text-slate-500" />
-                              </div>
-                            )}
-                          </div>
-                          <div className="text-left">
-                            <p className="text-xs font-semibold text-slate-200">{meta.name}</p>
-                            <p className="text-[10px] text-slate-500 hidden sm:block">{agent?.specialty || meta.tier}</p>
-                          </div>
-                          <Plus className={`w-3.5 h-3.5 text-slate-500 transition-colors ${!isMaxed ? 'group-hover/chip:text-cyan-400' : ''}`} />
-                        </button>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            setExpandedAgent(isExpanded ? null : role)
-                          }}
-                          className="ml-0.5 p-1 rounded-lg text-slate-600 hover:text-slate-300 hover:bg-white/[0.06] transition-colors"
-                          title={`About ${meta.name}`}
-                        >
-                          {isExpanded ? (
-                            <X className="w-3 h-3" />
+                          {avatarSrc ? (
+                            <Image
+                              src={avatarSrc}
+                              alt={meta.name}
+                              width={36}
+                              height={36}
+                              className="w-full h-full object-cover"
+                            />
                           ) : (
-                            <HelpCircle className="w-3 h-3" />
+                            <div className="w-full h-full bg-slate-800 flex items-center justify-center">
+                              <Bot className="w-4 h-4 text-slate-500" />
+                            </div>
                           )}
-                        </button>
+                        </div>
+                        <div className="text-left">
+                          <p className="text-sm font-semibold text-slate-200">{meta.name}</p>
+                          <p className="text-[11px] text-slate-500 hidden sm:block">{agent?.specialty || meta.tier}</p>
+                        </div>
+                        <Plus className={`w-4 h-4 text-slate-500 transition-colors ${!isMaxed ? 'group-hover/chip:text-cyan-400' : ''}`} />
                       </div>
+
+                      {/* ? badge — overlaid on top-right corner, visible on hover */}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          setExpandedAgent(isExpanded ? null : role)
+                        }}
+                        className={`
+                          absolute -top-1.5 -right-1.5 z-10
+                          w-5 h-5 rounded-full flex items-center justify-center
+                          text-[10px] font-bold
+                          border border-white/10 shadow-md shadow-black/30
+                          transition-all duration-150
+                          ${isExpanded
+                            ? 'opacity-100 bg-slate-600 text-white'
+                            : 'opacity-0 group-hover/chip:opacity-100 bg-slate-700/90 text-slate-300 hover:bg-slate-600 hover:text-white'
+                          }
+                        `}
+                        title={`About ${meta.name}`}
+                      >
+                        {isExpanded ? <X className="w-2.5 h-2.5" /> : '?'}
+                      </button>
 
                       {/* Expanded description popover */}
                       {isExpanded && (

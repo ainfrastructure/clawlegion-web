@@ -32,7 +32,7 @@ const tierMap: Record<string, AgentMetadata['tier']> = {
 }
 
 // Agents enabled by default in flow presets
-const defaultEnabledAgents = new Set(['archie', 'mason', 'vex'])
+const defaultEnabledAgents = new Set(['athena', 'vulcan', 'vex'])
 
 /**
  * Agent metadata for UI display — derived from canonical agentConfig
@@ -47,7 +47,7 @@ export const AGENT_METADATA: Record<AgentRole, AgentMetadata> = Object.fromEntri
         color: hexToColorName[a.color] ?? 'blue',
         description: a.description,
         defaultEnabled: defaultEnabledAgents.has(a.id),
-        tier: a.id === 'jarvis' ? 'orchestrator' as AgentMetadata['tier'] : tierMap[a.tier] ?? 'worker',
+        tier: a.id === 'caesar' ? 'orchestrator' as AgentMetadata['tier'] : tierMap[a.tier] ?? 'worker',
       } satisfies AgentMetadata,
     ])
 ) as Record<AgentRole, AgentMetadata>
@@ -82,8 +82,8 @@ export const DEFAULT_PRESETS: FlowPreset[] = [
     isSystem: true,
     agents: [
       { role: 'scout', enabled: false, resourceLevel: 'low' },
-      { role: 'archie', enabled: false, resourceLevel: 'low' },
-      { role: 'mason', enabled: true, resourceLevel: 'medium' },
+      { role: 'athena', enabled: false, resourceLevel: 'low' },
+      { role: 'vulcan', enabled: true, resourceLevel: 'medium' },
       { role: 'vex', enabled: true, resourceLevel: 'low' },
     ],
     loopSettings: {
@@ -106,8 +106,8 @@ export const DEFAULT_PRESETS: FlowPreset[] = [
     isSystem: true,
     agents: [
       { role: 'scout', enabled: false, resourceLevel: 'medium' },
-      { role: 'archie', enabled: true, resourceLevel: 'medium' },
-      { role: 'mason', enabled: true, resourceLevel: 'medium' },
+      { role: 'athena', enabled: true, resourceLevel: 'medium' },
+      { role: 'vulcan', enabled: true, resourceLevel: 'medium' },
       { role: 'vex', enabled: true, resourceLevel: 'medium' },
     ],
     loopSettings: {
@@ -130,8 +130,8 @@ export const DEFAULT_PRESETS: FlowPreset[] = [
     isSystem: true,
     agents: [
       { role: 'scout', enabled: true, resourceLevel: 'high' },
-      { role: 'archie', enabled: true, resourceLevel: 'high' },
-      { role: 'mason', enabled: true, resourceLevel: 'high' },
+      { role: 'athena', enabled: true, resourceLevel: 'high' },
+      { role: 'vulcan', enabled: true, resourceLevel: 'high' },
       { role: 'vex', enabled: true, resourceLevel: 'high' },
     ],
     loopSettings: {
@@ -154,8 +154,8 @@ export const DEFAULT_PRESETS: FlowPreset[] = [
     isSystem: true,
     agents: [
       { role: 'scout', enabled: true, resourceLevel: 'high' },
-      { role: 'archie', enabled: true, resourceLevel: 'medium' },
-      { role: 'mason', enabled: false, resourceLevel: 'low' },
+      { role: 'athena', enabled: true, resourceLevel: 'medium' },
+      { role: 'vulcan', enabled: false, resourceLevel: 'low' },
       { role: 'vex', enabled: false, resourceLevel: 'low' },
     ],
     loopSettings: {
@@ -169,6 +169,102 @@ export const DEFAULT_PRESETS: FlowPreset[] = [
       ],
       expansionApprovalThreshold: 40,
       roiThreshold: 20,
+    },
+  },
+  {
+    id: 'content-pipeline',
+    name: 'Content Pipeline',
+    description: 'Research, write, design, and distribute content end-to-end',
+    isSystem: true,
+    agents: [
+      { role: 'scout', enabled: true, resourceLevel: 'medium' },
+      { role: 'quill', enabled: true, resourceLevel: 'high' },
+      { role: 'pixel', enabled: true, resourceLevel: 'medium' },
+      { role: 'echo', enabled: true, resourceLevel: 'medium' },
+    ],
+    loopSettings: {
+      timeBudgetHours: 4,
+      maxIterations: 15,
+      failThreshold: 3,
+      checkpoints: [
+        { percentage: 25, enabled: true },
+        { percentage: 50, enabled: true },
+        { percentage: 75, enabled: true },
+      ],
+      expansionApprovalThreshold: 60,
+      roiThreshold: 40,
+    },
+  },
+  {
+    id: 'brand-launch',
+    name: 'Brand Launch',
+    description: 'Data-driven brand campaign with creative assets',
+    isSystem: true,
+    agents: [
+      { role: 'sage', enabled: true, resourceLevel: 'high' },
+      { role: 'quill', enabled: true, resourceLevel: 'high' },
+      { role: 'pixel', enabled: true, resourceLevel: 'high' },
+      { role: 'echo', enabled: true, resourceLevel: 'medium' },
+    ],
+    loopSettings: {
+      timeBudgetHours: 6,
+      maxIterations: 25,
+      failThreshold: 4,
+      checkpoints: [
+        { percentage: 25, enabled: true },
+        { percentage: 50, enabled: true },
+        { percentage: 75, enabled: true },
+      ],
+      expansionApprovalThreshold: 70,
+      roiThreshold: 50,
+    },
+  },
+  {
+    id: 'growth-analytics',
+    name: 'Growth & Analytics',
+    description: 'Outreach, measure performance, and generate reports',
+    isSystem: true,
+    agents: [
+      { role: 'echo', enabled: true, resourceLevel: 'medium' },
+      { role: 'sage', enabled: true, resourceLevel: 'high' },
+      { role: 'quill', enabled: true, resourceLevel: 'medium' },
+    ],
+    loopSettings: {
+      timeBudgetHours: 3,
+      maxIterations: 15,
+      failThreshold: 3,
+      checkpoints: [
+        { percentage: 25, enabled: false },
+        { percentage: 50, enabled: true },
+        { percentage: 75, enabled: true },
+      ],
+      expansionApprovalThreshold: 50,
+      roiThreshold: 35,
+    },
+  },
+  {
+    id: 'full-stack-deploy',
+    name: 'Full Stack Deploy',
+    description: 'End-to-end development with deployment and verification',
+    isSystem: true,
+    agents: [
+      { role: 'scout', enabled: true, resourceLevel: 'medium' },
+      { role: 'athena', enabled: true, resourceLevel: 'high' },
+      { role: 'vulcan', enabled: true, resourceLevel: 'high' },
+      { role: 'vex', enabled: true, resourceLevel: 'high' },
+      { role: 'forge', enabled: true, resourceLevel: 'medium' },
+    ],
+    loopSettings: {
+      timeBudgetHours: 8,
+      maxIterations: 40,
+      failThreshold: 5,
+      checkpoints: [
+        { percentage: 25, enabled: true },
+        { percentage: 50, enabled: true },
+        { percentage: 75, enabled: true },
+      ],
+      expansionApprovalThreshold: 70,
+      roiThreshold: 50,
     },
   },
 ]
@@ -398,7 +494,7 @@ export function formatTimeBudget(hours: number): string {
 /**
  * Valid agent roles for validation
  */
-const VALID_ROLES: AgentRole[] = ['scout', 'archie', 'mason', 'vex', 'jarvis', 'forge', 'echo', 'quill', 'pixel', 'sage']
+const VALID_ROLES: AgentRole[] = ['scout', 'athena', 'vulcan', 'vex', 'caesar', 'forge', 'echo', 'quill', 'pixel', 'sage']
 
 /**
  * Check if a role is a valid agent role

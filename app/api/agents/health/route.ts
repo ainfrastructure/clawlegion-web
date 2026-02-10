@@ -14,6 +14,8 @@ interface HealthResult {
   lastCheck: string
   healthEndpoint?: string
   error?: string
+  busy?: boolean
+  activeTask?: string
 }
 
 interface HealthCheckResponse {
@@ -27,19 +29,26 @@ interface HealthCheckResponse {
   cachedAt: string
 }
 
-// Default agents with health endpoints (OpenClaw ports)
-// Configure via AGENT_HEALTH_<NAME> environment variables (e.g. AGENT_HEALTH_JARVIS=http://localhost:18789/health)
+// Agent roles that correspond to workflow steps
+const WORKFLOW_STEP_AGENTS: Record<string, string> = {
+  research: 'scout',
+  plan: 'athena', 
+  build: 'vulcan',
+  verify: 'vex'
+}
+
+// Default agents configuration
 const DEFAULT_AGENTS: AgentConfig[] = [
-  { id: 'jarvis', name: 'Jarvis', healthEndpoint: process.env.AGENT_HEALTH_JARVIS || 'http://localhost:18789/health' },
-  { id: 'lux', name: 'Lux', healthEndpoint: process.env.AGENT_HEALTH_LUX || 'http://localhost:18796/health' },
-  { id: 'archie', name: 'Archie', healthEndpoint: process.env.AGENT_HEALTH_ARCHIE || 'http://localhost:18790/health' },
-  { id: 'mason', name: 'Mason', healthEndpoint: process.env.AGENT_HEALTH_MASON || 'http://localhost:18791/health' },
-  { id: 'vex', name: 'Vex', healthEndpoint: process.env.AGENT_HEALTH_VEX || 'http://localhost:18792/health' },
-  { id: 'scout', name: 'Scout', healthEndpoint: process.env.AGENT_HEALTH_SCOUT || 'http://localhost:18793/health' },
-  { id: 'ralph', name: 'Ralph', healthEndpoint: process.env.AGENT_HEALTH_RALPH || 'http://localhost:18794/health' },
-  { id: 'quill', name: 'Quill', healthEndpoint: process.env.AGENT_HEALTH_QUILL || 'http://localhost:18797/health' },
-  { id: 'pixel', name: 'Pixel', healthEndpoint: process.env.AGENT_HEALTH_PIXEL || 'http://localhost:18798/health' },
-  { id: 'sage', name: 'Sage', healthEndpoint: process.env.AGENT_HEALTH_SAGE || 'http://localhost:18799/health' },
+  { id: 'caesar', name: 'Caesar' },
+  { id: 'scout', name: 'Scout' },
+  { id: 'athena', name: 'Athena' },
+  { id: 'vulcan', name: 'Vulcan' },
+  { id: 'vex', name: 'Vex' },
+  { id: 'echo', name: 'Echo' },
+  { id: 'forge', name: 'Forge' },
+  { id: 'pixel', name: 'Pixel' },
+  { id: 'quill', name: 'Quill' },
+  { id: 'sage', name: 'Sage' },
 ]
 
 // Simple in-memory cache with 30s TTL
@@ -47,35 +56,35 @@ let healthCache: HealthCheckResponse | null = null
 let cacheTime: number = 0
 const CACHE_TTL_MS = 30 * 1000 // 30 seconds
 
-async function checkHealth(endpoint: string, timeoutMs = 5000): Promise<{ reachable: boolean; latencyMs?: number; error?: string }> {
-  const startTime = Date.now()
-  const controller = new AbortController()
-  const timeoutId = setTimeout(() => controller.abort(), timeoutMs)
-
+async function fetchActiveTasks(): Promise<any[]> {
   try {
-    const response = await fetch(endpoint, {
-      method: 'GET',
-      signal: controller.signal,
+    const baseUrl = process.env.BACKEND_URL || 'http://localhost:5001'
+    const response = await fetch(`${baseUrl}/api/task-tracking/tasks?status=building,verifying,researching,planning`, {
       cache: 'no-store',
     })
-    clearTimeout(timeoutId)
-    
-    const latencyMs = Date.now() - startTime
-    
     if (response.ok) {
-      return { reachable: true, latencyMs }
-    } else {
-      return { reachable: false, latencyMs, error: `HTTP ${response.status}` }
+      const data = await response.json()
+      return Array.isArray(data) ? data : (data.tasks || [])
     }
-  } catch (err: any) {
-    clearTimeout(timeoutId)
-    const latencyMs = Date.now() - startTime
-    
-    if (err.name === 'AbortError') {
-      return { reachable: false, latencyMs, error: 'Timeout' }
-    }
-    return { reachable: false, latencyMs, error: err.message || 'Connection failed' }
+  } catch (err) {
+    console.warn('Could not fetch active tasks:', err)
   }
+  return []
+}
+
+async function fetchAgentDetails(agentId: string): Promise<any> {
+  try {
+    const baseUrl = process.env.BACKEND_URL || 'http://localhost:5001'
+    const response = await fetch(`${baseUrl}/api/agents/${agentId}`, {
+      cache: 'no-store',
+    })
+    if (response.ok) {
+      return await response.json()
+    }
+  } catch (err) {
+    console.warn(`Could not fetch agent details for ${agentId}:`, err)
+  }
+  return null
 }
 
 async function fetchAgentsFromConfig(): Promise<AgentConfig[]> {
@@ -92,12 +101,10 @@ async function fetchAgentsFromConfig(): Promise<AgentConfig[]> {
         name: a.identity?.name || a.name,
         healthEndpoint: a.healthEndpoint,
       }))
-      // Only use config agents if they have health endpoints; otherwise merge with defaults
-      const hasEndpoints = configAgents.some(a => a.healthEndpoint)
-      if (hasEndpoints) {
+      
+      if (configAgents.length > 0) {
         return configAgents
       }
-      // Config agents lack health endpoints — use defaults (which have them)
     }
   } catch (err) {
     console.warn('Could not fetch agents from config API, using defaults')
@@ -105,29 +112,93 @@ async function fetchAgentsFromConfig(): Promise<AgentConfig[]> {
   return DEFAULT_AGENTS
 }
 
+function isAgentActiveForTask(agentId: string, task: any): boolean {
+  // Check if agent is directly assigned to task
+  if (task.assignee && task.assignee.toLowerCase() === agentId.toLowerCase()) {
+    return true
+  }
+  
+  // Check if task's workflow step maps to this agent
+  const stepAgent = WORKFLOW_STEP_AGENTS[task.currentWorkflowStep]
+  if (stepAgent && stepAgent.toLowerCase() === agentId.toLowerCase()) {
+    return true
+  }
+  
+  return false
+}
+
+async function checkAgentStatus(agentId: string, activeTasks: any[]): Promise<{ reachable: boolean; busy?: boolean; activeTask?: string; lastActiveAt?: string }> {
+  // Caesar is always reachable (he's the gateway itself)
+  if (agentId.toLowerCase() === 'caesar') {
+    const hasActiveTasks = activeTasks.length > 0
+    return { 
+      reachable: true, 
+      busy: hasActiveTasks,
+      activeTask: hasActiveTasks ? `Orchestrating ${activeTasks.length} tasks` : undefined
+    }
+  }
+  
+  // Check if agent has active tasks
+  const agentTasks = activeTasks.filter(task => isAgentActiveForTask(agentId, task))
+  if (agentTasks.length > 0) {
+    return { 
+      reachable: true, 
+      busy: true,
+      activeTask: agentTasks[0].title || agentTasks[0].id
+    }
+  }
+  
+  // Check agent details for currentTaskId
+  const agentDetails = await fetchAgentDetails(agentId)
+  if (agentDetails?.currentTaskId) {
+    return { 
+      reachable: true, 
+      busy: true,
+      activeTask: agentDetails.currentTaskId
+    }
+  }
+  
+  // Check lastActiveAt for recent activity (within 5 minutes = idle)
+  if (agentDetails?.lastActiveAt) {
+    const lastActive = new Date(agentDetails.lastActiveAt)
+    const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000)
+    
+    if (lastActive > fiveMinutesAgo) {
+      return { 
+        reachable: true, 
+        busy: false,
+        lastActiveAt: agentDetails.lastActiveAt
+      }
+    }
+  }
+  
+  // Otherwise, agent is offline
+  return { reachable: false }
+}
+
 async function performHealthChecks(): Promise<HealthCheckResponse> {
   const now = new Date().toISOString()
   const results: HealthResult[] = []
   
   const agents = await fetchAgentsFromConfig()
+  const activeTasks = await fetchActiveTasks()
   
-  // Check health for all agents with health endpoints
+  // Check status for all agents
   const checks = agents.map(async (agent) => {
+    const status = await checkAgentStatus(agent.id, activeTasks)
+    
     const result: HealthResult = {
       id: agent.id,
       name: agent.name,
-      reachable: false,
+      reachable: status.reachable,
       lastCheck: now,
       healthEndpoint: agent.healthEndpoint,
+      busy: status.busy,
+      activeTask: status.activeTask,
     }
     
-    if (agent.healthEndpoint) {
-      const health = await checkHealth(agent.healthEndpoint)
-      result.reachable = health.reachable
-      result.latencyMs = health.latencyMs
-      if (health.error) {
-        result.error = health.error
-      }
+    if (!status.reachable) {
+      result.error = status.lastActiveAt ? 'Inactive' : 'Offline'
     }
     
     return result
@@ -137,11 +208,10 @@ async function performHealthChecks(): Promise<HealthCheckResponse> {
   results.push(...checkResults)
   
   // Compute summary
-  const withEndpoint = results.filter(r => r.healthEndpoint)
   const summary = {
     total: results.length,
     reachable: results.filter(r => r.reachable).length,
-    unreachable: withEndpoint.filter(r => !r.reachable).length,
+    unreachable: results.filter(r => !r.reachable).length,
     noEndpoint: results.filter(r => !r.healthEndpoint).length,
   }
   
@@ -187,21 +257,23 @@ export async function GET(request: NextRequest) {
   return NextResponse.json(result)
 }
 
-// POST: Trigger a single agent health check
+// POST: Trigger a single agent health check (kept for backward compatibility)
 export async function POST(request: NextRequest) {
   try {
-    const { agentId, endpoint } = await request.json()
+    const { agentId } = await request.json()
     
-    if (!endpoint) {
-      return NextResponse.json({ error: 'endpoint is required' }, { status: 400 })
+    if (!agentId) {
+      return NextResponse.json({ error: 'agentId is required' }, { status: 400 })
     }
     
-    const health = await checkHealth(endpoint)
+    const activeTasks = await fetchActiveTasks()
+    const status = await checkAgentStatus(agentId, activeTasks)
     
     return NextResponse.json({
       agentId,
-      endpoint,
-      ...health,
+      reachable: status.reachable,
+      busy: status.busy,
+      activeTask: status.activeTask,
       checkedAt: new Date().toISOString(),
     })
   } catch (err: any) {

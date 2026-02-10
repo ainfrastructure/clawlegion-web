@@ -18,11 +18,9 @@ import {
   HeartPulse,
   LogOut,
   User,
-  BarChart3,
   Zap,
   ScrollText,
   Eye,
-  Activity,
 } from 'lucide-react'
 import { signOut, useSession } from 'next-auth/react'
 import { PresenceDots } from '@/components/agents/PresenceIndicator'
@@ -58,14 +56,9 @@ const EASY_NAV_ITEMS: NavItem[] = [
     label: 'Team'
   },
   {
-    href: '/output',
-    icon: <BarChart3 className="w-5 h-5" />,
-    label: 'Output'
-  },
-  {
-    href: '/notifications',
-    icon: <Activity className="w-5 h-5" />,
-    label: 'Activity'
+    href: '/audit',
+    icon: <ScrollText className="w-5 h-5" />,
+    label: 'Audit'
   },
   {
     href: '/settings',
@@ -107,28 +100,17 @@ const POWER_NAV_ITEMS: NavItem[] = [
     ]
   },
   {
-    href: '/output',
-    icon: <BarChart3 className="w-5 h-5" />,
-    label: 'Output'
-  },
-  {
     href: '/health',
     icon: <HeartPulse className="w-5 h-5" />,
     label: 'Monitoring',
     subItems: [
       { href: '/health', label: 'System' },
-      { href: '/watchdog', label: 'Watchdog' },
     ]
   },
   {
     href: '/audit',
     icon: <ScrollText className="w-5 h-5" />,
     label: 'Audit'
-  },
-  {
-    href: '/notifications',
-    icon: <Activity className="w-5 h-5" />,
-    label: 'Activity'
   },
   {
     href: '/settings',
@@ -158,7 +140,7 @@ export function Sidebar() {
 
   const isItemActive = (item: NavItem) => {
     if (item.href === '/dashboard') return pathname === '/dashboard' || pathname === '/'
-    // Check sub-items first — they may have non-prefix paths (e.g., /watchdog under /health, /sessions under /agents)
+    // Check sub-items first — they may have non-prefix paths (e.g., /sessions under /agents)
     if (item.subItems) {
       return item.subItems.some(sub => pathname === sub.href || pathname.startsWith(sub.href + '/'))
     }

@@ -1,20 +1,24 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
+import Link from 'next/link'
+import Image from 'next/image'
 import { PageContainer } from '@/components/layout'
 import { AgentProfilePanel, type AgentData, type AgentStatus } from '@/components/agents'
 import { OrgAgentCard } from '@/components/agents/OrgAgentCard'
 import { AgentDetailModal } from '@/components/agents/AgentDetailModal'
-import { FlowConfigPanel } from '@/components/flow-config/FlowConfigPanel'
-import { DEFAULT_CONFIG } from '@/lib/flow-presets'
-import type { FlowConfiguration } from '@/components/flow-config/types'
-import { getAgentByName, ALL_AGENTS } from '@/components/chat-v2/agentConfig'
+import { DEFAULT_PRESETS, AGENT_METADATA } from '@/lib/flow-presets'
+import type { FlowPreset } from '@/components/flow-config/types'
+import { getAgentByName, getAgentById, ALL_AGENTS } from '@/components/chat-v2/agentConfig'
 import {
   Users,
   GitBranch,
   RefreshCw,
   Loader2,
+  ArrowRight,
+  Bot,
+  Lock,
 } from 'lucide-react'
 
 // ============================================
@@ -62,13 +66,12 @@ async function fetchHealth(): Promise<HealthData> {
 }
 
 // Leadership agent names (matched by name since DB IDs are CUIDs)
-const LEADERSHIP_NAMES = ['jarvis', 'lux']
+const LEADERSHIP_NAMES = ['caesar', 'lux']
 
 export default function AgentOrgPage() {
   const [selectedAgent, setSelectedAgent] = useState<AgentData | null>(null)
   const [showDetailModal, setShowDetailModal] = useState(false)
   const [configAgentId, setConfigAgentId] = useState<string | null>(null)
-  const [flowConfig, setFlowConfig] = useState<FlowConfiguration>(DEFAULT_CONFIG)
 
   const {
     data: agents,
@@ -154,10 +157,6 @@ export default function AgentOrgPage() {
     setConfigAgentId(enriched?.id || agentId)
   }
 
-  const handleFlowConfigChange = useCallback((config: FlowConfiguration) => {
-    setFlowConfig(config)
-  }, [])
-
   return (
     <PageContainer>
       {/* Header */}
@@ -168,7 +167,7 @@ export default function AgentOrgPage() {
               <Users className="text-blue-400" size={28} /> Agent Organization
             </h1>
             <p className="text-sm sm:text-base text-slate-400 mt-1">
-              Team structure and task workflow pipeline
+              Team structure and flow presets
             </p>
           </div>
           <button
@@ -210,14 +209,15 @@ export default function AgentOrgPage() {
             {leadershipAgents.length > 0 && (
               <div>
                 <p className="text-xs font-semibold uppercase tracking-widest text-slate-500 mb-3">Leadership</p>
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                <div className="flex flex-wrap justify-center gap-5">
                   {leadershipAgents.map((agent) => (
-                    <OrgAgentCard
-                      key={agent.id}
-                      agent={agent}
-                      variant="featured"
-                      onClick={() => handleAgentClick(agent)}
-                    />
+                    <div key={agent.id} className="w-full max-w-lg">
+                      <OrgAgentCard
+                        agent={agent}
+                        variant="featured"
+                        onClick={() => handleAgentClick(agent)}
+                      />
+                    </div>
                   ))}
                 </div>
               </div>
@@ -242,20 +242,127 @@ export default function AgentOrgPage() {
         )}
       </div>
 
-      {/* Task Flow Pipeline — configurable */}
+      {/* Flow Presets */}
       <div className="glass-2 rounded-xl p-4 sm:p-6">
-        <div className="mb-4">
-          <h2 className="text-lg sm:text-xl font-semibold text-white flex items-center gap-2">
-            <GitBranch className="text-green-400" size={20} /> Task Flow Pipeline
-          </h2>
-          <p className="text-sm text-slate-400 mt-1">
-            Configure the OpenClaw agent pipeline — toggle agents, set resource levels, and tune loop parameters.
-          </p>
+        <div className="flex items-center justify-between mb-5">
+          <div>
+            <h2 className="text-lg sm:text-xl font-semibold text-white flex items-center gap-2">
+              <GitBranch className="text-green-400" size={20} /> Flow Presets
+            </h2>
+            <p className="text-sm text-slate-400 mt-1">
+              Pre-configured agent pipelines for common workflows
+            </p>
+          </div>
+          <Link
+            href="/flows"
+            className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-blue-400 hover:text-blue-300 hover:bg-blue-500/10 rounded-lg transition-colors"
+          >
+            Open Flow Builder <ArrowRight size={14} />
+          </Link>
         </div>
-        <FlowConfigPanel
-          config={flowConfig}
-          onChange={handleFlowConfigChange}
-        />
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
+          {DEFAULT_PRESETS.map((preset) => {
+            const enabledAgents = preset.agents.filter(a => a.enabled)
+            const primaryAgent = enabledAgents[0]
+            const primaryColor = primaryAgent ? getAgentById(primaryAgent.role)?.color : undefined
+
+            return (
+              <Link
+                key={preset.id}
+                href={`/flows?preset=${preset.id}`}
+                className="group relative rounded-xl cursor-pointer transition-all duration-200 overflow-hidden"
+              >
+                {/* Gradient border from primary agent color */}
+                {primaryColor && (
+                  <div
+                    className="absolute -inset-px rounded-xl opacity-30 group-hover:opacity-50 transition-opacity"
+                    style={{
+                      background: `linear-gradient(135deg, ${primaryColor}40, transparent 60%)`,
+                    }}
+                  />
+                )}
+
+                <div className="relative rounded-xl p-4 glass-2 group-hover:border-white/[0.1] transition-colors h-full">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0 flex-1">
+                      {/* Title */}
+                      <div className="flex items-center gap-1.5">
+                        <Lock className="w-3 h-3 text-slate-600 flex-shrink-0" />
+                        <p className="text-sm font-semibold text-slate-200 group-hover:text-cyan-300 transition-colors truncate">
+                          {preset.name}
+                        </p>
+                      </div>
+                      {/* Description */}
+                      <p className="text-xs text-slate-500 mt-1 leading-relaxed line-clamp-1">
+                        {preset.description}
+                      </p>
+                      {/* Stacked avatars + count */}
+                      <div className="mt-3 flex items-center gap-2">
+                        <div className="flex -space-x-2">
+                          {enabledAgents.slice(0, 5).map((agent, i) => {
+                            const agentData = getAgentById(agent.role)
+                            const avatarSrc = agentData?.avatar
+                            const agentColor = agentData?.color || '#64748b'
+                            const meta = AGENT_METADATA[agent.role as keyof typeof AGENT_METADATA]
+                            return (
+                              <div
+                                key={agent.role}
+                                className="w-6 h-6 rounded-full overflow-hidden ring-1 ring-offset-1 ring-offset-slate-900 relative"
+                                style={{
+                                  ['--tw-ring-color' as string]: agentColor,
+                                  zIndex: 5 - i,
+                                }}
+                                title={meta?.name || agent.role}
+                              >
+                                {avatarSrc ? (
+                                  <Image
+                                    src={avatarSrc}
+                                    alt={meta?.name || agent.role}
+                                    width={24}
+                                    height={24}
+                                    className="w-full h-full object-cover"
+                                  />
+                                ) : (
+                                  <div className="w-full h-full bg-slate-800 flex items-center justify-center">
+                                    <Bot className="w-3 h-3 text-slate-500" />
+                                  </div>
+                                )}
+                              </div>
+                            )
+                          })}
+                          {enabledAgents.length > 5 && (
+                            <span className="text-[10px] text-slate-500 ml-1.5">+{enabledAgents.length - 5}</span>
+                          )}
+                        </div>
+                        <span className="text-[10px] text-slate-600">
+                          {enabledAgents.length} agents
+                        </span>
+                      </div>
+                      {/* Mini flow preview dots */}
+                      <div className="flex items-center gap-0.5 mt-2">
+                        {enabledAgents.slice(0, 6).map((agent, i) => {
+                          const agentColor = getAgentById(agent.role)?.color || '#64748b'
+                          return (
+                            <div key={agent.role} className="flex items-center">
+                              <div
+                                className="w-1.5 h-1.5 rounded-full"
+                                style={{ backgroundColor: agentColor }}
+                              />
+                              {i < Math.min(enabledAgents.length, 6) - 1 && (
+                                <div className="w-3 h-px bg-slate-700" />
+                              )}
+                            </div>
+                          )
+                        })}
+                      </div>
+                    </div>
+                    <ArrowRight size={14} className="text-slate-600 group-hover:text-cyan-400 transition-colors mt-0.5 flex-shrink-0" />
+                  </div>
+                </div>
+              </Link>
+            )
+          })}
+        </div>
       </div>
 
       {/* Agent Detail Modal */}

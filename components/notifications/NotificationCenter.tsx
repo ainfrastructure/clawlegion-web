@@ -272,7 +272,7 @@ export function NotificationCenter() {
               <kbd className="px-1 py-0.5 bg-white/[0.04] rounded text-[9px] font-mono">N</kbd> toggle
             </span>
             <Link
-              href="/notifications"
+              href="/audit?view=activity"
               onClick={() => setIsOpen(false)}
               className="flex items-center gap-1 text-[11px] font-medium text-slate-400 hover:text-white transition-colors"
             >

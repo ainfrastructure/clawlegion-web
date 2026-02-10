@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react'
 import {
-  Paintbrush,
   Moon,
   Sun,
   Monitor,
@@ -11,7 +10,6 @@ import {
   VolumeX,
   Smartphone,
   PanelLeftClose,
-  User,
   Save,
 } from 'lucide-react'
 
@@ -40,11 +38,95 @@ function Toggle({ checked, onChange }: { checked: boolean; onChange: (v: boolean
     <button
       type="button"
       onClick={() => onChange(!checked)}
-      className={`w-10 h-6 rounded-full transition-colors ${checked ? 'bg-blue-500' : 'bg-slate-700'}`}
+      className={`w-11 h-6 rounded-full transition-all duration-200 ${checked ? 'bg-blue-500 shadow-lg shadow-blue-500/20' : 'bg-slate-700'}`}
     >
       <div
-        className={`w-4 h-4 bg-white rounded-full transition-transform mx-1 ${checked ? 'translate-x-4' : 'translate-x-0'}`}
+        className={`bg-white rounded-full transition-transform shadow-sm`}
+        style={{ width: '18px', height: '18px', marginTop: '3px', marginLeft: checked ? '22px' : '3px' }}
       />
+    </button>
+  )
+}
+
+function ToggleRow({
+  icon,
+  label,
+  description,
+  checked,
+  onChange,
+}: {
+  icon: React.ReactNode
+  label: string
+  description: string
+  checked: boolean
+  onChange: (v: boolean) => void
+}) {
+  return (
+    <div className="flex items-center justify-between py-3">
+      <div className="flex items-center gap-3">
+        <div className="p-1.5 rounded-lg bg-white/[0.04]">
+          {icon}
+        </div>
+        <div>
+          <span className="text-sm text-white">{label}</span>
+          <p className="text-xs text-slate-500">{description}</p>
+        </div>
+      </div>
+      <Toggle checked={checked} onChange={onChange} />
+    </div>
+  )
+}
+
+function ThemeCard({
+  value,
+  icon,
+  label,
+  isActive,
+  onClick,
+}: {
+  value: string
+  icon: React.ReactNode
+  label: string
+  isActive: boolean
+  onClick: () => void
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={`flex-1 relative rounded-2xl border-2 transition-all duration-200 overflow-hidden ${
+        isActive
+          ? 'border-blue-500/50 shadow-lg shadow-blue-500/10'
+          : 'border-white/[0.06] hover:border-white/[0.12]'
+      }`}
+    >
+      {/* Mini preview mockup */}
+      <div className={`p-3 ${value === 'light' ? 'bg-slate-200' : 'bg-slate-900'}`}>
+        <div className="flex gap-1.5 mb-2">
+          <div className={`w-1.5 h-1.5 rounded-full ${value === 'light' ? 'bg-red-400' : 'bg-red-500/60'}`} />
+          <div className={`w-1.5 h-1.5 rounded-full ${value === 'light' ? 'bg-amber-400' : 'bg-amber-500/60'}`} />
+          <div className={`w-1.5 h-1.5 rounded-full ${value === 'light' ? 'bg-green-400' : 'bg-green-500/60'}`} />
+        </div>
+        <div className="flex gap-2">
+          <div className={`w-6 rounded ${value === 'light' ? 'bg-slate-300 h-8' : 'bg-slate-800 h-8'}`} />
+          <div className="flex-1 space-y-1.5">
+            <div className={`h-1.5 rounded-full w-3/4 ${value === 'light' ? 'bg-slate-300' : 'bg-slate-700'}`} />
+            <div className={`h-1.5 rounded-full w-1/2 ${value === 'light' ? 'bg-slate-300' : 'bg-slate-700'}`} />
+            <div className={`h-1.5 rounded-full w-2/3 ${value === 'light' ? 'bg-slate-300' : 'bg-slate-700'}`} />
+          </div>
+        </div>
+        {value === 'system' && (
+          <div className="absolute inset-0 pointer-events-none" style={{
+            background: 'linear-gradient(135deg, transparent 49.5%, rgba(255,255,255,0.08) 49.5%, rgba(255,255,255,0.08) 50.5%, transparent 50.5%)'
+          }} />
+        )}
+      </div>
+      {/* Label */}
+      <div className={`flex items-center justify-center gap-2 px-3 py-2.5 text-sm font-medium ${
+        isActive ? 'text-blue-400' : 'text-slate-400'
+      }`}>
+        {icon}
+        {label}
+      </div>
     </button>
   )
 }
@@ -87,119 +169,107 @@ export function AppearanceTab() {
 
   return (
     <div>
-      <h2 className="text-lg sm:text-xl font-semibold text-white flex items-center gap-2 mb-4">
-        <Paintbrush className="text-pink-400" /> Appearance
-      </h2>
-
       {/* Theme */}
-      <div className="glass-2 rounded-xl p-5 mb-4">
-        <h3 className="text-sm font-semibold text-white mb-3">Theme</h3>
-        <div className="flex gap-2">
-          {([
-            { value: 'dark' as const, icon: <Moon className="w-4 h-4" />, label: 'Dark' },
-            { value: 'light' as const, icon: <Sun className="w-4 h-4" />, label: 'Light' },
-            { value: 'system' as const, icon: <Monitor className="w-4 h-4" />, label: 'System' },
-          ]).map((option) => (
-            <button
-              key={option.value}
-              onClick={() => update('theme', option.value)}
-              className={`flex-1 flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg transition-colors text-sm ${
-                settings.theme === option.value
-                  ? 'bg-blue-500/20 text-blue-400 border border-blue-500/50'
-                  : 'bg-slate-800/50 text-slate-400 border border-white/[0.06] hover:border-slate-600'
-              }`}
-            >
-              {option.icon}
-              {option.label}
-            </button>
-          ))}
+      <div className="glass-2 rounded-2xl p-5 sm:p-6 mb-4">
+        <h3 className="text-sm font-semibold text-white mb-4">Theme</h3>
+        <div className="flex gap-3">
+          <ThemeCard
+            value="dark"
+            icon={<Moon className="w-4 h-4" />}
+            label="Dark"
+            isActive={settings.theme === 'dark'}
+            onClick={() => update('theme', 'dark')}
+          />
+          <ThemeCard
+            value="light"
+            icon={<Sun className="w-4 h-4" />}
+            label="Light"
+            isActive={settings.theme === 'light'}
+            onClick={() => update('theme', 'light')}
+          />
+          <ThemeCard
+            value="system"
+            icon={<Monitor className="w-4 h-4" />}
+            label="System"
+            isActive={settings.theme === 'system'}
+            onClick={() => update('theme', 'system')}
+          />
         </div>
       </div>
 
       {/* Display */}
-      <div className="glass-2 rounded-xl p-5 mb-4">
-        <h3 className="text-sm font-semibold text-white mb-3">Display</h3>
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Smartphone className="w-4 h-4 text-slate-400" />
-              <div>
-                <span className="text-sm text-white">Compact mode</span>
-                <p className="text-xs text-slate-500">Reduce spacing throughout the UI</p>
-              </div>
-            </div>
-            <Toggle checked={settings.compactMode} onChange={(v) => update('compactMode', v)} />
-          </div>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <PanelLeftClose className="w-4 h-4 text-slate-400" />
-              <div>
-                <span className="text-sm text-white">Default sidebar collapsed</span>
-                <p className="text-xs text-slate-500">Start with the sidebar collapsed on load</p>
-              </div>
-            </div>
-            <Toggle checked={settings.sidebarCollapsed} onChange={(v) => update('sidebarCollapsed', v)} />
-          </div>
+      <div className="glass-2 rounded-2xl p-5 sm:p-6 mb-4">
+        <h3 className="text-sm font-semibold text-white mb-2">Display</h3>
+        <div className="divide-y divide-white/[0.04]">
+          <ToggleRow
+            icon={<Smartphone className="w-4 h-4 text-slate-400" />}
+            label="Compact mode"
+            description="Reduce spacing throughout the UI"
+            checked={settings.compactMode}
+            onChange={(v) => update('compactMode', v)}
+          />
+          <ToggleRow
+            icon={<PanelLeftClose className="w-4 h-4 text-slate-400" />}
+            label="Default sidebar collapsed"
+            description="Start with the sidebar collapsed on load"
+            checked={settings.sidebarCollapsed}
+            onChange={(v) => update('sidebarCollapsed', v)}
+          />
         </div>
       </div>
 
       {/* Notifications */}
-      <div className="glass-2 rounded-xl p-5 mb-4">
-        <h3 className="text-sm font-semibold text-white mb-3">Notifications</h3>
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Bell className="w-4 h-4 text-slate-400" />
-              <div>
-                <span className="text-sm text-white">Enable notifications</span>
-                <p className="text-xs text-slate-500">Browser notifications for task updates</p>
-              </div>
-            </div>
-            <Toggle checked={settings.notifications} onChange={(v) => update('notifications', v)} />
-          </div>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              {settings.sounds ? (
-                <Volume2 className="w-4 h-4 text-slate-400" />
-              ) : (
-                <VolumeX className="w-4 h-4 text-slate-400" />
-              )}
-              <div>
-                <span className="text-sm text-white">Sound effects</span>
-                <p className="text-xs text-slate-500">Play sounds on task completion and alerts</p>
-              </div>
-            </div>
-            <Toggle checked={settings.sounds} onChange={(v) => update('sounds', v)} />
-          </div>
+      <div className="glass-2 rounded-2xl p-5 sm:p-6 mb-4">
+        <h3 className="text-sm font-semibold text-white mb-2">Notifications</h3>
+        <div className="divide-y divide-white/[0.04]">
+          <ToggleRow
+            icon={<Bell className="w-4 h-4 text-slate-400" />}
+            label="Enable notifications"
+            description="Browser notifications for task updates"
+            checked={settings.notifications}
+            onChange={(v) => update('notifications', v)}
+          />
+          <ToggleRow
+            icon={settings.sounds
+              ? <Volume2 className="w-4 h-4 text-slate-400" />
+              : <VolumeX className="w-4 h-4 text-slate-400" />
+            }
+            label="Sound effects"
+            description="Play sounds on task completion and alerts"
+            checked={settings.sounds}
+            onChange={(v) => update('sounds', v)}
+          />
         </div>
       </div>
 
       {/* Identity */}
-      <div className="glass-2 rounded-xl p-5 mb-4">
-        <h3 className="text-sm font-semibold text-white mb-3">Identity</h3>
-        <div>
-          <div className="flex items-center gap-3 mb-2">
-            <User className="w-4 h-4 text-slate-400" />
-            <label className="text-sm text-white">Agent ID</label>
+      <div className="glass-2 rounded-2xl p-5 sm:p-6 mb-5">
+        <h3 className="text-sm font-semibold text-white mb-4">Identity</h3>
+        <div className="flex items-center gap-4">
+          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-pink-500/20 to-purple-500/20 border border-white/[0.08] flex items-center justify-center text-lg font-bold text-pink-400 flex-shrink-0">
+            {settings.agentId.charAt(0).toUpperCase()}
           </div>
-          <input
-            type="text"
-            value={settings.agentId}
-            onChange={(e) => update('agentId', e.target.value)}
-            className="w-full px-3 py-2 bg-slate-800/50 border border-white/[0.06] rounded-lg text-white text-sm focus:outline-none focus:border-blue-500/50 transition-colors"
-            placeholder="dashboard-user"
-          />
-          <p className="text-xs text-slate-500 mt-1">Used for @mentions and task assignments</p>
+          <div className="flex-1 min-w-0">
+            <label className="text-xs text-slate-400 mb-1.5 block font-medium">Agent ID</label>
+            <input
+              type="text"
+              value={settings.agentId}
+              onChange={(e) => update('agentId', e.target.value)}
+              className="w-full px-3 py-2 bg-slate-800/40 border border-white/[0.08] rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500/40 transition-all"
+              placeholder="dashboard-user"
+            />
+            <p className="text-xs text-slate-500 mt-1">Used for @mentions and task assignments</p>
+          </div>
         </div>
       </div>
 
       {/* Save */}
       <button
         onClick={handleSave}
-        className={`w-full sm:w-auto px-6 py-2.5 rounded-lg font-medium transition-colors flex items-center justify-center gap-2 ${
+        className={`w-full sm:w-auto px-6 py-2.5 rounded-xl font-medium transition-all flex items-center justify-center gap-2 ${
           saved
-            ? 'bg-green-500/20 text-green-400'
-            : 'bg-blue-600 hover:bg-blue-700 text-white'
+            ? 'bg-green-500/15 text-green-400 border border-green-500/20'
+            : 'bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-500/10'
         }`}
       >
         {saved ? 'Saved!' : <><Save className="w-4 h-4" /> Save Preferences</>}

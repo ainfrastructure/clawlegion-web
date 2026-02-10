@@ -25,7 +25,6 @@ const routeNames: Record<string, string> = {
   fleet: 'Fleet',
   org: 'Organization',
   sprint: 'Sprint',
-  watchdog: 'Watchdog',
   loops: 'Loops',
   health: 'Health',
   approvals: 'Approvals',

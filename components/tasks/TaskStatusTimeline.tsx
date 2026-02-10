@@ -157,13 +157,12 @@ export function TaskStatusTimeline({
           return (
             <div key={status.key} className="flex items-stretch flex-1 min-w-0 relative">
               {/* Phase card */}
-              <button
-                onClick={() => onStatusClick?.(status.key)}
+              <div
                 onMouseEnter={() => (isComplete || isCurrent) && setHoveredPhase(status.key)}
                 onMouseLeave={() => setHoveredPhase(null)}
                 className={`
                   flex-1 min-w-0 rounded-xl p-2.5 flex flex-col items-center gap-1.5
-                  transition-all duration-300 cursor-pointer group relative
+                  transition-all duration-300 group relative
                   ${isComplete ? 'bg-emerald-500/[0.08] border border-emerald-500/[0.15] hover:bg-emerald-500/[0.12]' : ''}
                   ${isCurrent ? 'bg-blue-500/[0.12] border border-blue-500/[0.2] shadow-[0_0_20px_-4px_rgb(59_130_246/0.3)] animate-glow-pulse' : ''}
                   ${isPending ? 'bg-white/[0.02] border border-transparent opacity-40' : ''}
@@ -209,7 +208,7 @@ export function TaskStatusTimeline({
                     {duration}
                   </span>
                 )}
-              </button>
+              </div>
 
               {/* Hover popover */}
               {isHovered && (isComplete || isCurrent) && (

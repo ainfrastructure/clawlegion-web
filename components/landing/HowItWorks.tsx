@@ -1,104 +1,258 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
-import { CheckCircle2, XCircle, RotateCcw, GitMerge, ChevronRight } from 'lucide-react'
+import { useEffect, useRef, useState, useCallback } from 'react'
+import { CheckCircle2, XCircle, ChevronRight } from 'lucide-react'
 import Image from 'next/image'
 
-/* ─── Agent data ─── */
-const AGENTS = [
-  {
-    id: 'archie',
-    name: 'Archie',
+/* ─── Agent pool — all available pipeline agents ─── */
+
+type Agent = {
+  id: string
+  name: string
+  role: string
+  color: string
+  avatar: string
+  avatarType: 'svg' | 'png'
+}
+
+const AGENT_POOL: Record<string, Agent> = {
+  athena: {
+    id: 'athena',
+    name: 'Athena',
     role: 'Planner',
-    color: '#3B82F6',
-    avatar: '/agents/archie.svg',
-    avatarType: 'svg' as const,
-    description: 'Decomposes tasks into implementation plans',
+    color: '#06B6D4',
+    avatar: '/agents/athena.png',
+    avatarType: 'png',
   },
-  {
+  scout: {
     id: 'scout',
     name: 'Scout',
     role: 'Researcher',
     color: '#06B6D4',
     avatar: '/agents/scout-researcher.png',
-    avatarType: 'png' as const,
-    description: 'Investigates APIs & technical discovery',
+    avatarType: 'png',
   },
-  {
-    id: 'mason',
-    name: 'Mason',
+  vulcan: {
+    id: 'vulcan',
+    name: 'Vulcan',
     role: 'Builder',
     color: '#F59E0B',
-    avatar: '/agents/builder.svg',
-    avatarType: 'svg' as const,
-    description: 'Implements code & constructs features',
+    avatar: '/agents/vulcan.png',
+    avatarType: 'png',
   },
-  {
+  vex: {
     id: 'vex',
     name: 'Vex',
     role: 'Verifier',
     color: '#8B5CF6',
     avatar: '/agents/verifier.svg',
-    avatarType: 'svg' as const,
-    description: 'Runtime verification with visual proof',
+    avatarType: 'svg',
+  },
+  forge: {
+    id: 'forge',
+    name: 'Forge',
+    role: 'DevOps Engineer',
+    color: '#FF6B00',
+    avatar: '/agents/forge-avatar.jpg',
+    avatarType: 'png',
+  },
+  echo: {
+    id: 'echo',
+    name: 'Echo',
+    role: 'Comms Manager',
+    color: '#3B82F6',
+    avatar: '/agents/echo-avatar.jpg',
+    avatarType: 'png',
+  },
+  quill: {
+    id: 'quill',
+    name: 'Quill',
+    role: 'Content Creator',
+    color: '#F97316',
+    avatar: '/agents/quill-writer.svg',
+    avatarType: 'svg',
+  },
+  pixel: {
+    id: 'pixel',
+    name: 'Pixel',
+    role: 'Creative Director',
+    color: '#D946EF',
+    avatar: '/agents/pixel-designer.svg',
+    avatarType: 'svg',
+  },
+  sage: {
+    id: 'sage',
+    name: 'Sage',
+    role: 'Data Analyst',
+    color: '#14B8A6',
+    avatar: '/agents/sage-analyst.svg',
+    avatarType: 'svg',
+  },
+}
+
+/* ─── Template data ─── */
+
+type Outcome = {
+  label: string
+  action: string
+}
+
+type Template = {
+  name: string
+  emoji: string
+  tagline: string
+  pipeline: string[]
+  descriptions: Record<string, string>
+  outcomes: { success: Outcome; failure: Outcome }
+}
+
+const TEMPLATES: Template[] = [
+  {
+    name: 'Software Development',
+    emoji: '🚀',
+    tagline: 'From issue to shipped code — fully automated',
+    pipeline: ['athena', 'scout', 'vulcan', 'vex'],
+    descriptions: {
+      caesar: 'Routes tasks & manages the pipeline',
+      athena: 'Decomposes tasks into implementation plans',
+      scout: 'Investigates APIs & technical discovery',
+      vulcan: 'Implements code & constructs features',
+      vex: 'Runtime verification with visual proof',
+    },
+    outcomes: {
+      success: { label: 'Pass', action: 'Merge' },
+      failure: { label: 'Fail', action: 'Retry' },
+    },
+  },
+  {
+    name: 'Content Marketing',
+    emoji: '📝',
+    tagline: 'One brief in, a week of content out',
+    pipeline: ['scout', 'quill', 'pixel', 'echo'],
+    descriptions: {
+      caesar: 'Routes briefs & coordinates the content pipeline',
+      scout: 'Researches trending topics & competitors',
+      quill: 'Writes blog posts, social copy, newsletters',
+      pixel: 'Designs graphics, thumbnails, and brand assets',
+      echo: 'Distributes content across all channels',
+    },
+    outcomes: {
+      success: { label: 'Approved', action: 'Publish' },
+      failure: { label: 'Revisions', action: 'Redraft' },
+    },
+  },
+  {
+    name: 'Market Research & Analysis',
+    emoji: '🔬',
+    tagline: 'Data-driven insights on autopilot',
+    pipeline: ['scout', 'sage', 'athena', 'quill'],
+    descriptions: {
+      caesar: 'Coordinates research streams & deliverables',
+      scout: 'Gathers market data, competitor intel, surveys',
+      sage: 'Analyzes trends, correlations, and key metrics',
+      athena: 'Structures findings into report frameworks',
+      quill: 'Writes executive summaries and slide decks',
+    },
+    outcomes: {
+      success: { label: 'Validated', action: 'Deliver' },
+      failure: { label: 'Gaps Found', action: 'Deep Dive' },
+    },
+  },
+  {
+    name: 'Product Launch',
+    emoji: '🎯',
+    tagline: 'From positioning to launch day — orchestrated',
+    pipeline: ['sage', 'athena', 'pixel', 'echo'],
+    descriptions: {
+      caesar: 'Manages the launch timeline & coordinates teams',
+      sage: 'Analyzes market fit & competitor positioning',
+      athena: 'Plans launch timeline, channels, messaging',
+      pixel: 'Creates landing pages, ads, and visual assets',
+      echo: 'Handles PR outreach, emails, and announcements',
+    },
+    outcomes: {
+      success: { label: 'Ready', action: 'Launch' },
+      failure: { label: 'Not Ready', action: 'Iterate' },
+    },
+  },
+  {
+    name: 'Operations & Compliance',
+    emoji: '📋',
+    tagline: 'Streamline processes, enforce standards',
+    pipeline: ['scout', 'athena', 'forge', 'vex'],
+    descriptions: {
+      caesar: 'Oversees operational workflows & compliance',
+      scout: 'Audits current processes & regulations',
+      athena: 'Creates compliance checklists & SOPs',
+      forge: 'Implements automation & infrastructure tooling',
+      vex: 'Validates completeness & flags compliance gaps',
+    },
+    outcomes: {
+      success: { label: 'Compliant', action: 'Certify' },
+      failure: { label: 'Violations', action: 'Remediate' },
+    },
   },
 ]
 
-const JARVIS = {
-  id: 'jarvis',
-  name: 'Jarvis',
+function getTemplateAgents(template: Template): Agent[] {
+  return template.pipeline.map((id) => AGENT_POOL[id])
+}
+
+const CAESAR = {
+  id: 'caesar',
+  name: 'Caesar',
   role: 'Orchestrator',
   color: '#DC2626',
-  avatar: '/agents/jarvis-lobster.svg',
-  description: 'Routes tasks & manages the pipeline',
+  avatar: '/agents/caesar.png',
 }
 
 /* ─── Sub-components ─── */
 
-function OrchestratorCard({ visible }: { visible: boolean }) {
+function SlideOrchestratorCard({ template, visible }: { template: Template; visible: boolean }) {
   return (
     <div
-      className={`relative flex flex-col items-center transition-all duration-700 ${
+      className={`flex flex-col items-center transition-all duration-700 ${
         visible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-6'
       }`}
     >
       <div
         className="glass-2 rounded-2xl p-5 flex items-center gap-4 animate-card-breathe w-full max-w-xs"
         style={{
-          boxShadow: `0 0 24px -4px ${JARVIS.color}33, 0 0 8px -2px ${JARVIS.color}22`,
-          borderColor: `${JARVIS.color}30`,
+          boxShadow: `0 0 24px -4px ${CAESAR.color}33, 0 0 8px -2px ${CAESAR.color}22`,
+          borderColor: `${CAESAR.color}30`,
         }}
       >
         <div
           className="w-14 h-14 rounded-xl overflow-hidden flex-shrink-0 flex items-center justify-center"
-          style={{ background: `${JARVIS.color}18` }}
+          style={{ background: `${CAESAR.color}18` }}
         >
           <Image
-            src={JARVIS.avatar}
-            alt={JARVIS.name}
+            src={CAESAR.avatar}
+            alt={CAESAR.name}
             width={40}
             height={40}
             className="object-contain"
+            loading="eager"
           />
         </div>
         <div className="min-w-0">
           <div className="flex items-center gap-2">
-            <span className="text-white font-semibold text-sm">{JARVIS.name}</span>
+            <span className="text-white font-semibold text-sm">{CAESAR.name}</span>
             <span
               className="text-[10px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded"
-              style={{ color: JARVIS.color, background: `${JARVIS.color}18` }}
+              style={{ color: CAESAR.color, background: `${CAESAR.color}18` }}
             >
-              {JARVIS.role}
+              {CAESAR.role}
             </span>
           </div>
-          <p className="text-xs text-slate-400 mt-1">{JARVIS.description}</p>
+          <p className="text-xs text-slate-400 mt-1">{template.descriptions.caesar}</p>
         </div>
       </div>
     </div>
   )
 }
 
-function OversightLine({ visible }: { visible: boolean }) {
+function SlideOversightLine({ visible }: { visible: boolean }) {
   return (
     <div
       className={`flex justify-center py-3 transition-all duration-500 delay-200 ${
@@ -106,24 +260,26 @@ function OversightLine({ visible }: { visible: boolean }) {
       }`}
     >
       <div className="flex flex-col items-center gap-1">
-        <div className="w-px h-8 border-l border-dashed" style={{ borderColor: `${JARVIS.color}40` }} />
+        <div className="w-px h-8 border-l border-dashed" style={{ borderColor: `${CAESAR.color}40` }} />
         <div
           className="w-1.5 h-1.5 rounded-full animate-glow-border-pulse"
-          style={{ background: JARVIS.color }}
+          style={{ background: CAESAR.color }}
         />
       </div>
     </div>
   )
 }
 
-function AgentCard({
+function SlideAgentCard({
   agent,
   index,
   visible,
+  description,
 }: {
-  agent: (typeof AGENTS)[0]
+  agent: Agent
   index: number
   visible: boolean
+  description: string
 }) {
   return (
     <div
@@ -138,7 +294,6 @@ function AgentCard({
           boxShadow: `0 0 20px -4px ${agent.color}22`,
         }}
       >
-        {/* Glow border on hover */}
         <div
           className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
           style={{
@@ -146,33 +301,19 @@ function AgentCard({
             borderRadius: 'inherit',
           }}
         />
-
-        {/* Avatar */}
         <div
           className="w-16 h-16 rounded-xl overflow-hidden flex items-center justify-center mb-3 relative"
           style={{ background: `${agent.color}12` }}
         >
-          {agent.avatarType === 'svg' ? (
-            <Image
-              src={agent.avatar}
-              alt={agent.name}
-              width={44}
-              height={44}
-              className="object-contain"
-            />
-          ) : (
-            <Image
-              src={agent.avatar}
-              alt={agent.name}
-              width={44}
-              height={44}
-              className="object-cover rounded-lg"
-              loading="lazy"
-            />
-          )}
+          <Image
+            src={agent.avatar}
+            alt={agent.name}
+            width={44}
+            height={44}
+            className={agent.avatarType === 'svg' ? 'object-contain' : 'object-cover rounded-lg'}
+            loading="eager"
+          />
         </div>
-
-        {/* Name + role */}
         <span className="text-white font-semibold text-sm">{agent.name}</span>
         <span
           className="text-[10px] font-mono uppercase tracking-wider mt-1 px-2 py-0.5 rounded"
@@ -180,15 +321,13 @@ function AgentCard({
         >
           {agent.role}
         </span>
-
-        {/* Description */}
-        <p className="text-xs text-slate-400 mt-2 leading-relaxed">{agent.description}</p>
+        <p className="text-xs text-slate-400 mt-2 leading-relaxed">{description}</p>
       </div>
     </div>
   )
 }
 
-function ConnectionArrow({ color, delay = 0, visible }: { color: string; delay?: number; visible: boolean }) {
+function SlideConnectionArrow({ color, delay = 0, visible }: { color: string; delay?: number; visible: boolean }) {
   return (
     <div
       className={`hidden md:flex items-center justify-center transition-opacity duration-500 ${
@@ -197,12 +336,10 @@ function ConnectionArrow({ color, delay = 0, visible }: { color: string; delay?:
       style={{ transitionDelay: `${delay}ms` }}
     >
       <div className="relative w-12 flex items-center">
-        {/* Line */}
         <div
           className="absolute inset-y-1/2 left-0 right-0 h-px"
           style={{ background: `${color}40` }}
         />
-        {/* Flowing particle */}
         <div
           className="absolute w-1.5 h-1.5 rounded-full animate-flow-particle"
           style={{
@@ -213,7 +350,6 @@ function ConnectionArrow({ color, delay = 0, visible }: { color: string; delay?:
             animationDelay: `${delay}ms`,
           }}
         />
-        {/* Arrow tip */}
         <ChevronRight
           className="absolute -right-1 w-3 h-3"
           style={{ color: `${color}80` }}
@@ -223,7 +359,7 @@ function ConnectionArrow({ color, delay = 0, visible }: { color: string; delay?:
   )
 }
 
-function MobileFlowArrow({ color, visible }: { color: string; visible: boolean }) {
+function SlideMobileFlowArrow({ color, visible }: { color: string; visible: boolean }) {
   return (
     <div
       className={`flex md:hidden justify-center py-2 transition-opacity duration-500 ${
@@ -244,7 +380,7 @@ function MobileFlowArrow({ color, visible }: { color: string; visible: boolean }
   )
 }
 
-function BranchFork({ visible }: { visible: boolean }) {
+function SlideBranchFork({ visible, outcomes }: { visible: boolean; outcomes: Template['outcomes'] }) {
   return (
     <div
       className={`mt-6 transition-all duration-700 ${
@@ -252,45 +388,101 @@ function BranchFork({ visible }: { visible: boolean }) {
       }`}
       style={{ transitionDelay: '900ms' }}
     >
-      {/* Fork stem */}
       <div className="flex justify-center mb-4">
         <div className="flex flex-col items-center">
           <div className="w-px h-6 bg-purple-500/30" />
           <div className="w-2 h-2 rounded-full bg-purple-500/50" />
         </div>
       </div>
-
-      {/* Pass / Fail branches */}
       <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8">
-        {/* Pass → Merge */}
         <div className="glass-2 rounded-xl px-5 py-3 flex items-center gap-3 group hover:scale-[1.03] transition-transform"
           style={{ boxShadow: '0 0 16px -4px rgb(34 197 94 / 0.2)' }}
         >
           <CheckCircle2 className="w-5 h-5 text-emerald-400 flex-shrink-0" />
           <div>
-            <span className="text-xs font-semibold text-emerald-400">Pass</span>
+            <span className="text-xs font-semibold text-emerald-400">{outcomes.success.label}</span>
             <span className="text-slate-500 mx-2">→</span>
-            <GitMerge className="w-4 h-4 text-emerald-400 inline" />
-            <span className="text-xs text-slate-300 ml-1">Merge</span>
+            <span className="text-xs text-slate-300">{outcomes.success.action}</span>
           </div>
         </div>
-
-        {/* Divider */}
         <span className="text-xs text-slate-600 font-mono">or</span>
-
-        {/* Fail → Retry */}
         <div className="glass-2 rounded-xl px-5 py-3 flex items-center gap-3 group hover:scale-[1.03] transition-transform"
           style={{ boxShadow: '0 0 16px -4px rgb(239 68 68 / 0.2)' }}
         >
           <XCircle className="w-5 h-5 text-red-400 flex-shrink-0" />
           <div>
-            <span className="text-xs font-semibold text-red-400">Fail</span>
+            <span className="text-xs font-semibold text-red-400">{outcomes.failure.label}</span>
             <span className="text-slate-500 mx-2">→</span>
-            <RotateCcw className="w-4 h-4 text-red-400 inline" />
-            <span className="text-xs text-slate-300 ml-1">Retry</span>
+            <span className="text-xs text-slate-300">{outcomes.failure.action}</span>
           </div>
         </div>
       </div>
+    </div>
+  )
+}
+
+/** A complete pipeline visualization for one template */
+function SlideContent({ template, visible }: { template: Template; visible: boolean }) {
+  const agents = getTemplateAgents(template)
+
+  return (
+    <div className="flex-shrink-0 px-2" style={{ width: '10%' }}>
+      {/* Template label */}
+      <div className="text-center mb-6">
+        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-2 border border-white/[0.06]">
+          <span className="text-sm font-semibold text-white">{template.name}</span>
+        </div>
+        <p className="text-sm text-slate-500 mt-2 italic">{template.tagline}</p>
+      </div>
+
+      {/* Orchestrator */}
+      <SlideOrchestratorCard template={template} visible={visible} />
+
+      {/* Oversight line */}
+      <SlideOversightLine visible={visible} />
+
+      {/* Agent pipeline — Desktop: horizontal, Mobile: vertical */}
+      <div className="hidden md:flex items-center justify-center">
+        {agents.map((agent, i) => (
+          <div key={agent.id} className="flex items-center">
+            <div className="w-[180px]">
+              <SlideAgentCard
+                agent={agent}
+                index={i}
+                visible={visible}
+                description={template.descriptions[agent.id]}
+              />
+            </div>
+            {i < agents.length - 1 && (
+              <SlideConnectionArrow
+                color={agent.color}
+                delay={400 + i * 150}
+                visible={visible}
+              />
+            )}
+          </div>
+        ))}
+      </div>
+
+      {/* Mobile vertical stack */}
+      <div className="flex md:hidden flex-col items-center">
+        {agents.map((agent, i) => (
+          <div key={agent.id} className="w-full max-w-[220px]">
+            <SlideAgentCard
+              agent={agent}
+              index={i}
+              visible={visible}
+              description={template.descriptions[agent.id]}
+            />
+            {i < agents.length - 1 && (
+              <SlideMobileFlowArrow color={agent.color} visible={visible} />
+            )}
+          </div>
+        ))}
+      </div>
+
+      {/* Branch fork */}
+      <SlideBranchFork visible={visible} outcomes={template.outcomes} />
     </div>
   )
 }
@@ -300,7 +492,21 @@ function BranchFork({ visible }: { visible: boolean }) {
 export function HowItWorks() {
   const sectionRef = useRef<HTMLDivElement>(null)
   const [visible, setVisible] = useState(false)
+  const [entryDone, setEntryDone] = useState(false)
+  const [paused, setPaused] = useState(false)
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false)
+  const [reducedMotionIdx, setReducedMotionIdx] = useState(0)
 
+  // Detect prefers-reduced-motion
+  useEffect(() => {
+    const mql = window.matchMedia('(prefers-reduced-motion: reduce)')
+    setPrefersReducedMotion(mql.matches)
+    const handler = (e: MediaQueryListEvent) => setPrefersReducedMotion(e.matches)
+    mql.addEventListener('change', handler)
+    return () => mql.removeEventListener('change', handler)
+  }, [])
+
+  // Visibility observer
   useEffect(() => {
     const el = sectionRef.current
     if (!el) return
@@ -319,14 +525,34 @@ export function HowItWorks() {
     return () => observer.disconnect()
   }, [])
 
+  // After entry animations complete, start the CSS scroll
+  useEffect(() => {
+    if (!visible) return
+    const timeout = setTimeout(() => setEntryDone(true), 1500)
+    return () => clearTimeout(timeout)
+  }, [visible])
+
+  // Hover pause/resume
+  const handleMouseEnter = useCallback(() => setPaused(true), [])
+  const handleMouseLeave = useCallback(() => setPaused(false), [])
+
+  // Reduced-motion fallback: discrete rotation
+  useEffect(() => {
+    if (!prefersReducedMotion || !entryDone || paused) return
+    const interval = setInterval(() => {
+      setReducedMotionIdx((prev) => (prev + 1) % TEMPLATES.length)
+    }, 5000)
+    return () => clearInterval(interval)
+  }, [prefersReducedMotion, entryDone, paused])
+
   return (
     <section
       ref={sectionRef}
       id="pipeline"
-      className="px-4 sm:px-6 py-24 border-t border-white/[0.04]"
+      className="py-24 border-t border-white/[0.04] overflow-hidden"
     >
-      <div className="max-w-5xl mx-auto">
-        {/* Header */}
+      {/* Header — constrained */}
+      <div className="max-w-5xl mx-auto px-4 sm:px-6">
         <div
           className={`text-center mb-14 transition-all duration-700 ${
             visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
@@ -342,52 +568,41 @@ export function HowItWorks() {
             </span>
           </div>
           <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4 tracking-tight">
-            Meet your AI workforce
+            One Team. Any Workflow.
           </h2>
           <p className="text-lg text-slate-400 max-w-xl mx-auto">
-            Five specialized agents working in concert. Each task flows through the pipeline automatically.
+            Five specialized agents working in concert. Watch them adapt to any industry.
           </p>
         </div>
-
-        {/* Orchestrator */}
-        <OrchestratorCard visible={visible} />
-
-        {/* Oversight line */}
-        <OversightLine visible={visible} />
-
-        {/* Agent pipeline — Desktop: horizontal, Mobile: vertical */}
-        <div className="hidden md:flex items-center justify-center">
-          {AGENTS.map((agent, i) => (
-            <div key={agent.id} className="flex items-center">
-              <div className="w-[180px]">
-                <AgentCard agent={agent} index={i} visible={visible} />
-              </div>
-              {i < AGENTS.length - 1 && (
-                <ConnectionArrow
-                  color={agent.color}
-                  delay={400 + i * 150}
-                  visible={visible}
-                />
-              )}
-            </div>
-          ))}
-        </div>
-
-        {/* Mobile vertical stack */}
-        <div className="flex md:hidden flex-col items-center">
-          {AGENTS.map((agent, i) => (
-            <div key={agent.id} className="w-full max-w-[220px]">
-              <AgentCard agent={agent} index={i} visible={visible} />
-              {i < AGENTS.length - 1 && (
-                <MobileFlowArrow color={agent.color} visible={visible} />
-              )}
-            </div>
-          ))}
-        </div>
-
-        {/* Branch fork */}
-        <BranchFork visible={visible} />
       </div>
+
+      {/* Pipeline strip — full width, edge to edge */}
+      {prefersReducedMotion ? (
+        <div className="max-w-5xl mx-auto px-4 sm:px-6">
+          <SlideContent
+            template={TEMPLATES[reducedMotionIdx]}
+            visible={visible}
+          />
+        </div>
+      ) : (
+        <div
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+        >
+          <div
+            className={`flex ${entryDone ? 'pipeline-strip' : ''} ${paused ? 'paused' : ''}`}
+            style={{ width: '500%' }}
+          >
+            {[...TEMPLATES, ...TEMPLATES].map((tmpl, i) => (
+              <SlideContent
+                key={`${tmpl.name}-${i < TEMPLATES.length ? 'a' : 'b'}`}
+                template={tmpl}
+                visible={visible}
+              />
+            ))}
+          </div>
+        </div>
+      )}
     </section>
   )
 }

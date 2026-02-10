@@ -7,17 +7,12 @@ import { PageContainer } from '@/components/layout'
 import { AgentCard, AgentCardWithActivity, type AgentData, type AgentStatus } from '@/components/agents'
 import { MetricCard } from '@/components/ui/MetricCard'
 import { MobileAgentScroller, type MobileAgentData } from '@/components/dashboard'
-import { AlertsFeed } from '@/components/watchdog/AlertsFeed'
-import { useWatchdogAlerts } from '@/hooks/useWatchdog'
 import { useMobile } from '@/hooks/useMobile'
 import { useSidebar } from '@/components/layout/SidebarContext'
 import Link from 'next/link'
 import {
   Cpu,
   CheckCircle2,
-  Clock,
-  AlertTriangle,
-  RefreshCw,
   Users,
   ListTodo,
   ArrowRight,
@@ -27,7 +22,6 @@ import {
   Shield,
   ShieldAlert,
   ShieldX,
-  Bell,
   Star,
   Zap,
 } from 'lucide-react'
@@ -216,7 +210,7 @@ export default function DashboardPage() {
   })
 
   // Fetch health data to derive actual online/offline status
-  const { data: healthData } = useQuery<{ agents: { id: string; reachable: boolean; latencyMs?: number }[] }>({
+  const { data: healthData } = useQuery<{ agents: { id: string; reachable: boolean; latencyMs?: number; busy?: boolean; activeTask?: string }[] }>({
     queryKey: ['agents-health'],
     queryFn: () => fetch('/api/agents/health').then(r => r.json()),
     refetchInterval: 30000,
@@ -229,10 +223,19 @@ export default function DashboardPage() {
   const agents = rawAgents.map((agent: any) => {
     const health = healthData?.agents?.find(h => h.id === agent.id || h.id === agent.name?.toLowerCase())
 
-    // Derive status from health check: reachable = online, else use raw status or offline
+    // Special case: Caesar is always reachable
+    const isCaesar = agent.id?.toLowerCase() === 'caesar' || agent.name?.toLowerCase() === 'caesar'
+    
+    // Derive status from health check
     let derivedStatus = agent.status || 'offline'
-    if (health?.reachable) {
-      derivedStatus = agent.currentTask || agent.currentTaskId ? 'busy' : 'online'
+    
+    if (isCaesar) {
+      // Caesar is always online, busy if there are any active tasks
+      const hasActiveTasks = health?.busy || agent.currentTask || agent.currentTaskId
+      derivedStatus = hasActiveTasks ? 'busy' : 'online'
+    } else if (health?.reachable) {
+      // Other agents: use health check result
+      derivedStatus = health.busy || agent.currentTask || agent.currentTaskId ? 'busy' : 'online'
     } else if (health && !health.reachable) {
       // Health check ran but agent not reachable
       derivedStatus = agent.status === 'rate_limited' ? 'rate_limited' : 'offline'
@@ -241,9 +244,22 @@ export default function DashboardPage() {
     return {
       ...agent,
       status: derivedStatus,
-      reachable: health?.reachable,
+      reachable: isCaesar || health?.reachable,
       latencyMs: health?.latencyMs,
+      busy: health?.busy,
+      activeTask: health?.activeTask,
     }
+  })
+
+  // Sort: core agents first (Caesar, Scout, Athena, Vulcan, Vex), then others alphabetically
+  const CORE_ORDER = ['caesar', 'scout', 'athena', 'vulcan', 'vex']
+  agents.sort((a: any, b: any) => {
+    const aIdx = CORE_ORDER.indexOf(a.id?.toLowerCase() || a.name?.toLowerCase())
+    const bIdx = CORE_ORDER.indexOf(b.id?.toLowerCase() || b.name?.toLowerCase())
+    if (aIdx !== -1 && bIdx !== -1) return aIdx - bIdx
+    if (aIdx !== -1) return -1
+    if (bIdx !== -1) return 1
+    return (a.name || '').localeCompare(b.name || '')
   })
 
   const { data: boardData } = useQuery({
@@ -263,14 +279,10 @@ export default function DashboardPage() {
     refetchInterval: 30000,
   })
 
-  // Watchdog alerts
-  const { data: alertsData, isLoading: alertsLoading } = useWatchdogAlerts(20)
-
   const activeAgents = agents.filter((a: any) => a.status === 'online' || a.status === 'busy').length
   const totalTasks = boardData?.stats?.total ?? 0
   const completedTasks = boardData?.stats?.completed ?? 0
   const inProgress = boardData?.stats?.inProgress ?? 0
-  const alerts = alertsData?.alerts ?? []
 
   const systemStatus = systemHealth?.status ?? 'unknown'
   const systemUptime = systemHealth?.uptime ?? 0
@@ -290,8 +302,6 @@ export default function DashboardPage() {
         activeAgents={activeAgents}
         completedTasks={completedTasks}
         inProgress={inProgress}
-        alerts={alerts}
-        alertsLoading={alertsLoading}
         systemStatus={systemStatus}
       />
     )
@@ -363,7 +373,7 @@ export default function DashboardPage() {
             <div className="text-slate-400">No agents registered</div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-              {agents.slice(0, 6).map((agent: any) => {
+              {agents.map((agent: any) => {
                 const agentData: AgentData = {
                   id: agent.id,
                   name: agent.name,
@@ -413,21 +423,6 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Alerts & Issues (replaces Live Activity) */}
-      <div className="mt-4 sm:mt-6">
-        {alerts.length === 0 && !alertsLoading ? (
-          <div className="glass-2 rounded-xl p-6 flex items-center justify-center gap-3 text-slate-400">
-            <CheckCircle2 size={20} className="text-green-500" />
-            <span>All tasks healthy — no alerts</span>
-          </div>
-        ) : (
-          <AlertsFeed
-            alerts={alerts}
-            isLoading={alertsLoading}
-            onViewTask={(taskId) => window.open(`/tasks?taskId=${taskId}`, '_self')}
-          />
-        )}
-      </div>
     </PageContainer>
   )
 }
@@ -504,8 +499,6 @@ interface MobileDashboardViewProps {
   activeAgents: number
   completedTasks: number
   inProgress: number
-  alerts: any[]
-  alertsLoading: boolean
   systemStatus: string
 }
 
@@ -516,13 +509,10 @@ function MobileDashboardView({
   activeAgents,
   completedTasks,
   inProgress,
-  alerts,
-  alertsLoading,
   systemStatus,
 }: MobileDashboardViewProps) {
   const [agentsExpanded, setAgentsExpanded] = useState(true)
   const [tasksExpanded, setTasksExpanded] = useState(true)
-  const [alertsExpanded, setAlertsExpanded] = useState(true)
 
   // Transform agents for mobile scroller
   const mobileAgents: MobileAgentData[] = agents.map((a: any) => ({
@@ -534,8 +524,6 @@ function MobileDashboardView({
     currentTask: a.currentTask || a.currentTaskId,
     color: a.color,
   }))
-
-  const unacknowledgedAlerts = alerts.filter((a: any) => !a.acknowledged)
 
   return (
     <PageContainer>
@@ -587,29 +575,6 @@ function MobileDashboardView({
         </div>
       </MobileSection>
 
-      {/* Alerts Section (replaces Activity) */}
-      <MobileSection
-        title="Alerts"
-        icon={<Bell size={16} className="text-amber-400" />}
-        count={unacknowledgedAlerts.length}
-        expanded={alertsExpanded}
-        onToggle={() => setAlertsExpanded(!alertsExpanded)}
-      >
-        {alertsLoading ? (
-          <div className="text-slate-400 text-center py-4 text-sm animate-pulse">Loading alerts...</div>
-        ) : unacknowledgedAlerts.length === 0 ? (
-          <div className="flex items-center justify-center gap-2 py-4 text-sm text-slate-400">
-            <CheckCircle2 size={16} className="text-green-500" />
-            All tasks healthy
-          </div>
-        ) : (
-          <div className="space-y-2">
-            {unacknowledgedAlerts.slice(0, 5).map((alert: any) => (
-              <MobileAlertRow key={alert.id} alert={alert} />
-            ))}
-          </div>
-        )}
-      </MobileSection>
     </PageContainer>
   )
 }
@@ -666,33 +631,6 @@ function MobileSection({ title, icon, count, expanded, onToggle, seeAllHref, chi
         </div>
       )}
     </div>
-  )
-}
-
-// ============================================
-// Mobile Alert Row
-// ============================================
-
-function MobileAlertRow({ alert }: { alert: any }) {
-  const typeConfig: Record<string, { icon: React.ReactNode; color: string }> = {
-    warning: { icon: <AlertTriangle size={14} className="text-yellow-400" />, color: 'text-yellow-400' },
-    stale: { icon: <Clock size={14} className="text-orange-400" />, color: 'text-orange-400' },
-    failed: { icon: <ShieldX size={14} className="text-red-400" />, color: 'text-red-400' },
-    retry_exhausted: { icon: <RefreshCw size={14} className="text-red-400" />, color: 'text-red-400' },
-  }
-  const cfg = typeConfig[alert.alertType] ?? typeConfig.warning
-
-  return (
-    <Link
-      href={`/tasks?taskId=${alert.taskId}`}
-      className="flex items-center gap-2 py-2 px-2 rounded bg-slate-900/30 active:bg-slate-800/50 transition-colors"
-    >
-      <span className="flex-shrink-0">{cfg.icon}</span>
-      <span className="text-xs text-slate-300 flex-1 min-w-0 truncate">
-        {alert.message}
-      </span>
-      <ArrowRight size={12} className="text-slate-500 flex-shrink-0" />
-    </Link>
   )
 }
 

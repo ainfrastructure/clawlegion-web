@@ -6,13 +6,13 @@ import type { Node, Edge } from '@xyflow/react';
 import type { AgentNodeData, AgentStatus } from './types';
 
 const AGENT_STEPS = [
-  { id: 'archie', name: 'Archie', role: 'Plan', avatar: '/agents/archie-planner.png', primaryColor: '#8B5CF6', secondaryColor: '#C4B5FD' },
-  { id: 'mason', name: 'Mason', role: 'Build', avatar: '/agents/mason-builder.png', primaryColor: '#F59E0B', secondaryColor: '#FCD34D' },
+  { id: 'athena', name: 'Athena', role: 'Plan', avatar: '/agents/athena.png', primaryColor: '#06B6D4', secondaryColor: '#67E8F9' },
+  { id: 'vulcan', name: 'Vulcan', role: 'Build', avatar: '/agents/vulcan.png', primaryColor: '#F59E0B', secondaryColor: '#FCD34D' },
   { id: 'sentinel', name: 'Sentinel', role: 'Scan', avatar: '/agents/scout-researcher.png', primaryColor: '#3B82F6', secondaryColor: '#93C5FD' },
-  { id: 'critic', name: 'Critic', role: 'Review', avatar: '/agents/archie-planner.png', primaryColor: '#991B1B', secondaryColor: '#FCA5A5' },
+  { id: 'critic', name: 'Critic', role: 'Review', avatar: '/agents/athena.png', primaryColor: '#991B1B', secondaryColor: '#FCA5A5' },
   { id: 'vex', name: 'Vex', role: 'Verify', avatar: '/agents/vex-verifier.png', primaryColor: '#10B981', secondaryColor: '#6EE7B7' },
   { id: 'deploy', name: 'Deploy', role: 'Deploy', avatar: '/agents/scout-researcher.png', primaryColor: '#EA580C', secondaryColor: '#FDBA74' },
-  { id: 'scribe', name: 'Scribe', role: 'Docs', avatar: '/agents/archie-planner.png', primaryColor: '#78350F', secondaryColor: '#D6BCAB' },
+  { id: 'scribe', name: 'Scribe', role: 'Docs', avatar: '/agents/athena.png', primaryColor: '#78350F', secondaryColor: '#D6BCAB' },
 ];
 
 interface UseWorkflowLayoutProps {

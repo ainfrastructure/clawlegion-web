@@ -10,7 +10,6 @@ const valueItems = [
   'Task orchestration & queue management',
   'Multi-agent coordination chat',
   'Interactive dependency graph',
-  'Health watchdog & alerting',
   'Session replay & audit logs',
   'Unlimited agents',
   'Priority support',

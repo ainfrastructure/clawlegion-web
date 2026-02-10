@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback, useMemo } from 'react'
+import { useState, useCallback, useMemo, useEffect, useRef } from 'react'
 import { Save, Copy, RotateCcw, Layers } from 'lucide-react'
 import {
   ReactFlow,
@@ -8,6 +8,7 @@ import {
   Controls,
   Background,
   BackgroundVariant,
+  useReactFlow,
   type NodeMouseHandler,
 } from '@xyflow/react'
 import '@xyflow/react/dist/style.css'
@@ -17,6 +18,22 @@ import { FlowPropertiesPanel } from './FlowPropertiesPanel'
 import { FlowAgentNode } from './FlowAgentNode'
 import { FlowEdge } from './FlowEdge'
 import { useFlowLayout } from './useFlowLayout'
+
+/** Imperatively calls fitView when the node count changes, with a small delay for dagre layout */
+function FitViewOnChange({ nodeCount }: { nodeCount: number }) {
+  const { fitView } = useReactFlow()
+  const prevCount = useRef(nodeCount)
+
+  useEffect(() => {
+    if (nodeCount !== prevCount.current) {
+      prevCount.current = nodeCount
+      const timer = setTimeout(() => fitView({ padding: 0.3, duration: 200 }), 50)
+      return () => clearTimeout(timer)
+    }
+  }, [nodeCount, fitView])
+
+  return null
+}
 
 const nodeTypes = { flowAgent: FlowAgentNode }
 const edgeTypes = { flow: FlowEdge }
@@ -158,7 +175,7 @@ export function FlowCanvas({
           )}
 
           <ReactFlowProvider>
-            <div style={{ width: '100%', height: '100%', position: 'absolute', inset: 0 }}>
+            <div style={{ width: '100%', height: '100%', position: 'absolute', inset: 0, backgroundColor: '#0f172a' }}>
               <ReactFlow
                 nodes={nodes}
                 edges={edges}
@@ -167,15 +184,14 @@ export function FlowCanvas({
                 onNodeClick={onNodeClick}
                 nodesConnectable={false}
                 nodesDraggable={false}
-                fitView
-                fitViewOptions={{ padding: 0.3 }}
                 proOptions={proOptions}
+                colorMode="dark"
                 minZoom={0.3}
                 maxZoom={1.5}
-                key={flow.steps.map(s => s.id).join(',')}
               >
                 <Background variant={BackgroundVariant.Dots} gap={24} size={1} color="rgb(255 255 255 / 0.04)" />
                 <Controls showInteractive={false} />
+                <FitViewOnChange nodeCount={nodes.length} />
               </ReactFlow>
             </div>
           </ReactFlowProvider>

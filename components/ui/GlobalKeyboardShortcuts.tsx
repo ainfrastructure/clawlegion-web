@@ -2,7 +2,7 @@
 
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts'
 import { useState } from 'react'
-import { NewTaskModal } from '@/components/tasks/NewTaskModal'
+import { EnhancedTaskModal } from '@/components/tasks/EnhancedTaskModal'
 
 /**
  * Global keyboard shortcuts handler component.
@@ -33,12 +33,11 @@ export function GlobalKeyboardShortcuts() {
   return (
     <>
       {showNewTaskModal && (
-        <NewTaskModal
+        <EnhancedTaskModal
           isOpen={showNewTaskModal}
           onClose={() => setShowNewTaskModal(false)}
           onTaskCreated={() => {
             setShowNewTaskModal(false)
-            // Optionally trigger a refresh of task data
           }}
           repositories={[]}
         />

@@ -109,12 +109,18 @@ export function AuthenticatedLayout({ children }: { children: React.ReactNode })
       <Sidebar />
       <MainContent fullHeight={isFullHeight}>
         {!isFullHeight && (
-          <div className="sticky top-0 z-10 glass-2 border-b border-white/[0.06] px-6 py-2.5 mb-4">
-            <div className="flex items-center justify-between">
+          <div className="sticky top-0 z-20 border-b border-white/[0.06] mb-4">
+            <div className="flex items-center justify-between px-6 py-2 bg-[rgb(12,15,24)]/80 backdrop-blur-xl">
               <Breadcrumbs />
-              <div className="flex items-center gap-4">
-                <PresenceDots />
-                <LiveClock />
+              <div className="flex items-center gap-1 ml-auto">
+                <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-slate-500 hover:bg-white/[0.03] transition-colors">
+                  <PresenceDots />
+                </div>
+                <div className="w-px h-3.5 bg-white/[0.06]" />
+                <div className="flex items-center px-2.5 py-1.5 rounded-md text-slate-500 hover:bg-white/[0.03] transition-colors">
+                  <LiveClock />
+                </div>
+                <div className="w-px h-3.5 bg-white/[0.06]" />
                 <NotificationCenter />
               </div>
             </div>

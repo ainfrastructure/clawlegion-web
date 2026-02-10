@@ -28,10 +28,10 @@ export interface ChatRoom {
 // Map agent names to their OpenClaw webhook URLs
 // Configure via AGENT_WEBHOOK_<NAME> environment variables (e.g. AGENT_WEBHOOK_JARVIS=http://localhost:18789)
 export const AGENT_WEBHOOKS: Record<string, string> = {
-  'jarvis': process.env.AGENT_WEBHOOK_JARVIS || 'http://localhost:18789',
+  'caesar': process.env.AGENT_WEBHOOK_CAESAR || 'http://localhost:18789',
   'lux': process.env.AGENT_WEBHOOK_LUX || 'http://localhost:18796',
-  'archie': process.env.AGENT_WEBHOOK_ARCHIE || 'http://localhost:18790',
-  'mason': process.env.AGENT_WEBHOOK_MASON || 'http://localhost:18791',
+  'athena': process.env.AGENT_WEBHOOK_ATHENA || 'http://localhost:18790',
+  'vulcan': process.env.AGENT_WEBHOOK_VULCAN || 'http://localhost:18791',
   'vex': process.env.AGENT_WEBHOOK_VEX || 'http://localhost:18792',
   'scout': process.env.AGENT_WEBHOOK_SCOUT || 'http://localhost:18793',
   'ralph': process.env.AGENT_WEBHOOK_RALPH || 'http://localhost:18794',
@@ -42,10 +42,10 @@ export const AGENT_WEBHOOKS: Record<string, string> = {
 
 // Canonical agent names (for self-mention detection and alias resolution)
 export const AGENT_NAMES: Record<string, string> = {
-  'jarvis': 'jarvis',
+  'caesar': 'caesar',
   'lux': 'lux',
-  'archie': 'archie',
-  'mason': 'mason',
+  'athena': 'athena',
+  'vulcan': 'vulcan',
   'vex': 'vex',
   'scout': 'scout',
   'ralph': 'ralph',
@@ -55,8 +55,8 @@ export const AGENT_NAMES: Record<string, string> = {
   // Legacy aliases
   'verifier': 'vex',
   'tester': 'vex',
-  'planner': 'archie',
-  'builder': 'mason',
+  'planner': 'athena',
+  'builder': 'vulcan',
   'researcher': 'scout',
 }
 
@@ -96,7 +96,7 @@ export async function notifyMentionedAgents(
     fromAgent?: string
   } = {}
 ) {
-  const mentions = message.content.match(/@(jarvis|lux|archie|mason|vex|scout|ralph|quill|pixel|sage|verifier|tester|planner|builder|researcher|all)/gi)
+  const mentions = message.content.match(/@(caesar|lux|athena|vulcan|vex|scout|ralph|quill|pixel|sage|verifier|tester|planner|builder|researcher|all)/gi)
   if (!mentions || mentions.length === 0) return
 
   const uniqueAgents = Array.from(new Set(mentions.map(m => m.substring(1).toLowerCase())))

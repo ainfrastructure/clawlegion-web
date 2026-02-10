@@ -7,7 +7,6 @@ import { Loader2, MessageCircle, Activity, FileText, LayoutDashboard } from 'luc
 import { TaskDetailHeader } from './TaskDetailHeader'
 import { TaskDetailFooter } from './TaskDetailFooter'
 import { TaskStatusTimeline } from './TaskStatusTimeline'
-import { useTaskHealth } from '@/hooks/useWatchdog'
 import { OverviewTab } from './tabs/OverviewTab'
 import { TimelineTab } from './tabs/TimelineTab'
 import { DiscussionTab } from './tabs/DiscussionTab'
@@ -57,7 +56,6 @@ export function TaskDetailModal({ taskId, task: initialTask, isOpen, onClose, in
   const task = fetchedTask || initialTask
 
   const isInProgress = task?.status === 'in_progress' || task?.status === 'assigned'
-  const { data: taskHealth } = useTaskHealth(isInProgress ? taskId : '')
 
   const { data: commentsData, isLoading: isLoadingComments } = useQuery({
     queryKey: ['task-comments', taskId],
@@ -184,7 +182,6 @@ export function TaskDetailModal({ taskId, task: initialTask, isOpen, onClose, in
             task={task}
             isLoading={isLoading}
             isInProgress={isInProgress}
-            taskHealth={taskHealth}
             onDelete={() => deleteMutation.mutate()}
             isDeleting={deleteMutation.isPending}
             onClose={onClose}
@@ -200,7 +197,7 @@ export function TaskDetailModal({ taskId, task: initialTask, isOpen, onClose, in
               <TaskStatusTimeline
                 currentStatus={task?.status || 'backlog'}
                 activities={activitiesData || []}
-                onStatusClick={(status) => statusMutation.mutate({ status })}
+                /* onStatusClick removed — phases are display-only, not manually clickable */
                 domain={task?.domain}
                 sessionId={task?.sessionId}
               />

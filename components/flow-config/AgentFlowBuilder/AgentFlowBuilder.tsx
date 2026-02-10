@@ -5,7 +5,7 @@ import { AgentCard } from './AgentCard'
 import { AGENT_METADATA } from '@/lib/flow-presets'
 import type { AgentFlowBuilderProps, AgentConfig, AgentRole } from '../types'
 
-const AGENT_ORDER: AgentRole[] = ['scout', 'archie', 'mason', 'vex']
+const AGENT_ORDER: AgentRole[] = ['scout', 'athena', 'vulcan', 'vex']
 
 export function AgentFlowBuilder({ agents, onChange }: AgentFlowBuilderProps) {
   const handleAgentChange = (updatedAgent: AgentConfig) => {
@@ -84,7 +84,7 @@ export function AgentFlowBuilder({ agents, onChange }: AgentFlowBuilderProps) {
 
       {/* Quick Tips */}
       <div className="text-xs text-slate-500 space-y-1">
-        <p>💡 <span className="text-slate-400">Quick Fix:</span> Enable only Mason + Vex for small bugs</p>
+        <p>💡 <span className="text-slate-400">Quick Fix:</span> Enable only Vulcan + Vex for small bugs</p>
         <p>💡 <span className="text-slate-400">Deep Work:</span> Enable all agents with high resources for complex features</p>
       </div>
     </div>

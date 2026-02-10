@@ -16,12 +16,12 @@ export interface BotMember {
 // Council - Top tier leadership
 export const COUNCIL_MEMBERS: BotMember[] = [
   {
-    id: 'jarvis',
-    name: 'Jarvis',
+    id: 'caesar',
+    name: 'Caesar',
     role: 'Orchestrator',
-    emoji: '🦞',
+    emoji: '🔴',
     color: '#DC2626', // Red
-    avatar: '/agents/jarvis-lobster.png',
+    avatar: '/agents/caesar.png',
   },
   {
     id: 'lux',
@@ -36,20 +36,20 @@ export const COUNCIL_MEMBERS: BotMember[] = [
 // Bot Army - Specialized workers
 export const BOT_ARMY: BotMember[] = [
   {
-    id: 'archie',
-    name: 'Archie',
+    id: 'athena',
+    name: 'Athena',
     role: 'Planner',
-    emoji: '🏛️',
-    color: '#3B82F6', // Blue
-    avatar: '/agents/archie-planner.png',
+    emoji: '🩵',
+    color: '#06B6D4', // Cyan
+    avatar: '/agents/athena.png',
   },
   {
-    id: 'mason',
-    name: 'Mason',
+    id: 'vulcan',
+    name: 'Vulcan',
     role: 'Builder',
-    emoji: '🔨',
+    emoji: '🔥',
     color: '#F59E0B', // Amber
-    avatar: '/agents/mason-builder.png',
+    avatar: '/agents/vulcan.png',
   },
   {
     id: 'vex',
@@ -106,7 +106,7 @@ export const ALL_BOTS = [...COUNCIL_MEMBERS, ...BOT_ARMY]
 
 // ID aliases (OpenClaw internal IDs -> display IDs)
 const BOT_ID_ALIASES: Record<string, string> = {
-  'main': 'jarvis',  // OpenClaw uses 'main' for Jarvis
+  'main': 'caesar',  // OpenClaw uses 'main' for Caesar
 }
 
 // Get bot by ID (handles aliases and case-insensitivity)

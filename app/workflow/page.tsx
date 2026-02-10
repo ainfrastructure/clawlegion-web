@@ -6,8 +6,8 @@ import type { AgentStatus } from '@/components/workflow';
 export default function WorkflowPage() {
   // Demo with mixed statuses showing pipeline progress
   const demoStatuses: Record<string, AgentStatus> = {
-    archie: 'success',
-    mason: 'success',
+    athena: 'success',
+    vulcan: 'success',
     sentinel: 'in-progress',
     critic: 'pending',
     vex: 'pending',

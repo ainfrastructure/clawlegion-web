@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import { X, CheckCircle, Trash2, ChevronRight } from 'lucide-react'
-import { WatchdogStatusBadge, type WatchdogStatus } from '@/components/watchdog'
 import { TaskCompactMetadata } from './TaskCompactMetadata'
 import { getPriorityConfig, getStatusConfig } from './config'
 import type { Task } from './types'
@@ -11,7 +10,6 @@ type TaskDetailHeaderProps = {
   task: Partial<Task> | undefined
   isLoading: boolean
   isInProgress: boolean
-  taskHealth: { watchdogStatus: WatchdogStatus } | undefined
   onDelete: () => void
   isDeleting: boolean
   onClose: () => void
@@ -21,7 +19,6 @@ export function TaskDetailHeader({
   task,
   isLoading,
   isInProgress,
-  taskHealth,
   onDelete,
   isDeleting,
   onClose,
@@ -65,13 +62,6 @@ export function TaskDetailHeader({
                 <CheckCircle className="w-3 h-3" />
                 Approved
               </span>
-            )}
-            {isInProgress && taskHealth && (
-              <WatchdogStatusBadge
-                status={taskHealth.watchdogStatus}
-                size="sm"
-                pulse={taskHealth.watchdogStatus !== 'healthy'}
-              />
             )}
           </div>
           {isLoading ? (

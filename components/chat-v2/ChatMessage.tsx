@@ -61,11 +61,11 @@ function formatTime(timestamp: string): string {
 
 // Default avatar paths for agents
 const AGENT_AVATARS: Record<string, string> = {
-  'jarvis': '/agents/jarvis-lobster.png',
-  'main': '/agents/jarvis-lobster.png',
+  'caesar': '/agents/caesar.png',
+  'main': '/agents/caesar.png',
   'lux': '/agents/lux-lobster.png',
-  'archie': '/agents/archie-planner.png',
-  'mason': '/agents/mason-builder.png',
+  'athena': '/agents/athena.png',
+  'vulcan': '/agents/vulcan.png',
   'vex': '/agents/vex-verifier.png',
   'scout': '/agents/scout-researcher.png',
   'ralph': '/agents/ralph.png',
@@ -76,11 +76,11 @@ const AGENT_AVATARS: Record<string, string> = {
 
 // Default colors for agents
 const AGENT_COLORS: Record<string, string> = {
-  'jarvis': '#DC2626',
+  'caesar': '#DC2626',
   'main': '#DC2626',
   'lux': '#22C55E',
-  'archie': '#3B82F6',
-  'mason': '#F59E0B',
+  'athena': '#06B6D4',
+  'vulcan': '#F59E0B',
   'vex': '#8B5CF6',
   'scout': '#06B6D4',
   'ralph': '#EC4899',
@@ -111,11 +111,11 @@ function getSenderIcon(senderType: 'human' | 'agent', senderId: string): string 
   if (bot) return bot.emoji
   // Fallback for unknown agents
   const agentIcons: Record<string, string> = {
-    'jarvis': '🦞',
-    'main': '🦞',
+    'caesar': '🔴',
+    'main': '🔴',
     'lux': '✨',
-    'archie': '🏛️',
-    'mason': '🔨',
+    'athena': '🩵',
+    'vulcan': '🔥',
     'vex': '🧪',
     'scout': '🔭',
     'ralph': '🔄',
