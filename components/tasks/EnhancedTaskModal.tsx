@@ -3,7 +3,7 @@
 import { useState, useCallback } from 'react'
 import { useMutation } from '@tanstack/react-query'
 import api from '@/lib/api'
-import { X, Loader2, ChevronDown, ChevronUp, Sparkles, ArrowLeft } from 'lucide-react'
+import { X, Loader2, ChevronDown, ChevronUp, Sparkles, ArrowLeft, HelpCircle } from 'lucide-react'
 import { AgentFlowSection } from './AgentFlowSection'
 import { SuccessCriteriaSection } from './SuccessCriteriaSection'
 import {
@@ -473,8 +473,18 @@ export function EnhancedTaskModal({ isOpen, onClose, onTaskCreated, repositories
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-slate-300 mb-2">
+                      <label className="flex items-center gap-1.5 text-sm font-medium text-slate-300 mb-2">
                         Priority
+                        <span className="relative group/tip">
+                          <HelpCircle className="w-3.5 h-3.5 text-slate-500 cursor-help" />
+                          <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 rounded-lg bg-slate-900 border border-white/[0.08] text-[11px] text-slate-300 leading-relaxed whitespace-nowrap opacity-0 pointer-events-none group-hover/tip:opacity-100 transition-opacity duration-150 shadow-xl z-20">
+                            <span className="font-semibold text-red-400">P0</span> Critical / urgent<br />
+                            <span className="font-semibold text-orange-400">P1</span> High priority<br />
+                            <span className="font-semibold text-amber-400">P2</span> Medium priority<br />
+                            <span className="font-semibold text-blue-400">P3</span> Low priority
+                            <span className="absolute top-full left-1/2 -translate-x-1/2 -mt-px border-4 border-transparent border-t-slate-900" />
+                          </span>
+                        </span>
                       </label>
                       <div className="flex gap-2">
                         {(['P0', 'P1', 'P2', 'P3'] as const).map((p) => (
@@ -482,7 +492,7 @@ export function EnhancedTaskModal({ isOpen, onClose, onTaskCreated, repositories
                             key={p}
                             type="button"
                             onClick={() => setPriority(p)}
-                            className={`flex-1 py-2 rounded-lg text-sm font-medium transition-all ${
+                            className={`flex-1 py-3 rounded-lg text-sm font-medium transition-all ${
                               priority === p
                                 ? p === 'P0' ? 'bg-red-500 text-white'
                                 : p === 'P1' ? 'bg-orange-500 text-white'

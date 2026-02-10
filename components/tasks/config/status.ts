@@ -167,9 +167,12 @@ const CODE_WORKFLOW: WorkflowStep[] = STATUS_ORDER.map(key => ({
 
 const DOMAIN_WORKFLOWS: Record<string, WorkflowStep[]> = {
   code: CODE_WORKFLOW,
+  dev: CODE_WORKFLOW,
   research: RESEARCH_WORKFLOW,
   content: CONTENT_WORKFLOW,
+  marketing: CONTENT_WORKFLOW,
   operations: OPERATIONS_WORKFLOW,
+  ops: OPERATIONS_WORKFLOW,
 }
 
 export function getWorkflowForDomain(domain?: string): WorkflowStep[] {
