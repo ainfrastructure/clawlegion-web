@@ -28,7 +28,7 @@ export function PricingSection() {
             One plan. Unlimited agents. Infinite workflows.
           </h2>
           <p className="text-lg text-slate-400 max-w-2xl mx-auto">
-            Join now and keep this price forever — even as we add features and raise pricing.
+            Early access includes 1-on-1 mentoring and hands-on setup. Limited spots available.
           </p>
         </div>
 

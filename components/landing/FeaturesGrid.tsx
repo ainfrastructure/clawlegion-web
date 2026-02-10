@@ -74,7 +74,7 @@ export function FeaturesGrid() {
         {/* Mid-section CTA */}
         <div className="text-center mt-16">
           <p className="text-xl font-semibold text-white mb-4">
-            All of this for just <span className="text-blue-400">$49/mo</span>
+            All of this for <span className="text-blue-400">$49/mo</span> — limited early access
           </p>
           <a
             href="#pricing"
