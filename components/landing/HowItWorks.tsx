@@ -367,63 +367,65 @@ function SlideContent({ template, visible }: { template: Template; visible: bool
   const agents = getTemplateAgents(template)
 
   return (
-    <div className="flex-shrink-0 px-2" style={{ width: '10%' }}>
-      {/* Template label */}
-      <div className="text-center mb-6">
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-2 border border-white/[0.06]">
-          <span className="text-sm font-semibold text-white">{template.name}</span>
+    <div className="flex-shrink-0" style={{ width: '20%' }}>
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Template label */}
+        <div className="text-center mb-6">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-2 border border-white/[0.06]">
+            <span className="text-sm font-semibold text-white">{template.name}</span>
+          </div>
+          <p className="text-sm text-slate-500 mt-2 italic">{template.tagline}</p>
         </div>
-        <p className="text-sm text-slate-500 mt-2 italic">{template.tagline}</p>
-      </div>
 
-      {/* Orchestrator */}
-      <SlideOrchestratorCard template={template} visible={visible} />
+        {/* Orchestrator */}
+        <SlideOrchestratorCard template={template} visible={visible} />
 
-      {/* Oversight line */}
-      <SlideOversightLine visible={visible} />
+        {/* Oversight line */}
+        <SlideOversightLine visible={visible} />
 
-      {/* Agent pipeline — Desktop: horizontal, Mobile: vertical */}
-      <div className="hidden md:flex items-center justify-center">
-        {agents.map((agent, i) => (
-          <div key={agent.id} className="flex items-center">
-            <div className="w-[180px]">
+        {/* Agent pipeline — Desktop: horizontal, Mobile: vertical */}
+        <div className="hidden md:flex items-center justify-center flex-wrap lg:flex-nowrap gap-1">
+          {agents.map((agent, i) => (
+            <div key={agent.id} className="flex items-center">
+              <div className="w-[140px] lg:w-[160px] xl:w-[180px]">
+                <SlideAgentCard
+                  agent={agent}
+                  index={i}
+                  visible={visible}
+                  description={template.descriptions[agent.id]}
+                />
+              </div>
+              {i < agents.length - 1 && (
+                <SlideConnectionArrow
+                  color={agent.color}
+                  delay={400 + i * 150}
+                  visible={visible}
+                />
+              )}
+            </div>
+          ))}
+        </div>
+
+        {/* Mobile vertical stack */}
+        <div className="flex md:hidden flex-col items-center gap-1">
+          {agents.map((agent, i) => (
+            <div key={agent.id} className="w-full max-w-[200px]">
               <SlideAgentCard
                 agent={agent}
                 index={i}
                 visible={visible}
                 description={template.descriptions[agent.id]}
               />
+              {i < agents.length - 1 && (
+                <SlideMobileFlowArrow color={agent.color} visible={visible} />
+              )}
             </div>
-            {i < agents.length - 1 && (
-              <SlideConnectionArrow
-                color={agent.color}
-                delay={400 + i * 150}
-                visible={visible}
-              />
-            )}
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
 
-      {/* Mobile vertical stack */}
-      <div className="flex md:hidden flex-col items-center">
-        {agents.map((agent, i) => (
-          <div key={agent.id} className="w-full max-w-[220px]">
-            <SlideAgentCard
-              agent={agent}
-              index={i}
-              visible={visible}
-              description={template.descriptions[agent.id]}
-            />
-            {i < agents.length - 1 && (
-              <SlideMobileFlowArrow color={agent.color} visible={visible} />
-            )}
-          </div>
-        ))}
+        {/* Branch fork */}
+        <SlideBranchFork visible={visible} outcomes={template.outcomes} />
       </div>
-
-      {/* Branch fork */}
-      <SlideBranchFork visible={visible} outcomes={template.outcomes} />
     </div>
   )
 }
@@ -528,11 +530,15 @@ export function HowItWorks() {
 
       {/* Pipeline strip — full width, edge to edge */}
       {/* Mobile: single template with nav dots */}
-      <div className="md:hidden max-w-5xl mx-auto px-4">
-        <SlideContent
-          template={TEMPLATES[reducedMotionIdx]}
-          visible={visible}
-        />
+      <div className="md:hidden w-full overflow-hidden">
+        <div style={{ width: '500%' }}>
+          <div style={{ width: '20%' }}>
+            <SlideContent
+              template={TEMPLATES[reducedMotionIdx]}
+              visible={visible}
+            />
+          </div>
+        </div>
         {/* Dot navigation */}
         <div className="flex justify-center gap-2 mt-6">
           {TEMPLATES.map((t, i) => (
@@ -548,7 +554,7 @@ export function HowItWorks() {
       </div>
 
       {/* Desktop: scrolling strip */}
-      <div className="hidden md:block">
+      <div className="hidden md:block overflow-hidden">
         {prefersReducedMotion ? (
           <div className="max-w-5xl mx-auto px-4 sm:px-6">
             <SlideContent
@@ -558,6 +564,7 @@ export function HowItWorks() {
           </div>
         ) : (
           <div
+            className="overflow-hidden"
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
           >
