@@ -14,6 +14,7 @@ export async function middleware(request: NextRequest) {
     '/favicon.ico',
     '/agents/',        // Agent avatar images (public/agents/)
     '/avatars/',       // Avatar images (public/avatars/)
+    '/demo-',          // Demo video + poster (public/demo-*)
   ]
 
   // Check if path is public
