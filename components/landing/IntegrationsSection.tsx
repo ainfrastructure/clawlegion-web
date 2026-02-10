@@ -6,7 +6,6 @@ import { useEffect, useRef, useState } from 'react'
 
 type Integration = {
   name: string
-  description: string
   icon: React.ReactNode
   accentColor: string
 }
@@ -54,36 +53,11 @@ function TelegramIcon() {
 }
 
 const INTEGRATIONS: Integration[] = [
-  {
-    name: 'Facebook',
-    description: 'Publish, schedule, and manage content via Meta Business Suite',
-    icon: <FacebookIcon />,
-    accentColor: '#1877F2',
-  },
-  {
-    name: 'Instagram',
-    description: 'Auto-post reels, stories, and feed content via Meta Graph API',
-    icon: <InstagramIcon />,
-    accentColor: '#E4405F',
-  },
-  {
-    name: 'TikTok',
-    description: 'Schedule and publish short-form video content at scale',
-    icon: <TikTokIcon />,
-    accentColor: '#00F2EA',
-  },
-  {
-    name: 'X / Twitter',
-    description: 'Automate tweets, threads, and engagement workflows',
-    icon: <XTwitterIcon />,
-    accentColor: '#FFFFFF',
-  },
-  {
-    name: 'Telegram',
-    description: 'Deploy bots, send notifications, and manage communities',
-    icon: <TelegramIcon />,
-    accentColor: '#26A5E4',
-  },
+  { name: 'Facebook', icon: <FacebookIcon />, accentColor: '#1877F2' },
+  { name: 'Instagram', icon: <InstagramIcon />, accentColor: '#E4405F' },
+  { name: 'TikTok', icon: <TikTokIcon />, accentColor: '#00F2EA' },
+  { name: 'X / Twitter', icon: <XTwitterIcon />, accentColor: '#FFFFFF' },
+  { name: 'Telegram', icon: <TelegramIcon />, accentColor: '#26A5E4' },
 ]
 
 /* ─── Main component ─── */
@@ -136,48 +110,46 @@ export function IntegrationsSection() {
             Connected Everywhere
           </h2>
           <p className="text-lg text-slate-400 max-w-2xl mx-auto">
-            Your agents publish, schedule, and manage content across every major platform — automatically.
+            Your agents work where you do.
           </p>
         </div>
 
-        {/* Integration cards grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* Integration logos — clean grid */}
+        <div className="flex flex-wrap items-center justify-center gap-8 sm:gap-12">
           {INTEGRATIONS.map((integration, i) => (
             <div
               key={integration.name}
-              className={`group glass-2 rounded-2xl p-6 border border-white/[0.06] transition-all duration-600 hover:bg-white/[0.06] hover:scale-[1.02] ${
+              className={`group flex flex-col items-center gap-3 transition-all duration-600 ${
                 visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
               }`}
               style={{ transitionDelay: `${200 + i * 100}ms` }}
             >
               <div
-                className="w-14 h-14 rounded-xl flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-110"
+                className="w-16 h-16 rounded-2xl flex items-center justify-center transition-transform duration-300 group-hover:scale-110"
                 style={{
-                  background: `${integration.accentColor}12`,
+                  background: `${integration.accentColor}15`,
                   color: integration.accentColor,
                 }}
               >
                 {integration.icon}
               </div>
-              <h3 className="text-lg font-semibold text-white mb-2">{integration.name}</h3>
-              <p className="text-sm text-slate-400 leading-relaxed">{integration.description}</p>
+              <span className="text-sm font-medium text-slate-400 group-hover:text-white transition-colors">
+                {integration.name}
+              </span>
             </div>
           ))}
 
-          {/* "More coming" card */}
+          {/* More coming */}
           <div
-            className={`group glass-2 rounded-2xl p-6 border border-dashed border-white/[0.1] flex flex-col items-center justify-center text-center transition-all duration-600 ${
+            className={`group flex flex-col items-center gap-3 transition-all duration-600 ${
               visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
             }`}
             style={{ transitionDelay: `${200 + INTEGRATIONS.length * 100}ms` }}
           >
-            <div className="w-14 h-14 rounded-xl bg-white/[0.04] flex items-center justify-center mb-4 text-slate-500 text-2xl">
+            <div className="w-16 h-16 rounded-2xl bg-white/[0.04] border border-dashed border-white/[0.1] flex items-center justify-center text-slate-500 text-2xl">
               +
             </div>
-            <h3 className="text-lg font-semibold text-slate-400 mb-2">More Coming Soon</h3>
-            <p className="text-sm text-slate-500 leading-relaxed">
-              LinkedIn, YouTube, Slack, and more. Build custom integrations with our API.
-            </p>
+            <span className="text-sm font-medium text-slate-500">More soon</span>
           </div>
         </div>
       </div>

@@ -3,8 +3,9 @@
 import { useState, useCallback } from 'react'
 import { useMutation } from '@tanstack/react-query'
 import api from '@/lib/api'
-import { X, Loader2, Plus, Trash2, ChevronDown, ChevronUp, Sparkles, ArrowLeft } from 'lucide-react'
+import { X, Loader2, ChevronDown, ChevronUp, Sparkles, ArrowLeft } from 'lucide-react'
 import { AgentFlowSection } from './AgentFlowSection'
+import { SuccessCriteriaSection } from './SuccessCriteriaSection'
 import {
   DEFAULT_PRESETS,
   applyPreset,
@@ -56,7 +57,6 @@ export function EnhancedTaskModal({ isOpen, onClose, onTaskCreated, repositories
 
   // Success criteria
   const [successCriteria, setSuccessCriteria] = useState<SuccessCriterion[]>(DEFAULT_CRITERIA)
-  const [newCriterion, setNewCriterion] = useState('')
 
   // Collapsible sections
   const [showAdvanced, setShowAdvanced] = useState(false)
@@ -81,7 +81,6 @@ export function EnhancedTaskModal({ isOpen, onClose, onTaskCreated, repositories
     const preset = DEFAULT_PRESETS.find(p => p.id === 'standard')!
     setFlowConfig(applyPreset(preset))
     setSuccessCriteria(DEFAULT_CRITERIA)
-    setNewCriterion('')
     setShowAdvanced(false)
     setShowTechnical(false)
   }, [])
@@ -182,19 +181,9 @@ export function EnhancedTaskModal({ isOpen, onClose, onTaskCreated, repositories
     setSelectedPresetId('custom')
   }, [])
 
-  // Handle success criteria
-  const addCriterion = useCallback(() => {
-    if (newCriterion.trim()) {
-      setSuccessCriteria(prev => [
-        ...prev,
-        { id: Date.now().toString(), text: newCriterion.trim() }
-      ])
-      setNewCriterion('')
-    }
-  }, [newCriterion])
-
-  const removeCriterion = useCallback((id: string) => {
-    setSuccessCriteria(prev => prev.filter(c => c.id !== id))
+  // Handle success criteria change (from SuccessCriteriaSection)
+  const handleCriteriaChange = useCallback((newCriteria: typeof successCriteria) => {
+    setSuccessCriteria(newCriteria)
   }, [])
 
   // Create task mutation
@@ -521,45 +510,10 @@ export function EnhancedTaskModal({ isOpen, onClose, onTaskCreated, repositories
                 />
 
                 {/* Success Criteria */}
-                <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-3">
-                    Success Criteria
-                  </label>
-                  <div className="bg-slate-900/50 rounded-xl border border-white/[0.06] p-4">
-                    <div className="space-y-2 mb-3">
-                      {successCriteria.map((criterion) => (
-                        <div key={criterion.id} className="flex items-center gap-2">
-                          <span className="text-green-400">&#10003;</span>
-                          <span className="flex-1 text-sm text-slate-300">{criterion.text}</span>
-                          <button
-                            type="button"
-                            onClick={() => removeCriterion(criterion.id)}
-                            className="p-1 hover:bg-slate-700 rounded text-slate-500 hover:text-red-400"
-                          >
-                            <Trash2 size={14} />
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                    <div className="flex gap-2">
-                      <input
-                        type="text"
-                        value={newCriterion}
-                        onChange={(e) => setNewCriterion(e.target.value)}
-                        onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addCriterion())}
-                        placeholder="Add success criterion..."
-                        className="flex-1 px-3 py-2 text-sm rounded-lg bg-slate-800 border border-slate-600 text-slate-100 placeholder-slate-500"
-                      />
-                      <button
-                        type="button"
-                        onClick={addCriterion}
-                        className="px-3 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg text-slate-300"
-                      >
-                        <Plus size={16} />
-                      </button>
-                    </div>
-                  </div>
-                </div>
+                <SuccessCriteriaSection
+                  criteria={successCriteria}
+                  onCriteriaChange={handleCriteriaChange}
+                />
 
                 {/* Technical Details (collapsible) */}
                 <button

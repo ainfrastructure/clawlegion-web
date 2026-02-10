@@ -12,7 +12,6 @@ import {
   Monitor,
   GripVertical,
   Workflow,
-  ArrowRight,
   Sparkles,
 } from 'lucide-react'
 import { ALL_AGENTS, getAgentById } from '@/components/chat-v2/agentConfig'
@@ -44,9 +43,9 @@ const RESOURCE_ICONS: Record<ResourceLevel, React.ReactNode> = {
 }
 
 const RESOURCE_LABELS: Record<ResourceLevel, string> = {
-  high: 'High',
-  medium: 'Med',
-  low: 'Low',
+  high: 'Opus',
+  medium: 'Sonnet',
+  low: 'Haiku',
   local: 'Local',
 }
 
@@ -205,18 +204,39 @@ export function AgentFlowSection({
               <p className="text-xs text-slate-600 mt-1">Add agents from the palette below</p>
             </div>
           ) : (
-            <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide">
-              {enabledAgents.map((agent, idx) => {
-                const agentData = getAgentById(agent.role)
-                const agentColor = agentData?.color || '#64748b'
-                const isHovered = hoveredAgent === agent.role
-                const isDragTarget = dragOverIndex === idx && draggedIndex !== idx
-                const isDragging = draggedIndex === idx
+            <>
+              {/* Mini flow preview strip */}
+              <div className="flex items-center justify-center gap-0 mb-3 pb-3 border-b border-white/[0.04]">
+                {enabledAgents.map((agent, idx) => {
+                  const agentData = getAgentById(agent.role)
+                  const agentColor = agentData?.color || '#64748b'
+                  return (
+                    <div key={agent.role} className="flex items-center">
+                      <div
+                        className="w-3 h-3 rounded-full flex-shrink-0 ring-1 ring-black/20"
+                        style={{ backgroundColor: agentColor }}
+                        title={`${idx + 1}. ${agentData?.name || agent.role}`}
+                      />
+                      {idx < enabledAgents.length - 1 && (
+                        <div className="w-5 h-px bg-slate-600/60 flex-shrink-0" />
+                      )}
+                    </div>
+                  )
+                })}
+              </div>
 
-                return (
-                  <div key={agent.role} className="flex items-center flex-shrink-0">
-                    {/* Agent Card */}
+              {/* Wrapping grid of agent cards */}
+              <div className="flex flex-wrap gap-2">
+                {enabledAgents.map((agent, idx) => {
+                  const agentData = getAgentById(agent.role)
+                  const agentColor = agentData?.color || '#64748b'
+                  const isHovered = hoveredAgent === agent.role
+                  const isDragTarget = dragOverIndex === idx && draggedIndex !== idx
+                  const isDragging = draggedIndex === idx
+
+                  return (
                     <div
+                      key={agent.role}
                       draggable
                       onDragStart={() => handleDragStart(idx)}
                       onDragOver={(e) => handleDragOver(e, idx)}
@@ -225,7 +245,7 @@ export function AgentFlowSection({
                       onMouseEnter={() => setHoveredAgent(agent.role)}
                       onMouseLeave={() => setHoveredAgent(null)}
                       className={`
-                        relative group/card w-[130px] rounded-xl overflow-hidden cursor-grab active:cursor-grabbing
+                        relative group/card w-[105px] rounded-xl overflow-hidden cursor-grab active:cursor-grabbing
                         transition-all duration-300
                         ${isDragging ? 'opacity-30 scale-95' : ''}
                         ${isDragTarget ? 'ring-2 ring-cyan-400/40 ring-offset-1 ring-offset-slate-900' : ''}
@@ -262,7 +282,7 @@ export function AgentFlowSection({
                         <X className="w-3 h-3 text-slate-400 group-hover/card:text-red-400" />
                       </button>
 
-                      <div className="p-3 flex flex-col items-center gap-2">
+                      <div className="p-2.5 flex flex-col items-center gap-1.5">
                         {/* Step order */}
                         <div
                           className="absolute top-1.5 left-1/2 -translate-x-1/2 text-[9px] font-bold uppercase tracking-widest opacity-40"
@@ -281,7 +301,7 @@ export function AgentFlowSection({
                             }}
                           />
                           <div
-                            className="relative w-12 h-12 rounded-full overflow-hidden ring-[1.5px] ring-offset-1 ring-offset-transparent transition-all duration-300"
+                            className="relative w-10 h-10 rounded-full overflow-hidden ring-[1.5px] ring-offset-1 ring-offset-transparent transition-all duration-300"
                             style={{
                               ['--tw-ring-color' as string]: agentColor,
                               ['--tw-ring-offset-color' as string]: 'rgb(15 23 42)',
@@ -291,25 +311,30 @@ export function AgentFlowSection({
                               <Image
                                 src={agentData.avatar}
                                 alt={agentData.name}
-                                width={48}
-                                height={48}
+                                width={40}
+                                height={40}
                                 className={`w-full h-full object-cover transition-transform duration-500 ${isHovered ? 'scale-110' : 'scale-100'}`}
                               />
                             ) : (
                               <div className="w-full h-full bg-slate-800 flex items-center justify-center">
-                                <Bot className="w-5 h-5 text-slate-500" />
+                                <Bot className="w-4 h-4 text-slate-500" />
                               </div>
                             )}
                           </div>
                         </div>
 
-                        {/* Name */}
-                        <p
-                          className="text-[11px] font-bold truncate w-full text-center transition-colors duration-300"
-                          style={{ color: agentColor }}
-                        >
-                          {agentData?.name || agent.role}
-                        </p>
+                        {/* Name + Role */}
+                        <div className="text-center w-full">
+                          <p
+                            className="text-[11px] font-bold truncate transition-colors duration-300"
+                            style={{ color: agentColor }}
+                          >
+                            {agentData?.name || agent.role}
+                          </p>
+                          <p className="text-[9px] text-slate-500 truncate">
+                            {agentData?.role || agent.role}
+                          </p>
+                        </div>
 
                         {/* Resource level pill — click to cycle */}
                         <button
@@ -339,39 +364,32 @@ export function AgentFlowSection({
                         }}
                       />
                     </div>
+                  )
+                })}
 
-                    {/* Arrow connector */}
-                    {idx < enabledAgents.length - 1 && (
-                      <div className="mx-1.5 flex-shrink-0">
-                        <ArrowRight className="w-3.5 h-3.5 text-slate-600" />
-                      </div>
-                    )}
-                  </div>
-                )
-              })}
-
-              {/* Add agent button */}
-              <button
-                type="button"
-                onClick={() => setShowPalette(!showPalette)}
-                className={`
-                  flex-shrink-0 w-[130px] rounded-xl border-2 border-dashed transition-all duration-200
-                  flex flex-col items-center justify-center py-6 gap-1
-                  ${showPalette
-                    ? 'border-cyan-500/30 bg-cyan-500/5 text-cyan-400'
-                    : 'border-white/[0.08] hover:border-white/[0.15] text-slate-500 hover:text-slate-400'
-                  }
-                `}
-              >
-                <Plus className={`w-5 h-5 transition-transform duration-200 ${showPalette ? 'rotate-45' : ''}`} />
-                <span className="text-[10px] font-medium">
-                  {showPalette ? 'Close' : 'Add Agent'}
-                </span>
-              </button>
-            </div>
+                {/* Add agent button — inline in grid */}
+                <button
+                  type="button"
+                  onClick={() => setShowPalette(!showPalette)}
+                  className={`
+                    w-[105px] rounded-xl border-2 border-dashed transition-all duration-200
+                    flex flex-col items-center justify-center py-5 gap-1
+                    ${showPalette
+                      ? 'border-cyan-500/30 bg-cyan-500/5 text-cyan-400'
+                      : 'border-white/[0.08] hover:border-white/[0.15] text-slate-500 hover:text-slate-400'
+                    }
+                  `}
+                >
+                  <Plus className={`w-5 h-5 transition-transform duration-200 ${showPalette ? 'rotate-45' : ''}`} />
+                  <span className="text-[10px] font-medium">
+                    {showPalette ? 'Close' : 'Add Agent'}
+                  </span>
+                </button>
+              </div>
+            </>
           )}
 
-          {/* Resource level legend */}
+          {/* Model legend */}
           {enabledAgents.length > 0 && (
             <div className="flex items-center justify-center gap-4 mt-3 pt-3 border-t border-white/[0.04]">
               {(['high', 'medium', 'low'] as ResourceLevel[]).map(level => (
