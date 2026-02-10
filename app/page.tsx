@@ -4,12 +4,17 @@ import { useState } from 'react'
 import {
   LandingNav,
   HeroSection,
+  ProductShowcase,
+  LogoBar,
   FeaturesGrid,
   HowItWorks,
   DemoSection,
   EarlyAccessForm,
   LandingFooter,
+  UrgencyBanner,
+  TestimonialsSection,
   PricingSection,
+  StickyCtaBar,
   ContactModal,
   EasyVsPower,
 } from '@/components/landing'
@@ -19,16 +24,21 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen bg-[#020617] text-white">
-      <LandingNav onContactClick={() => setContactOpen(true)} />
-      <div>
+      <div className="fixed top-0 left-0 right-0 z-[60]">
+        <UrgencyBanner />
+      </div>
+      <LandingNav bannerVisible onContactClick={() => setContactOpen(true)} />
+      <div className="pt-[41px]">
         <HeroSection />
         <EasyVsPower />
         <HowItWorks />
-        <DemoSection />
+        <ProductShowcase />
         <FeaturesGrid />
         <PricingSection />
+        <DemoSection />
         <EarlyAccessForm />
         <LandingFooter onContactClick={() => setContactOpen(true)} />
+        <StickyCtaBar />
       </div>
       <ContactModal isOpen={contactOpen} onClose={() => setContactOpen(false)} />
     </div>
