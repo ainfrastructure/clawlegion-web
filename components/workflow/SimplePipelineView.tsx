@@ -18,7 +18,7 @@ const AGENTS: Agent[] = [
   { id: 'vulcan', name: 'Vulcan', role: 'Build', avatar: '/agents/vulcan.png', primaryColor: '#F59E0B', status: 'pending' },
   { id: 'sentinel', name: 'Sentinel', role: 'Scan', avatar: '/agents/scout-researcher.png', primaryColor: '#3B82F6', status: 'pending' },
   { id: 'critic', name: 'Critic', role: 'Review', avatar: '/agents/athena.png', primaryColor: '#991B1B', status: 'pending' },
-  { id: 'vex', name: 'Vex', role: 'Verify', avatar: '/agents/vex-verifier.png', primaryColor: '#10B981', status: 'pending' },
+  { id: 'janus', name: 'Janus', role: 'Verify', avatar: '/agents/janus.png', primaryColor: '#10B981', status: 'pending' },
   { id: 'deploy', name: 'Deploy', role: 'Deploy', avatar: '/agents/scout-researcher.png', primaryColor: '#EA580C', status: 'pending' },
   { id: 'scribe', name: 'Scribe', role: 'Docs', avatar: '/agents/athena.png', primaryColor: '#78350F', status: 'pending' },
 ];

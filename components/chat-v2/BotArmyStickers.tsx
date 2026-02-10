@@ -52,12 +52,12 @@ export const BOT_ARMY: BotMember[] = [
     avatar: '/agents/vulcan.png',
   },
   {
-    id: 'vex',
-    name: 'Vex',
+    id: 'janus',
+    name: 'Janus',
     role: 'Verifier',
     emoji: '🧪',
     color: '#8B5CF6', // Purple
-    avatar: '/agents/vex-verifier.png',
+    avatar: '/agents/janus.png',
   },
   {
     id: 'scout',

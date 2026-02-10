@@ -72,7 +72,7 @@ export const STATUS_CONFIG: Record<TaskStatusKey, StatusConfig> = {
     label: 'Verifying',
     color: 'cyan',
     icon: ShieldCheck,
-    agent: 'vex',
+    agent: 'janus',
   },
   done: {
     key: 'done',

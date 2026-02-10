@@ -6,7 +6,7 @@ export const AGENTS = [
   { id: 'lux', name: 'Lux', port: 18796, role: 'Council Member' },
   { id: 'athena', name: 'Athena', port: 18790, role: 'Planner' },
   { id: 'vulcan', name: 'Vulcan', port: 18791, role: 'Builder' },
-  { id: 'vex', name: 'Vex', port: 18792, role: 'Verifier' },
+  { id: 'janus', name: 'Janus', port: 18792, role: 'Verifier' },
   { id: 'scout', name: 'Scout', port: 18793, role: 'Researcher' },
   { id: 'ralph', name: 'Ralph', port: 18794, role: 'Loop Orchestrator' },
   { id: 'quill', name: 'Quill', port: 18797, role: 'Content Creator' },
@@ -43,7 +43,7 @@ const AGENT_COLORS: Record<string, string> = {
   lux: '#A855F7',       // Purple - Council Member
   athena: '#06B6D4',    // Cyan - Planner
   vulcan: '#F59E0B',    // Amber - Builder
-  vex: '#10B981',       // Emerald - Verifier
+  janus: '#1E40AF',       // Emerald - Verifier
   scout: '#06B6D4',     // Cyan - Researcher
   ralph: '#EC4899',     // Pink - Loop Orchestrator
   quill: '#F97316',     // Orange - Content Creator
@@ -63,7 +63,7 @@ const AGENT_AVATARS: Record<string, string> = {
   caesar: '/agents/caesar.png',
   athena: '/agents/athena.png',
   vulcan: '/agents/vulcan.png',
-  vex: '/agents/vex.jpg',
+  janus: '/agents/janus.png',
   scout: '/agents/scout.jpg',
   ralph: '/agents/ralph.jpg',
   lux: '/agents/lux-lobster.png',
@@ -74,7 +74,7 @@ const AGENT_AVATARS: Record<string, string> = {
   main: '/agents/caesar.png',
   planner: '/agents/athena.png',
   builder: '/agents/vulcan.png',
-  verifier: '/agents/vex.jpg',
+  verifier: '/agents/janus.png',
   researcher: '/agents/scout.jpg',
 }
 
@@ -84,7 +84,7 @@ const AGENT_EMOJIS: Record<string, string> = {
   caesar: '🔴',
   athena: '🩵',
   vulcan: '🔥',
-  vex: '🧪',
+  janus: '🌗',
   scout: '🔭',
   ralph: '🔄',
   lux: '✨',
@@ -145,7 +145,7 @@ function normalizeAgentId(id: string): string {
     main: 'caesar',
     planner: 'athena',
     builder: 'vulcan',
-    verifier: 'vex',
+    verifier: 'janus',
     researcher: 'scout',
   }
   return idMap[id] || id
@@ -220,7 +220,7 @@ export const FALLBACK_BOT_ARMY: AgentDisplay[] = [
   ...FALLBACK_COUNCIL,
   { id: 'athena', name: 'Athena', emoji: '🩵', avatar: '/agents/athena.png', role: 'Planner', color: '#06B6D4', status: 'online' },
   { id: 'vulcan', name: 'Vulcan', emoji: '🔥', avatar: '/agents/vulcan.png', role: 'Builder', color: '#F59E0B', status: 'online' },
-  { id: 'vex', name: 'Vex', emoji: '🧪', avatar: '/agents/vex.jpg', role: 'Verifier', color: '#10B981', status: 'online' },
+  { id: 'janus', name: 'Janus', emoji: '🧪', avatar: '/agents/vex.jpg', role: 'Verifier', color: '#10B981', status: 'online' },
   { id: 'scout', name: 'Scout', emoji: '🔭', avatar: '/agents/scout.jpg', role: 'Researcher', color: '#06B6D4', status: 'online' },
   { id: 'ralph', name: 'Ralph', emoji: '🔄', avatar: '/agents/ralph.jpg', role: 'Loop Orchestrator', color: '#EC4899', status: 'online' },
   { id: 'quill', name: 'Quill', emoji: '🪶', avatar: '/agents/quill-writer.svg', role: 'Content Creator', color: '#F97316', status: 'online' },

@@ -41,8 +41,8 @@ const AGENT_POOL: Record<string, Agent> = {
     avatarType: 'png',
   },
   vex: {
-    id: 'vex',
-    name: 'Vex',
+    id: 'janus',
+    name: 'Janus',
     role: 'Verifier',
     color: '#8B5CF6',
     avatar: '/agents/verifier.svg',
@@ -111,7 +111,7 @@ const TEMPLATES: Template[] = [
     name: 'Software Development',
     emoji: '🚀',
     tagline: 'From issue to shipped code — fully automated',
-    pipeline: ['athena', 'scout', 'vulcan', 'vex'],
+    pipeline: ['athena', 'scout', 'vulcan', 'janus'],
     descriptions: {
       caesar: 'Routes tasks & manages the pipeline',
       athena: 'Decomposes tasks into implementation plans',
@@ -179,7 +179,7 @@ const TEMPLATES: Template[] = [
     name: 'Operations & Compliance',
     emoji: '📋',
     tagline: 'Streamline processes, enforce standards',
-    pipeline: ['scout', 'athena', 'forge', 'vex'],
+    pipeline: ['scout', 'athena', 'forge', 'janus'],
     descriptions: {
       caesar: 'Oversees operational workflows & compliance',
       scout: 'Audits current processes & regulations',

@@ -10,7 +10,7 @@ const PIPELINE_DOTS = [
   { label: 'Archie', color: '#3B82F6' },
   { label: 'Scout', color: '#06B6D4' },
   { label: 'Mason', color: '#F59E0B' },
-  { label: 'Vex', color: '#8B5CF6' },
+  { label: 'Janus', color: '#8B5CF6' },
 ]
 
 function MiniAgentFlow() {

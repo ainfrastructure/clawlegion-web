@@ -251,8 +251,8 @@ export default function DashboardPage() {
     }
   })
 
-  // Sort: core agents first (Caesar, Scout, Athena, Vulcan, Vex), then others alphabetically
-  const CORE_ORDER = ['caesar', 'scout', 'athena', 'vulcan', 'vex']
+  // Sort: core agents first (Caesar, Scout, Athena, Vulcan, Janus), then others alphabetically
+  const CORE_ORDER = ['caesar', 'scout', 'athena', 'vulcan', 'janus']
   agents.sort((a: any, b: any) => {
     const aIdx = CORE_ORDER.indexOf(a.id?.toLowerCase() || a.name?.toLowerCase())
     const bIdx = CORE_ORDER.indexOf(b.id?.toLowerCase() || b.name?.toLowerCase())

@@ -32,7 +32,7 @@ const tierMap: Record<string, AgentMetadata['tier']> = {
 }
 
 // Agents enabled by default in flow presets
-const defaultEnabledAgents = new Set(['athena', 'vulcan', 'vex'])
+const defaultEnabledAgents = new Set(['athena', 'vulcan', 'janus'])
 
 /**
  * Agent metadata for UI display — derived from canonical agentConfig
@@ -84,7 +84,7 @@ export const DEFAULT_PRESETS: FlowPreset[] = [
       { role: 'scout', enabled: false, resourceLevel: 'low' },
       { role: 'athena', enabled: false, resourceLevel: 'low' },
       { role: 'vulcan', enabled: true, resourceLevel: 'medium' },
-      { role: 'vex', enabled: true, resourceLevel: 'low' },
+      { role: 'janus', enabled: true, resourceLevel: 'low' },
     ],
     loopSettings: {
       timeBudgetHours: 1,
@@ -108,7 +108,7 @@ export const DEFAULT_PRESETS: FlowPreset[] = [
       { role: 'scout', enabled: false, resourceLevel: 'medium' },
       { role: 'athena', enabled: true, resourceLevel: 'medium' },
       { role: 'vulcan', enabled: true, resourceLevel: 'medium' },
-      { role: 'vex', enabled: true, resourceLevel: 'medium' },
+      { role: 'janus', enabled: true, resourceLevel: 'medium' },
     ],
     loopSettings: {
       timeBudgetHours: 4,
@@ -132,7 +132,7 @@ export const DEFAULT_PRESETS: FlowPreset[] = [
       { role: 'scout', enabled: true, resourceLevel: 'high' },
       { role: 'athena', enabled: true, resourceLevel: 'high' },
       { role: 'vulcan', enabled: true, resourceLevel: 'high' },
-      { role: 'vex', enabled: true, resourceLevel: 'high' },
+      { role: 'janus', enabled: true, resourceLevel: 'high' },
     ],
     loopSettings: {
       timeBudgetHours: 8,
@@ -156,7 +156,7 @@ export const DEFAULT_PRESETS: FlowPreset[] = [
       { role: 'scout', enabled: true, resourceLevel: 'high' },
       { role: 'athena', enabled: true, resourceLevel: 'medium' },
       { role: 'vulcan', enabled: false, resourceLevel: 'low' },
-      { role: 'vex', enabled: false, resourceLevel: 'low' },
+      { role: 'janus', enabled: false, resourceLevel: 'low' },
     ],
     loopSettings: {
       timeBudgetHours: 2,
@@ -251,7 +251,7 @@ export const DEFAULT_PRESETS: FlowPreset[] = [
       { role: 'scout', enabled: true, resourceLevel: 'medium' },
       { role: 'athena', enabled: true, resourceLevel: 'high' },
       { role: 'vulcan', enabled: true, resourceLevel: 'high' },
-      { role: 'vex', enabled: true, resourceLevel: 'high' },
+      { role: 'janus', enabled: true, resourceLevel: 'high' },
       { role: 'forge', enabled: true, resourceLevel: 'medium' },
     ],
     loopSettings: {
@@ -494,7 +494,7 @@ export function formatTimeBudget(hours: number): string {
 /**
  * Valid agent roles for validation
  */
-const VALID_ROLES: AgentRole[] = ['scout', 'athena', 'vulcan', 'vex', 'caesar', 'forge', 'mercury', 'quill', 'pixel', 'sage']
+const VALID_ROLES: AgentRole[] = ['scout', 'athena', 'vulcan', 'janus', 'caesar', 'forge', 'mercury', 'quill', 'pixel', 'sage']
 
 /**
  * Check if a role is a valid agent role

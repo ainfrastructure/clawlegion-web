@@ -4,7 +4,7 @@ import { ArrowRight, Zap } from 'lucide-react'
 import { AGENT_METADATA, getAgentColorClasses } from '@/lib/flow-presets'
 import type { FlowPreviewProps, AgentRole } from '../types'
 
-const AGENT_ORDER: AgentRole[] = ['scout', 'athena', 'vulcan', 'vex']
+const AGENT_ORDER: AgentRole[] = ['scout', 'athena', 'vulcan', 'janus']
 
 export function FlowPreview({ agents }: FlowPreviewProps) {
   // Sort agents by the defined order
@@ -158,7 +158,7 @@ export function FlowPreview({ agents }: FlowPreviewProps) {
           <span className="w-2 h-2 rounded-full bg-amber-500" /> Vulcan
         </div>
         <div className="flex items-center gap-1">
-          <span className="w-2 h-2 rounded-full bg-green-500" /> Vex
+          <span className="w-2 h-2 rounded-full bg-green-500" /> Janus
         </div>
       </div>
     </div>

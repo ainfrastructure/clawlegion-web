@@ -34,7 +34,7 @@ const WORKFLOW_STEP_AGENTS: Record<string, string> = {
   research: 'scout',
   plan: 'athena', 
   build: 'vulcan',
-  verify: 'vex'
+  verify: 'janus'
 }
 
 // Default agents configuration
@@ -43,7 +43,7 @@ const DEFAULT_AGENTS: AgentConfig[] = [
   { id: 'scout', name: 'Scout' },
   { id: 'athena', name: 'Athena' },
   { id: 'vulcan', name: 'Vulcan' },
-  { id: 'vex', name: 'Vex' },
+  { id: 'janus', name: 'Janus' },
   { id: 'mercury', name: 'Mercury' },
   { id: 'forge', name: 'Forge' },
   { id: 'pixel', name: 'Pixel' },

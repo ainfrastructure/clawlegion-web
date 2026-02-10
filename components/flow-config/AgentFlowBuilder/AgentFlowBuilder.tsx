@@ -5,7 +5,7 @@ import { AgentCard } from './AgentCard'
 import { AGENT_METADATA } from '@/lib/flow-presets'
 import type { AgentFlowBuilderProps, AgentConfig, AgentRole } from '../types'
 
-const AGENT_ORDER: AgentRole[] = ['scout', 'athena', 'vulcan', 'vex']
+const AGENT_ORDER: AgentRole[] = ['scout', 'athena', 'vulcan', 'janus']
 
 export function AgentFlowBuilder({ agents, onChange }: AgentFlowBuilderProps) {
   const handleAgentChange = (updatedAgent: AgentConfig) => {
