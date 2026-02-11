@@ -370,9 +370,13 @@ function TaskCard({ task, isSelected, onSelect, onClick }: TaskCardProps) {
               {task.domain}
             </span>
           )}
-          {task.repository?.name && (
+          {task.repositories && task.repositories.length > 0 ? (
+            task.repositories.map((repo) => (
+              <span key={repo.id} className="px-1.5 py-0.5 rounded bg-slate-800/80 text-[10px] text-slate-400 font-mono">{repo.name}</span>
+            ))
+          ) : task.repository?.name ? (
             <span className="px-1.5 py-0.5 rounded bg-slate-800/80 text-[10px] text-slate-400 font-mono">{task.repository.name}</span>
-          )}
+          ) : null}
           {task.currentWorkflowStep && task.currentWorkflowStep !== 'pending' && task.currentWorkflowStep !== 'done' && (
             <span
               className="px-1.5 py-0.5 rounded text-[10px] uppercase tracking-wide font-semibold"

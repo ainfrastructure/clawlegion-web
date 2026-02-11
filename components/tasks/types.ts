@@ -83,6 +83,11 @@ export interface Task {
     name: string
     fullName: string
   }
+  repositories?: Array<{
+    id: string
+    name: string
+    fullName: string
+  }>
 
   // Planning
   specs?: string | null

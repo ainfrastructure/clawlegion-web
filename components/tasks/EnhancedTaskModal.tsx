@@ -45,6 +45,7 @@ export function EnhancedTaskModal({ isOpen, onClose, onTaskCreated, repositories
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [repositoryId, setRepositoryId] = useState('')
+  const [selectedRepoIds, setSelectedRepoIds] = useState<string[]>([])
   const [priority, setPriority] = useState<'P0' | 'P1' | 'P2' | 'P3'>('P2')
   const [specs, setSpecs] = useState('')
   const [approach, setApproach] = useState('')
@@ -78,6 +79,7 @@ export function EnhancedTaskModal({ isOpen, onClose, onTaskCreated, repositories
     setTitle('')
     setDescription('')
     setRepositoryId('')
+    setSelectedRepoIds([])
     setPriority('P2')
     setSpecs('')
     setApproach('')
@@ -120,7 +122,10 @@ export function EnhancedTaskModal({ isOpen, onClose, onTaskCreated, repositories
       )
       setSpecs(expanded.specs)
       setApproach(expanded.approach)
-      if (promptRepoId) setRepositoryId(promptRepoId)
+      if (promptRepoId) {
+        setRepositoryId(promptRepoId)
+        setSelectedRepoIds([promptRepoId])
+      }
       setShowTechnical(true)
       setError(null)
       setStep('review')
@@ -205,7 +210,8 @@ export function EnhancedTaskModal({ isOpen, onClose, onTaskCreated, repositories
       const payload = {
         title,
         description,
-        repositoryId,
+        repositoryId: repositoryId || selectedRepoIds[0],
+        repositoryIds: selectedRepoIds.length > 0 ? selectedRepoIds : (repositoryId ? [repositoryId] : []),
         priority,
         createLinearIssue: createLinearIssue && !!apiKey,
         successCriteria: successCriteria.map(c => c.text),
@@ -256,8 +262,8 @@ export function EnhancedTaskModal({ isOpen, onClose, onTaskCreated, repositories
       setError('Description is required')
       return
     }
-    if (!repositoryId) {
-      setError('Please select a repository')
+    if (!repositoryId && selectedRepoIds.length === 0) {
+      setError('Please select at least one repository')
       return
     }
 
@@ -291,7 +297,7 @@ export function EnhancedTaskModal({ isOpen, onClose, onTaskCreated, repositories
 
   if (!isOpen) return null
 
-  const selectedRepo = repositories.find((r) => r.id === repositoryId)
+  const selectedRepo = repositories.find((r) => r.id === (repositoryId || selectedRepoIds[0]))
   const repoHasLinearProject = selectedRepo?.linearProject != null
 
   return (
@@ -471,21 +477,47 @@ export function EnhancedTaskModal({ isOpen, onClose, onTaskCreated, repositories
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-slate-300 mb-2">
-                        Workspace *
+                        Workspaces *
+                        <span className="text-slate-500 ml-1 font-normal">(select one or more)</span>
                       </label>
-                      <select
-                        value={repositoryId}
-                        onChange={(e) => setRepositoryId(e.target.value)}
-                        className="w-full px-4 py-3 rounded-lg border border-slate-600 bg-slate-700 text-slate-100 focus:ring-2 focus:ring-amber-500 focus:border-transparent"
-                      >
-                        <option value="">Select workspace</option>
-                        {repositories.map((repo) => (
-                          <option key={repo.id} value={repo.id}>
-                            {repo.icon ? `${repo.icon} ` : ''}{repo.name}
-                            {repo.type && repo.type !== 'code' ? ` (${repo.type})` : ''}
-                          </option>
-                        ))}
-                      </select>
+                      <div className="space-y-1.5 max-h-36 overflow-y-auto border border-slate-600 rounded-lg p-2.5 bg-slate-700">
+                        {repositories.map((repo) => {
+                          const isChecked = selectedRepoIds.includes(repo.id)
+                          return (
+                            <label key={repo.id} className="flex items-center gap-2.5 cursor-pointer hover:bg-slate-600/50 rounded px-2 py-1.5 transition-colors">
+                              <input
+                                type="checkbox"
+                                checked={isChecked}
+                                onChange={() => {
+                                  if (isChecked) {
+                                    const newIds = selectedRepoIds.filter((rid) => rid !== repo.id)
+                                    setSelectedRepoIds(newIds)
+                                    if (repositoryId === repo.id) {
+                                      setRepositoryId(newIds[0] || '')
+                                    }
+                                  } else {
+                                    const newIds = [...selectedRepoIds, repo.id]
+                                    setSelectedRepoIds(newIds)
+                                    if (!repositoryId) {
+                                      setRepositoryId(repo.id)
+                                    }
+                                  }
+                                }}
+                                className="w-4 h-4 rounded border-slate-500 text-amber-600 focus:ring-amber-500"
+                              />
+                              <span className="text-sm text-slate-100">
+                                {repo.icon ? `${repo.icon} ` : ''}{repo.name}
+                                {repo.type && repo.type !== 'code' ? ` (${repo.type})` : ''}
+                              </span>
+                            </label>
+                          )
+                        })}
+                      </div>
+                      {selectedRepoIds.length > 1 && (
+                        <p className="mt-1 text-xs text-slate-500">
+                          {selectedRepoIds.length} workspaces selected
+                        </p>
+                      )}
                     </div>
 
                     <div>

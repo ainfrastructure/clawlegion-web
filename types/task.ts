@@ -53,6 +53,13 @@ export interface Task {
     type?: string
     icon?: string | null
   }
+  repositories?: Array<{
+    id: string
+    name: string
+    fullName: string
+    type?: string
+    icon?: string | null
+  }>
   domain?: string  // workspace type: code, research, content, etc.
   currentWorkflowStep?: string | null  // e.g. researching, planning, building, verifying, done
   attemptCount?: number

@@ -21,6 +21,7 @@ export function SimpleTaskModal({ isOpen, onClose, onTaskCreated }: SimpleTaskMo
   const queryClient = useQueryClient()
   const [prompt, setPrompt] = useState('')
   const [workspaceId, setWorkspaceId] = useState('')
+  const [selectedWorkspaceIds, setSelectedWorkspaceIds] = useState<string[]>([])
   const [priority, setPriority] = useState<'P1' | 'P2' | 'P3'>('P2')
   const [error, setError] = useState<string | null>(null)
 
@@ -37,6 +38,7 @@ export function SimpleTaskModal({ isOpen, onClose, onTaskCreated }: SimpleTaskMo
   const resetForm = useCallback(() => {
     setPrompt('')
     setWorkspaceId('')
+    setSelectedWorkspaceIds([])
     setPriority('P2')
     setError(null)
   }, [])
@@ -68,10 +70,12 @@ export function SimpleTaskModal({ isOpen, onClose, onTaskCreated }: SimpleTaskMo
         // AI expansion failed, use raw prompt
       }
 
+      const resolvedRepoIds = selectedWorkspaceIds.length > 0 ? selectedWorkspaceIds : (workspaceId ? [workspaceId] : [])
       const response = await api.post('/task-tracking/tasks', {
         title,
         description,
-        repositoryId: workspaceId || undefined,
+        repositoryId: workspaceId || resolvedRepoIds[0] || undefined,
+        repositoryIds: resolvedRepoIds.length > 0 ? resolvedRepoIds : undefined,
         workspaceId: workspaceId || undefined,
         priority,
         specs,
@@ -100,8 +104,8 @@ export function SimpleTaskModal({ isOpen, onClose, onTaskCreated }: SimpleTaskMo
       return
     }
 
-    if (!workspaceId) {
-      setError('Please select a workspace')
+    if (!workspaceId && selectedWorkspaceIds.length === 0) {
+      setError('Please select at least one workspace')
       return
     }
 
@@ -163,20 +167,40 @@ export function SimpleTaskModal({ isOpen, onClose, onTaskCreated }: SimpleTaskMo
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-slate-300 mb-2">
-                  Workspace
+                  Workspaces
                 </label>
-                <select
-                  value={workspaceId}
-                  onChange={(e) => setWorkspaceId(e.target.value)}
-                  className="w-full px-4 py-3 rounded-lg border border-slate-600 bg-slate-700 text-slate-100 focus:ring-2 focus:ring-amber-500 focus:border-transparent"
-                >
-                  <option value="">Select...</option>
-                  {workspaces.map((ws) => (
-                    <option key={ws.id} value={ws.id}>
-                      {ws.icon ? `${ws.icon} ` : ''}{ws.name}
-                    </option>
-                  ))}
-                </select>
+                <div className="space-y-1 max-h-28 overflow-y-auto border border-slate-600 rounded-lg p-2 bg-slate-700">
+                  {workspaces.map((ws) => {
+                    const isChecked = selectedWorkspaceIds.includes(ws.id)
+                    return (
+                      <label key={ws.id} className="flex items-center gap-2 cursor-pointer hover:bg-slate-600/50 rounded px-2 py-1 transition-colors">
+                        <input
+                          type="checkbox"
+                          checked={isChecked}
+                          onChange={() => {
+                            if (isChecked) {
+                              const newIds = selectedWorkspaceIds.filter((id) => id !== ws.id)
+                              setSelectedWorkspaceIds(newIds)
+                              if (workspaceId === ws.id) {
+                                setWorkspaceId(newIds[0] || '')
+                              }
+                            } else {
+                              const newIds = [...selectedWorkspaceIds, ws.id]
+                              setSelectedWorkspaceIds(newIds)
+                              if (!workspaceId) {
+                                setWorkspaceId(ws.id)
+                              }
+                            }
+                          }}
+                          className="w-3.5 h-3.5 rounded border-slate-500 text-amber-600 focus:ring-amber-500"
+                        />
+                        <span className="text-sm text-slate-100">
+                          {ws.icon ? `${ws.icon} ` : ''}{ws.name}
+                        </span>
+                      </label>
+                    )
+                  })}
+                </div>
               </div>
 
               <div>

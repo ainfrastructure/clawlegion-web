@@ -78,7 +78,15 @@ export function TaskCompactMetadata({ task }: TaskCompactMetadataProps) {
             </span>
           </>
         )}
-        {task.repository && (
+        {task.repositories && task.repositories.length > 0 ? (
+          <>
+            <Dot />
+            <span className="flex items-center gap-1">
+              <GitBranch className="w-3 h-3" />
+              {task.repositories.map((r) => r.name).join(', ')}
+            </span>
+          </>
+        ) : task.repository ? (
           <>
             <Dot />
             <span className="flex items-center gap-1">
@@ -86,7 +94,7 @@ export function TaskCompactMetadata({ task }: TaskCompactMetadataProps) {
               {task.repository.name}
             </span>
           </>
-        )}
+        ) : null}
         {task.domain && (
           <>
             <Dot />

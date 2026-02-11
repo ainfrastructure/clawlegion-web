@@ -11,6 +11,7 @@ export function NewTaskModal({ isOpen, onClose, onTaskCreated, repositories }: C
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [repositoryId, setRepositoryId] = useState('')
+  const [selectedRepoIds, setSelectedRepoIds] = useState<string[]>([])
   const [priority, setPriority] = useState('P2')
   const [createLinearIssue, setCreateLinearIssue] = useState(true)
   const [startImmediately, setStartImmediately] = useState(false)
@@ -29,7 +30,8 @@ export function NewTaskModal({ isOpen, onClose, onTaskCreated, repositories }: C
       const response = await api.post('/task-tracking/tasks', {
         title,
         description,
-        repositoryId,
+        repositoryId: repositoryId || selectedRepoIds[0],
+        repositoryIds: selectedRepoIds.length > 0 ? selectedRepoIds : [repositoryId],
         priority,
         createLinearIssue: createLinearIssue && !!apiKey,
       }, { headers })
@@ -49,6 +51,7 @@ export function NewTaskModal({ isOpen, onClose, onTaskCreated, repositories }: C
       setTitle('')
       setDescription('')
       setRepositoryId('')
+      setSelectedRepoIds([])
       setPriority('P2')
       setCreateLinearIssue(true)
       setStartImmediately(false)
@@ -74,8 +77,8 @@ export function NewTaskModal({ isOpen, onClose, onTaskCreated, repositories }: C
       return
     }
 
-    if (!repositoryId) {
-      setError('Please select a repository')
+    if (!repositoryId && selectedRepoIds.length === 0) {
+      setError('Please select at least one repository')
       return
     }
 
@@ -84,7 +87,7 @@ export function NewTaskModal({ isOpen, onClose, onTaskCreated, repositories }: C
 
   if (!isOpen) return null
 
-  const selectedRepo = repositories.find((r) => r.id === repositoryId)
+  const selectedRepo = repositories.find((r) => r.id === (repositoryId || selectedRepoIds[0]))
   const repoHasLinearProject = selectedRepo?.linearProject != null
 
   return (
@@ -142,23 +145,52 @@ export function NewTaskModal({ isOpen, onClose, onTaskCreated, repositories }: C
               />
             </div>
 
-            {/* Repository */}
+            {/* Repositories (multi-select) */}
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
-                Repository
+                Repositories
+                <span className="text-gray-400 dark:text-slate-500 ml-1 font-normal">(select one or more)</span>
               </label>
-              <select
-                value={repositoryId}
-                onChange={(e) => setRepositoryId(e.target.value)}
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              >
-                <option value="">Select a repository</option>
-                {repositories.map((repo) => (
-                  <option key={repo.id} value={repo.id}>
-                    {repo.name} {repo.linearProject ? '(Linear connected)' : ''}
-                  </option>
-                ))}
-              </select>
+              <div className="space-y-2 max-h-40 overflow-y-auto border border-gray-300 dark:border-slate-600 rounded-lg p-3 bg-white dark:bg-slate-700">
+                {repositories.map((repo) => {
+                  const isChecked = selectedRepoIds.includes(repo.id)
+                  return (
+                    <label key={repo.id} className="flex items-center gap-3 cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-600/50 rounded px-2 py-1.5 transition-colors">
+                      <input
+                        type="checkbox"
+                        checked={isChecked}
+                        onChange={() => {
+                          if (isChecked) {
+                            const newIds = selectedRepoIds.filter((id) => id !== repo.id)
+                            setSelectedRepoIds(newIds)
+                            if (repositoryId === repo.id) {
+                              setRepositoryId(newIds[0] || '')
+                            }
+                          } else {
+                            const newIds = [...selectedRepoIds, repo.id]
+                            setSelectedRepoIds(newIds)
+                            if (!repositoryId) {
+                              setRepositoryId(repo.id)
+                            }
+                          }
+                        }}
+                        className="w-4 h-4 rounded border-gray-300 dark:border-slate-500 text-blue-600 focus:ring-blue-500"
+                      />
+                      <span className="text-sm text-gray-900 dark:text-slate-100">
+                        {repo.name}
+                        {repo.linearProject ? (
+                          <span className="text-gray-400 dark:text-slate-500 ml-1">(Linear connected)</span>
+                        ) : null}
+                      </span>
+                    </label>
+                  )
+                })}
+              </div>
+              {selectedRepoIds.length > 1 && (
+                <p className="mt-1 text-xs text-gray-500 dark:text-slate-500">
+                  {selectedRepoIds.length} repositories selected
+                </p>
+              )}
             </div>
 
             {/* Priority */}
