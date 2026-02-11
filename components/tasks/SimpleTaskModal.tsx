@@ -23,6 +23,7 @@ export function SimpleTaskModal({ isOpen, onClose, onTaskCreated }: SimpleTaskMo
   const [workspaceId, setWorkspaceId] = useState('')
   const [selectedWorkspaceIds, setSelectedWorkspaceIds] = useState<string[]>([])
   const [priority, setPriority] = useState<'P1' | 'P2' | 'P3'>('P2')
+  const [startImmediately, setStartImmediately] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   // Fetch workspaces
@@ -40,6 +41,7 @@ export function SimpleTaskModal({ isOpen, onClose, onTaskCreated }: SimpleTaskMo
     setWorkspaceId('')
     setSelectedWorkspaceIds([])
     setPriority('P2')
+    setStartImmediately(false)
     setError(null)
   }, [])
 
@@ -82,7 +84,18 @@ export function SimpleTaskModal({ isOpen, onClose, onTaskCreated }: SimpleTaskMo
         approach,
         successCriteria,
       })
-      return response.data
+      const task = response.data?.task || response.data
+      
+      // Start pipeline immediately if toggle is on
+      if (startImmediately && task?.id) {
+        try {
+          await api.post(`/task-tracking/tasks/${task.id}/start-pipeline`)
+        } catch {
+          // Non-blocking — task was created, pipeline start is best-effort
+        }
+      }
+      
+      return task
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['tasks'] })
@@ -228,6 +241,34 @@ export function SimpleTaskModal({ isOpen, onClose, onTaskCreated }: SimpleTaskMo
               </div>
             </div>
 
+            {/* Start Immediately Toggle */}
+            <div
+              onClick={() => setStartImmediately(!startImmediately)}
+              className={`flex items-center justify-between p-3 rounded-lg border cursor-pointer transition-all ${
+                startImmediately
+                  ? 'border-amber-500/50 bg-amber-500/10'
+                  : 'border-slate-600 bg-slate-700/50 hover:border-slate-500'
+              }`}
+            >
+              <div className="flex items-center gap-2">
+                <span className="text-base">⚡</span>
+                <span className={`text-sm font-medium ${startImmediately ? 'text-amber-400' : 'text-slate-300'}`}>
+                  Start Immediately
+                </span>
+              </div>
+              <div
+                className={`w-9 h-5 rounded-full transition-colors relative ${
+                  startImmediately ? 'bg-amber-500' : 'bg-slate-600'
+                }`}
+              >
+                <div
+                  className={`absolute top-0.5 w-4 h-4 rounded-full bg-white shadow transition-transform ${
+                    startImmediately ? 'translate-x-4' : 'translate-x-0.5'
+                  }`}
+                />
+              </div>
+            </div>
+
             {/* Error */}
             {error && (
               <div className="p-3 bg-red-900/20 border border-red-800 rounded-lg text-red-400 text-sm">
@@ -258,7 +299,7 @@ export function SimpleTaskModal({ isOpen, onClose, onTaskCreated }: SimpleTaskMo
               ) : (
                 <>
                   <Sparkles className="w-4 h-4" />
-                  Create Task
+                  {startImmediately ? 'Create & Start' : 'Create Task'}
                 </>
               )}
             </button>

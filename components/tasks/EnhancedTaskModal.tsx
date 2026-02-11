@@ -3,7 +3,7 @@
 import { useState, useCallback } from 'react'
 import { useMutation } from '@tanstack/react-query'
 import api from '@/lib/api'
-import { X, Loader2, ChevronDown, ChevronUp, Sparkles, ArrowLeft, HelpCircle, Zap } from 'lucide-react'
+import { X, Loader2, ChevronDown, ChevronUp, Sparkles, ArrowLeft, HelpCircle, Zap, Check } from 'lucide-react'
 import { AgentFlowSection } from './AgentFlowSection'
 import { SuccessCriteriaSection } from './SuccessCriteriaSection'
 import {
@@ -39,7 +39,7 @@ export function EnhancedTaskModal({ isOpen, onClose, onTaskCreated, repositories
 
   // Prompt step fields
   const [promptText, setPromptText] = useState('')
-  const [promptRepoId, setPromptRepoId] = useState('')
+  const [promptWorkspaceOpen, setPromptWorkspaceOpen] = useState(false)
 
   // Review step fields
   const [title, setTitle] = useState('')
@@ -75,7 +75,7 @@ export function EnhancedTaskModal({ isOpen, onClose, onTaskCreated, repositories
   const resetForm = useCallback(() => {
     setStep('prompt')
     setPromptText('')
-    setPromptRepoId('')
+    setPromptWorkspaceOpen(false)
     setTitle('')
     setDescription('')
     setRepositoryId('')
@@ -99,7 +99,7 @@ export function EnhancedTaskModal({ isOpen, onClose, onTaskCreated, repositories
     mutationFn: async () => {
       const response = await api.post('/task-tracking/tasks/expand', {
         prompt: promptText.trim(),
-        repositoryId: promptRepoId || undefined,
+        repositoryId: selectedRepoIds[0] || undefined,
       })
       return response.data.expanded
     },
@@ -122,9 +122,8 @@ export function EnhancedTaskModal({ isOpen, onClose, onTaskCreated, repositories
       )
       setSpecs(expanded.specs)
       setApproach(expanded.approach)
-      if (promptRepoId) {
-        setRepositoryId(promptRepoId)
-        setSelectedRepoIds([promptRepoId])
+      if (selectedRepoIds.length > 0) {
+        setRepositoryId(selectedRepoIds[0])
       }
       setShowTechnical(true)
       setError(null)
@@ -362,24 +361,111 @@ export function EnhancedTaskModal({ isOpen, onClose, onTaskCreated, repositories
                   </p>
                 </div>
 
-                {/* Optional workspace selector */}
-                <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-2">
-                    Workspace <span className="text-slate-500">(optional, provides context)</span>
-                  </label>
-                  <select
-                    value={promptRepoId}
-                    onChange={(e) => setPromptRepoId(e.target.value)}
-                    className="w-full px-4 py-3 rounded-lg border border-slate-600 bg-slate-700 text-slate-100 focus:ring-2 focus:ring-amber-500 focus:border-transparent"
-                  >
-                    <option value="">No workspace selected</option>
-                    {repositories.map((repo) => (
-                      <option key={repo.id} value={repo.id}>
-                        {repo.icon ? `${repo.icon} ` : ''}{repo.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+                {/* Workspace multi-select */}
+                {repositories.length > 0 && (
+                  <div>
+                    <label className="block text-sm font-medium text-slate-300 mb-2">
+                      Workspaces <span className="text-slate-500">(optional, provides context)</span>
+                    </label>
+
+                    {/* Selected workspace pills */}
+                    {selectedRepoIds.length > 0 && (
+                      <div className="flex flex-wrap gap-1.5 mb-2">
+                        {selectedRepoIds.map((id) => {
+                          const repo = repositories.find(r => r.id === id)
+                          if (!repo) return null
+                          return (
+                            <span
+                              key={id}
+                              className="inline-flex items-center gap-1.5 pl-2.5 pr-1.5 py-1 rounded-md text-xs font-medium bg-amber-500/15 text-amber-300 border border-amber-500/20"
+                            >
+                              {repo.icon ? `${repo.icon} ` : ''}{repo.name}
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setSelectedRepoIds(prev => prev.filter(rid => rid !== id))
+                                  if (repositoryId === id) {
+                                    const remaining = selectedRepoIds.filter(rid => rid !== id)
+                                    setRepositoryId(remaining[0] || '')
+                                  }
+                                }}
+                                className="p-0.5 rounded hover:bg-amber-500/20 transition-colors"
+                              >
+                                <X size={12} />
+                              </button>
+                            </span>
+                          )
+                        })}
+                      </div>
+                    )}
+
+                    {/* Collapsible workspace list */}
+                    <button
+                      type="button"
+                      onClick={() => setPromptWorkspaceOpen(!promptWorkspaceOpen)}
+                      className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-lg border text-sm transition-colors ${
+                        promptWorkspaceOpen
+                          ? 'border-amber-500/40 bg-slate-700/80 text-slate-200'
+                          : 'border-slate-600 bg-slate-700/50 text-slate-400 hover:border-slate-500 hover:text-slate-300'
+                      }`}
+                    >
+                      <span>
+                        {selectedRepoIds.length === 0
+                          ? 'Select workspaces...'
+                          : `${selectedRepoIds.length} workspace${selectedRepoIds.length > 1 ? 's' : ''} selected`}
+                      </span>
+                      <ChevronDown size={16} className={`transition-transform ${promptWorkspaceOpen ? 'rotate-180' : ''}`} />
+                    </button>
+
+                    {promptWorkspaceOpen && (
+                      <div className="mt-1.5 rounded-lg border border-slate-600/80 bg-slate-800 overflow-hidden">
+                        <div className="max-h-44 overflow-y-auto py-1">
+                          {repositories.map((repo) => {
+                            const isChecked = selectedRepoIds.includes(repo.id)
+                            return (
+                              <button
+                                key={repo.id}
+                                type="button"
+                                onClick={() => {
+                                  if (isChecked) {
+                                    const newIds = selectedRepoIds.filter(rid => rid !== repo.id)
+                                    setSelectedRepoIds(newIds)
+                                    if (repositoryId === repo.id) setRepositoryId(newIds[0] || '')
+                                  } else {
+                                    const newIds = [...selectedRepoIds, repo.id]
+                                    setSelectedRepoIds(newIds)
+                                    if (!repositoryId) setRepositoryId(repo.id)
+                                  }
+                                }}
+                                className={`w-full flex items-center gap-3 px-3.5 py-2.5 text-sm transition-colors ${
+                                  isChecked
+                                    ? 'bg-amber-500/10 text-slate-100'
+                                    : 'text-slate-300 hover:bg-slate-700/60'
+                                }`}
+                              >
+                                <span className={`flex-shrink-0 w-4.5 h-4.5 flex items-center justify-center rounded border transition-all ${
+                                  isChecked
+                                    ? 'bg-amber-500 border-amber-500 text-white'
+                                    : 'border-slate-500 bg-transparent'
+                                }`}
+                                  style={{ width: '18px', height: '18px' }}
+                                >
+                                  {isChecked && <Check size={12} strokeWidth={3} />}
+                                </span>
+                                <span className="truncate">
+                                  {repo.icon ? `${repo.icon} ` : ''}{repo.name}
+                                  {repo.type && repo.type !== 'code' ? (
+                                    <span className="ml-1.5 text-slate-500 text-xs">({repo.type})</span>
+                                  ) : null}
+                                </span>
+                              </button>
+                            )
+                          })}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
 
                 {/* Loading skeleton */}
                 {expandMutation.isPending && (
@@ -473,22 +559,22 @@ export function EnhancedTaskModal({ isOpen, onClose, onTaskCreated, repositories
                     />
                   </div>
 
-                  {/* Repository & Priority */}
+                  {/* Workspaces & Priority */}
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-slate-300 mb-2">
                         Workspaces *
                         <span className="text-slate-500 ml-1 font-normal">(select one or more)</span>
                       </label>
-                      <div className="space-y-1.5 max-h-36 overflow-y-auto border border-slate-600 rounded-lg p-2.5 bg-slate-700">
-                        {repositories.map((repo) => {
-                          const isChecked = selectedRepoIds.includes(repo.id)
-                          return (
-                            <label key={repo.id} className="flex items-center gap-2.5 cursor-pointer hover:bg-slate-600/50 rounded px-2 py-1.5 transition-colors">
-                              <input
-                                type="checkbox"
-                                checked={isChecked}
-                                onChange={() => {
+                      <div className="rounded-lg border border-slate-600/80 overflow-hidden">
+                        <div className="max-h-40 overflow-y-auto py-1">
+                          {repositories.map((repo) => {
+                            const isChecked = selectedRepoIds.includes(repo.id)
+                            return (
+                              <button
+                                key={repo.id}
+                                type="button"
+                                onClick={() => {
                                   if (isChecked) {
                                     const newIds = selectedRepoIds.filter((rid) => rid !== repo.id)
                                     setSelectedRepoIds(newIds)
@@ -503,19 +589,36 @@ export function EnhancedTaskModal({ isOpen, onClose, onTaskCreated, repositories
                                     }
                                   }
                                 }}
-                                className="w-4 h-4 rounded border-slate-500 text-amber-600 focus:ring-amber-500"
-                              />
-                              <span className="text-sm text-slate-100">
-                                {repo.icon ? `${repo.icon} ` : ''}{repo.name}
-                                {repo.type && repo.type !== 'code' ? ` (${repo.type})` : ''}
-                              </span>
-                            </label>
-                          )
-                        })}
+                                className={`w-full flex items-center gap-3 px-3.5 py-2.5 text-sm transition-colors ${
+                                  isChecked
+                                    ? 'bg-amber-500/10 text-slate-100'
+                                    : 'text-slate-300 hover:bg-slate-700/60'
+                                }`}
+                              >
+                                <span
+                                  className={`flex-shrink-0 flex items-center justify-center rounded border transition-all ${
+                                    isChecked
+                                      ? 'bg-amber-500 border-amber-500 text-white'
+                                      : 'border-slate-500 bg-transparent'
+                                  }`}
+                                  style={{ width: '18px', height: '18px' }}
+                                >
+                                  {isChecked && <Check size={12} strokeWidth={3} />}
+                                </span>
+                                <span className="truncate">
+                                  {repo.icon ? `${repo.icon} ` : ''}{repo.name}
+                                  {repo.type && repo.type !== 'code' ? (
+                                    <span className="ml-1.5 text-slate-500 text-xs">({repo.type})</span>
+                                  ) : null}
+                                </span>
+                              </button>
+                            )
+                          })}
+                        </div>
                       </div>
-                      {selectedRepoIds.length > 1 && (
-                        <p className="mt-1 text-xs text-slate-500">
-                          {selectedRepoIds.length} workspaces selected
+                      {selectedRepoIds.length > 0 && (
+                        <p className="mt-1.5 text-xs text-slate-500">
+                          {selectedRepoIds.length} workspace{selectedRepoIds.length !== 1 ? 's' : ''} selected
                         </p>
                       )}
                     </div>
