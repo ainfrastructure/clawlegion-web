@@ -1,6 +1,6 @@
 'use client'
 
-import { ArrowRight, Play, Loader2, CheckCircle } from 'lucide-react'
+import { ArrowRight, Eye, Loader2, CheckCircle } from 'lucide-react'
 import { MascotHero } from './MascotHero'
 import { useEarlyAccessForm } from '@/hooks/useEarlyAccessForm'
 import { LAUNCH_CONFIG } from '@/lib/launch-config'
@@ -103,8 +103,8 @@ export function HeroSection() {
           href="#demo"
           className="inline-flex items-center gap-2 text-sm text-slate-400 hover:text-white transition-colors"
         >
-          <Play className="w-4 h-4" />
-          Watch Demo
+          <Eye className="w-4 h-4" />
+          See the Platform
         </a>
       </div>
     </section>

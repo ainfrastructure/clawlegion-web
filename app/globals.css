@@ -478,6 +478,26 @@
   .animate-fade-in {
     animation: fade-in 0.2s ease-out;
   }
+
+  /* Showcase slideshow animations */
+  @keyframes showcase-slide-enter {
+    0% { opacity: 0; transform: translateY(12px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+
+  .showcase-slide-enter {
+    animation: showcase-slide-enter 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .showcase-progress-bar {
+    width: 0%;
+    transition: none;
+  }
+
+  .showcase-progress-animate {
+    width: 100%;
+    transition: width 5.5s linear;
+  }
 }
 
 /* MascotHero keyframes & classes */

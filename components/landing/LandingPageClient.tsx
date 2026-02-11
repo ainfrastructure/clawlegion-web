@@ -10,7 +10,7 @@ import { EasyVsPower } from './EasyVsPower'
 import { LandingFooter } from './LandingFooter'
 
 const HowItWorks = dynamic(() => import('./HowItWorks').then(m => ({ default: m.HowItWorks })), { ssr: false })
-const DemoSection = dynamic(() => import('./DemoSection').then(m => ({ default: m.DemoSection })), { ssr: false })
+const ShowcaseSlideshow = dynamic(() => import('./ShowcaseSlideshow').then(m => ({ default: m.ShowcaseSlideshow })), { ssr: false })
 const ModelsSection = dynamic(() => import('./ModelsSection').then(m => ({ default: m.ModelsSection })), { ssr: false })
 const IntegrationsSection = dynamic(() => import('./IntegrationsSection').then(m => ({ default: m.IntegrationsSection })), { ssr: false })
 const PricingSection = dynamic(() => import('./PricingSection').then(m => ({ default: m.PricingSection })), { ssr: false })
@@ -32,7 +32,7 @@ export function LandingPageClient({ children }: { children?: React.ReactNode }) 
           <HeroSection />
           <EasyVsPower />
           <HowItWorks />
-          <DemoSection />
+          <ShowcaseSlideshow />
           {children}
           <ModelsSection />
           <IntegrationsSection />
