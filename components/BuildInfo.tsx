@@ -36,7 +36,7 @@ export function BuildInfo() {
   const shortSha = commitSha.slice(0, 7)
   const relativeTime = buildTime ? getRelativeTime(buildTime) : ''
   const isDev = commitSha === 'dev'
-  const commitUrl = isDev ? null : `${REPO_URL}/commit/${commitSha}`
+  const commitUrl: string | undefined = isDev ? undefined : `${REPO_URL}/commit/${commitSha}`
 
   return (
     <div className="fixed bottom-4 right-4 z-50">
