@@ -3,7 +3,7 @@
 import { useState, useCallback } from 'react'
 import { useMutation } from '@tanstack/react-query'
 import api from '@/lib/api'
-import { X, Loader2, ChevronDown, ChevronUp, Sparkles, ArrowLeft, HelpCircle, Zap, Check } from 'lucide-react'
+import { X, Loader2, ChevronDown, ChevronUp, Sparkles, ArrowLeft, HelpCircle, Zap, Check, MessageSquarePlus } from 'lucide-react'
 import { AgentFlowSection } from './AgentFlowSection'
 import { SuccessCriteriaSection } from './SuccessCriteriaSection'
 import {
@@ -62,6 +62,10 @@ export function EnhancedTaskModal({ isOpen, onClose, onTaskCreated, repositories
   // Success criteria
   const [successCriteria, setSuccessCriteria] = useState<SuccessCriterion[]>(DEFAULT_CRITERIA)
 
+  // Refinement state
+  const [refinements, setRefinements] = useState<string[]>([])
+  const [refinementInput, setRefinementInput] = useState('')
+
   // Start immediately toggle
   const [startImmediately, setStartImmediately] = useState(false)
 
@@ -85,6 +89,8 @@ export function EnhancedTaskModal({ isOpen, onClose, onTaskCreated, repositories
     setApproach('')
     setCreateLinearIssue(true)
     setStartImmediately(false)
+    setRefinements([])
+    setRefinementInput('')
     setError(null)
     setSelectedPresetId('standard')
     const preset = DEFAULT_PRESETS.find(p => p.id === 'standard')!
@@ -96,9 +102,14 @@ export function EnhancedTaskModal({ isOpen, onClose, onTaskCreated, repositories
 
   // AI expand mutation
   const expandMutation = useMutation({
-    mutationFn: async () => {
+    mutationFn: async (currentRefinements?: string[]) => {
+      let prompt = promptText.trim()
+      const refs = currentRefinements ?? refinements
+      if (refs.length > 0) {
+        prompt += '\n\n--- Refinements ---\n' + refs.map((r, i) => `${i + 1}. ${r}`).join('\n')
+      }
       const response = await api.post('/task-tracking/tasks/expand', {
-        prompt: promptText.trim(),
+        prompt,
         repositoryId: selectedRepoIds[0] || undefined,
       })
       return response.data.expanded
@@ -127,7 +138,9 @@ export function EnhancedTaskModal({ isOpen, onClose, onTaskCreated, repositories
       }
       setShowTechnical(true)
       setError(null)
-      setStep('review')
+      if (step !== 'review') {
+        setStep('review')
+      }
     },
     onError: (err: { response?: { data?: { error?: string } }; message?: string }) => {
       setError(err.response?.data?.error || err.message || 'AI expansion failed. Try again or skip to manual.')
@@ -281,12 +294,22 @@ export function EnhancedTaskModal({ isOpen, onClose, onTaskCreated, repositories
       setError('Please enter at least 3 characters describing your task')
       return
     }
-    expandMutation.mutate()
+    expandMutation.mutate(undefined)
   }
 
   const handleSkipToManual = () => {
     setError(null)
     setStep('review')
+  }
+
+  const handleRefine = () => {
+    const text = refinementInput.trim()
+    if (!text) return
+    const newRefinements = [...refinements, text]
+    setRefinements(newRefinements)
+    setRefinementInput('')
+    setError(null)
+    expandMutation.mutate(newRefinements)
   }
 
   const handleClose = () => {
@@ -525,6 +548,51 @@ export function EnhancedTaskModal({ isOpen, onClose, onTaskCreated, repositories
                   <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-300 text-sm">
                     <Sparkles size={14} />
                     AI-generated — review and edit before submitting
+                  </div>
+                )}
+
+                {/* Refinement section */}
+                {expandMutation.isSuccess && (
+                  <div className="space-y-2">
+                    {refinements.length > 0 && (
+                      <div className="px-3 py-2 rounded-lg bg-slate-700/50 border border-white/[0.06]">
+                        <p className="text-xs font-medium text-slate-400 mb-1.5">Refinements applied:</p>
+                        <ol className="list-decimal list-inside space-y-0.5">
+                          {refinements.map((r, i) => (
+                            <li key={i} className="text-xs text-slate-300">{r}</li>
+                          ))}
+                        </ol>
+                      </div>
+                    )}
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="text"
+                        value={refinementInput}
+                        onChange={(e) => setRefinementInput(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            e.preventDefault()
+                            e.stopPropagation()
+                            handleRefine()
+                          }
+                        }}
+                        placeholder="Add clarification... e.g. &quot;focus on frontend only&quot;"
+                        className="flex-1 px-3 py-2 rounded-lg border border-slate-600 bg-slate-700 text-slate-100 placeholder-slate-500 focus:ring-2 focus:ring-amber-500 focus:border-transparent text-sm"
+                      />
+                      <button
+                        type="button"
+                        onClick={handleRefine}
+                        disabled={!refinementInput.trim() || expandMutation.isPending}
+                        className="px-3 py-2 text-sm font-medium text-amber-300 bg-amber-500/10 border border-amber-500/20 rounded-lg hover:bg-amber-500/20 transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1.5 whitespace-nowrap"
+                      >
+                        {expandMutation.isPending ? (
+                          <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                        ) : (
+                          <MessageSquarePlus className="w-3.5 h-3.5" />
+                        )}
+                        Refine
+                      </button>
+                    </div>
                   </div>
                 )}
 
