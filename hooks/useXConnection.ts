@@ -49,8 +49,8 @@ export function useXConnection() {
       const res = await fetch(`${API_BASE}/connections/x/authorize?userId=default-user`)
       if (!res.ok) throw new Error('Failed to get authorization URL')
       const data = await res.json()
-      if (data.authUrl) {
-        window.location.href = data.authUrl
+      if (data.authUrl || data.url) {
+        window.location.href = data.authUrl || data.url
       } else {
         throw new Error('No authorization URL returned')
       }
