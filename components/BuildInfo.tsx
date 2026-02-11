@@ -25,8 +25,8 @@ export function BuildInfo() {
   const pathname = usePathname()
   const [expanded, setExpanded] = useState(false)
 
-  // Hide on landing page
-  if (pathname === '/') return null
+  // Hide entirely for now (clean screenshots)
+  return null
   
   const buildTime = process.env.NEXT_PUBLIC_BUILD_TIME || ''
   const commitSha = process.env.NEXT_PUBLIC_COMMIT_SHA || 'dev'

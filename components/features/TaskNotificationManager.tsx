@@ -219,9 +219,5 @@ export function TaskNotificationManager() {
 
   // This is an invisible component - it just manages WebSocket connections
   // In development, you could add a small connection status indicator here
-  return process.env.NODE_ENV === 'development' ? (
-    <div className="fixed bottom-4 left-4 z-50 px-2 py-1 text-xs bg-slate-800 border border-slate-700 rounded text-slate-300">
-      Socket: {connectionStatus}
-    </div>
-  ) : null
+  return null
 }
