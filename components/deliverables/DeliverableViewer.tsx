@@ -21,6 +21,7 @@ import {
   GitBranch,
 } from 'lucide-react'
 import type { Deliverable } from '@/types/common'
+import { FormattedText } from '@/components/tasks/shared/FormattedText'
 
 type DeliverableViewerProps = {
   taskId: string
@@ -204,10 +205,8 @@ function DeliverableCard({ deliverable, index }: { deliverable: Deliverable; ind
                 border border-white/[0.04]
                 bg-[#060e1c]/80
               `}>
-                <div className="max-h-[480px] overflow-y-auto custom-scrollbar">
-                  <pre className="px-4 py-4 text-[13px] leading-[1.7] text-slate-300 whitespace-pre-wrap font-[inherit] m-0 selection:bg-blue-500/30">
-                    {deliverable.content}
-                  </pre>
+                <div className="max-h-[480px] overflow-y-auto custom-scrollbar px-4 py-4 selection:bg-blue-500/30">
+                  <FormattedText text={deliverable.content!} className="space-y-2" />
                 </div>
               </div>
             </div>

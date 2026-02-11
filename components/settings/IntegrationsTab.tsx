@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useSearchParams } from 'next/navigation'
 import {
   useSystemSettings,
   useUpdateSystemSettings,
@@ -8,7 +9,8 @@ import {
   useTestIntegration,
 } from '@/hooks/useSystemSettings'
 import type { IntegrationConfig } from '@/hooks/useSystemSettings'
-import { CheckCircle2, XCircle, Loader2, Zap, ChevronDown } from 'lucide-react'
+import { CheckCircle2, XCircle, Loader2, Zap, ChevronDown, LogOut } from 'lucide-react'
+import { useXConnection } from '@/hooks/useXConnection'
 
 type Provider = 'linear' | 'github' | 'discord' | 'telegram'
 
@@ -224,6 +226,165 @@ function IntegrationCard({
   )
 }
 
+function XIntegrationCard() {
+  const { status, isLoading, isConnecting, isDisconnecting, connect, disconnect, refresh } = useXConnection()
+  const searchParams = useSearchParams()
+  const [oauthMessage, setOauthMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
+
+  // Handle OAuth callback URL params (from /settings/connections redirect)
+  useEffect(() => {
+    const oauthStatus = searchParams.get('oauth_status') || searchParams.get('status')
+    const oauthError = searchParams.get('oauth_error') || searchParams.get('error')
+    if (oauthStatus === 'success') {
+      setOauthMessage({ type: 'success', text: 'Successfully connected to X!' })
+      refresh()
+      // Clean URL params
+      const url = new URL(window.location.href)
+      url.searchParams.delete('oauth_status')
+      url.searchParams.delete('status')
+      window.history.replaceState({}, '', url.toString())
+    } else if (oauthError) {
+      setOauthMessage({ type: 'error', text: decodeURIComponent(oauthError) })
+      const url = new URL(window.location.href)
+      url.searchParams.delete('oauth_error')
+      url.searchParams.delete('error')
+      window.history.replaceState({}, '', url.toString())
+    }
+  }, [searchParams, refresh])
+
+  const xIcon = (
+    <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
+      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+    </svg>
+  )
+
+  return (
+    <div className="glass-2 rounded-2xl overflow-hidden">
+      <div className="p-5">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 rounded-xl bg-slate-800/15 text-white ring-4 ring-slate-500/10">
+              {xIcon}
+            </div>
+            <div>
+              <h3 className="font-semibold text-white">X (Twitter)</h3>
+              <div className="flex items-center gap-1.5 mt-1">
+                {isLoading ? (
+                  <>
+                    <Loader2 size={10} className="animate-spin text-slate-400" />
+                    <span className="text-xs text-slate-500">Checking...</span>
+                  </>
+                ) : status?.connected && status.account ? (
+                  <>
+                    <div className="w-2 h-2 rounded-full bg-green-400 shadow-sm shadow-green-400/50" />
+                    <span className="text-xs text-green-400 font-medium">
+                      Connected as @{status.account.username}
+                    </span>
+                  </>
+                ) : !status?.configured ? (
+                  <>
+                    <div className="w-2 h-2 rounded-full bg-amber-400 shadow-sm shadow-amber-400/50" />
+                    <span className="text-xs text-amber-400">Not configured</span>
+                  </>
+                ) : (
+                  <>
+                    <div className="w-2 h-2 rounded-full bg-slate-500" />
+                    <span className="text-xs text-slate-500">Not connected</span>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Connected account details */}
+        {status?.connected && status.account && (
+          <div className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-white/[0.03] mb-3">
+            {status.account.avatarUrl && (
+              <img
+                src={status.account.avatarUrl}
+                alt={status.account.displayName}
+                className="w-8 h-8 rounded-full ring-2 ring-white/10"
+              />
+            )}
+            <div className="flex-1 min-w-0">
+              <p className="text-sm text-white font-medium truncate">
+                {status.account.displayName}
+              </p>
+              <p className="text-xs text-slate-400">
+                Connected {new Date(status.account.connectedAt).toLocaleDateString()}
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Not configured message */}
+        {!isLoading && !status?.configured && (
+          <div className="px-3 py-2.5 rounded-xl bg-amber-500/5 border border-amber-500/10 mb-3">
+            <p className="text-xs text-amber-400/80">
+              Not configured — add <code className="px-1 py-0.5 bg-slate-800/60 rounded text-amber-300 text-[11px]">X_CLIENT_ID</code> and{' '}
+              <code className="px-1 py-0.5 bg-slate-800/60 rounded text-amber-300 text-[11px]">X_CLIENT_SECRET</code> to .env
+            </p>
+          </div>
+        )}
+
+        {/* OAuth callback message */}
+        {oauthMessage && (
+          <div className={`flex items-center gap-1.5 px-3 py-2.5 rounded-xl mb-3 ${
+            oauthMessage.type === 'success'
+              ? 'bg-green-500/5 border border-green-500/10'
+              : 'bg-red-500/5 border border-red-500/10'
+          }`}>
+            {oauthMessage.type === 'success' ? (
+              <CheckCircle2 size={14} className="text-green-400 shrink-0" />
+            ) : (
+              <XCircle size={14} className="text-red-400 shrink-0" />
+            )}
+            <p className={`text-xs ${oauthMessage.type === 'success' ? 'text-green-400/80' : 'text-red-400/80'}`}>
+              {oauthMessage.text}
+            </p>
+          </div>
+        )}
+
+        {/* Connect / Disconnect button */}
+        {!isLoading && status?.configured && (
+          <div>
+            {status.connected ? (
+              <button
+                onClick={disconnect}
+                disabled={isDisconnecting}
+                className="w-full flex items-center justify-center gap-2 px-3.5 py-2 glass-2 hover:bg-red-500/10 hover:text-red-400 rounded-xl text-sm text-slate-300 transition-colors disabled:opacity-50"
+              >
+                {isDisconnecting ? (
+                  <Loader2 size={14} className="animate-spin" />
+                ) : (
+                  <LogOut size={14} />
+                )}
+                {isDisconnecting ? 'Disconnecting...' : 'Disconnect'}
+              </button>
+            ) : (
+              <button
+                onClick={connect}
+                disabled={isConnecting}
+                className="w-full flex items-center justify-center gap-2 px-3.5 py-2 bg-white/90 hover:bg-white text-slate-900 rounded-xl text-sm font-medium transition-colors disabled:opacity-50 shadow-lg shadow-white/5"
+              >
+                {isConnecting ? (
+                  <Loader2 size={14} className="animate-spin" />
+                ) : (
+                  <svg viewBox="0 0 24 24" fill="currentColor" className="w-3.5 h-3.5">
+                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                  </svg>
+                )}
+                {isConnecting ? 'Connecting...' : 'Connect with X'}
+              </button>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
 export function IntegrationsTab() {
   const { data: settings } = useSystemSettings()
   const { data: envStatus } = useIntegrationStatus()
@@ -350,6 +511,8 @@ export function IntegrationsTab() {
           testResult={testResults.telegram ?? null}
           isTesting={testingProvider === 'telegram'}
         />
+
+        <XIntegrationCard />
       </div>
     </div>
   )
