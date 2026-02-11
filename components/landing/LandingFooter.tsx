@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import { MascotTrioIcon } from './MascotTrioIcon'
 
 const footerLinks = {
@@ -23,7 +24,9 @@ export function LandingFooter({ onContactClick }: LandingFooterProps) {
           <div className="col-span-2 md:col-span-1">
             <div className="flex items-center gap-2 mb-4">
               <MascotTrioIcon size={24} />
-              <span className="font-bold text-white">ClawLegion</span>
+              <span className="font-bold text-lg tracking-wide text-white" style={{ fontFamily: "'Cinzel', 'Georgia', serif" }}>
+                Claw<span className="text-red-500">Legion</span>
+              </span>
             </div>
             <p className="text-sm text-slate-500 leading-relaxed">
               The command center for autonomous AI legions.

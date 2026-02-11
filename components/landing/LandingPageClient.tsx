@@ -24,11 +24,8 @@ export function LandingPageClient({ children }: { children?: React.ReactNode }) 
   return (
     <CountdownProvider>
       <div className="min-h-screen bg-[#020617] text-white">
-        <div className="fixed top-0 left-0 right-0 z-[60]">
-          <UrgencyBanner />
-        </div>
-        <LandingNav bannerVisible onContactClick={() => setContactOpen(true)} />
-        <div className="pt-[41px]">
+        <LandingNav onContactClick={() => setContactOpen(true)} />
+        <div>
           <HeroSection />
           <EasyVsPower />
           <HowItWorks />

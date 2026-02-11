@@ -6,13 +6,13 @@ export function MascotHero() {
       <div className="council-hero-container">
         <div className="council-hero-glow" />
         <Image
-          src="/agents/council-hero.png"
-          alt="Caesar, Athena and Vulcan — The AI Council"
+          src="/agents/council-hero-group.png"
+          alt="The ClawLegion — Autonomous AI Workforce"
           fill
           quality={95}
-          className="council-hero-image object-contain"
+          className="council-hero-image object-contain object-bottom"
           priority
-          sizes="(max-width: 480px) 90vw, (max-width: 768px) 70vw, 620px"
+          sizes="(max-width: 480px) 95vw, (max-width: 768px) 85vw, 800px"
         />
       </div>
     </div>

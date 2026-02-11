@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { Menu, X } from 'lucide-react'
+import Image from 'next/image'
 import { MascotIcon } from './MascotIcon'
 import { LAUNCH_CONFIG } from '@/lib/launch-config'
 
@@ -44,10 +45,14 @@ type LandingNavProps = {
 
 export function LandingNav({ bannerVisible = false, onContactClick }: LandingNavProps) {
   const [scrolled, setScrolled] = useState(false)
+  const [pastHero, setPastHero] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20)
+    const onScroll = () => {
+      setScrolled(window.scrollY > 20)
+      setPastHero(window.scrollY > window.innerHeight * 0.4)
+    }
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
@@ -70,14 +75,18 @@ export function LandingNav({ bannerVisible = false, onContactClick }: LandingNav
       }`}
     >
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo + mini pipeline */}
-          <div className="flex items-center">
-            <a href="#" className="flex items-center gap-2">
-              <MascotIcon size={28} />
-              <span className="font-bold text-lg text-white">ClawLegion</span>
+        <div className={`flex items-center h-16 transition-all duration-300 justify-between ${!pastHero ? 'md:justify-center' : ''}`}>
+          {/* Logo — only visible after scrolling past hero */}
+          <div className={`flex items-center transition-all duration-300 ${pastHero ? 'w-auto opacity-100' : 'w-0 opacity-0 overflow-hidden md:w-0 md:opacity-0 md:overflow-hidden'}`}>
+            <a href="#" className="flex items-center h-8">
+              <Image
+                src="/agents/clawlegion-logo-transparent.png"
+                alt="ClawLegion"
+                width={140}
+                height={32}
+                className="object-contain"
+              />
             </a>
-            <MiniAgentFlow />
           </div>
 
           {/* Desktop links */}

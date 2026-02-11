@@ -1,6 +1,7 @@
 'use client'
 
 import { ArrowRight, Eye, Loader2, CheckCircle } from 'lucide-react'
+import Image from 'next/image'
 import { MascotHero } from './MascotHero'
 import { useEarlyAccessForm } from '@/hooks/useEarlyAccessForm'
 import { LAUNCH_CONFIG } from '@/lib/launch-config'
@@ -21,40 +22,35 @@ export function HeroSection() {
 
       <div className="relative z-10 text-center max-w-4xl mx-auto">
         {/* Mascot */}
-        <div className="relative mb-6 flex justify-center">
+        <div className="relative mb-2 flex justify-center">
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
             <div className="w-64 h-64 bg-blue-500/15 rounded-full blur-[80px]" />
           </div>
           <MascotHero />
         </div>
 
-        {/* Badge */}
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/10 border border-amber-500/20 mb-8">
-          <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75" />
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500" />
-          </span>
-          <span className="text-sm font-medium text-amber-300">{LAUNCH_CONFIG.badgeText}</span>
+        {/* Headline — Logo */}
+        <div className="mb-6 flex justify-center">
+          <Image
+            src="/agents/clawlegion-logo-transparent.png"
+            alt="ClawLegion"
+            width={500}
+            height={115}
+            className="object-contain"
+            priority
+          />
         </div>
-
-        {/* Headline */}
-        <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6 tracking-tight leading-[1.1]">
-          <span className="bg-gradient-to-r from-blue-400 via-blue-500 to-purple-500 bg-clip-text text-transparent">
-            AI Legion
-          </span>
-        </h1>
 
         {/* Subtitle */}
         <p className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto mb-6 leading-relaxed">
           Your autonomous AI workforce. Code. Content. Compliance. One command center.
         </p>
 
-        {/* Price anchor */}
+        {/* Price */}
         <div className="flex items-center justify-center gap-3 mb-8">
-          <span className="text-slate-500 line-through text-lg">${LAUNCH_CONFIG.originalPrice}/mo</span>
           <span className="text-3xl font-bold text-white">${LAUNCH_CONFIG.earlyBirdPrice}/mo</span>
-          <span className="px-2.5 py-1 bg-green-500/15 border border-green-500/25 rounded-full text-green-400 text-sm font-medium">
-            Save {LAUNCH_CONFIG.discount}%
+          <span className="px-2.5 py-1 bg-amber-500/15 border border-amber-500/25 rounded-full text-amber-400 text-sm font-medium">
+            Limited Spots
           </span>
         </div>
 

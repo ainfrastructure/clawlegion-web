@@ -13,9 +13,8 @@ const valueItems = [
   'Session replay & audit logs',
   'Specialized AI agents for every role',
   'Pre-built workflow templates',
-  'All AI models — Anthropic, OpenAI, Google, Grok & more',
+  'Integrates with Anthropic, OpenAI, Google, Grok & more',
   'Social media management — Instagram, Facebook, TikTok, X',
-  '15+ messaging integrations included',
   'Growing integration library',
   'Priority support',
 ]
@@ -47,7 +46,7 @@ export function PricingSection() {
             ))}
             <div className="pt-4 mt-4 border-t border-white/10">
               <p className="text-slate-500 text-sm">
-                Total value: <span className="text-white font-semibold">${LAUNCH_CONFIG.originalPrice}/mo</span>
+                All features included at <span className="text-white font-semibold">${LAUNCH_CONFIG.earlyBirdPrice}/mo</span>
               </p>
             </div>
           </div>
@@ -57,9 +56,9 @@ export function PricingSection() {
             {/* Glow border effect */}
             <div className="absolute -inset-[1px] rounded-2xl bg-gradient-to-b from-blue-500/20 to-purple-500/20 -z-10 blur-sm" />
 
-            {/* Save badge */}
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-green-500/15 border border-green-500/25 rounded-full text-green-400 text-sm font-medium mb-6">
-              Save {LAUNCH_CONFIG.discount}%
+            {/* Limited spots badge */}
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-500/15 border border-amber-500/25 rounded-full text-amber-400 text-sm font-medium mb-6">
+              Limited Spots
             </div>
 
             {/* Price */}
@@ -68,14 +67,11 @@ export function PricingSection() {
                 <span className="text-5xl font-bold text-white">${LAUNCH_CONFIG.earlyBirdPrice}</span>
                 <span className="text-slate-300">/mo</span>
               </div>
-              <div className="mt-1">
-                <span className="text-slate-400 line-through text-lg">${LAUNCH_CONFIG.originalPrice}/mo</span>
-              </div>
             </div>
 
             {/* Countdown */}
             <div className="mb-6">
-              <p className="text-xs text-slate-400 uppercase tracking-wider font-medium mb-3">Price increases in:</p>
+              <p className="text-xs text-slate-400 uppercase tracking-wider font-medium mb-3">Spots closing in:</p>
               <CountdownTimer variant="large" />
             </div>
 
