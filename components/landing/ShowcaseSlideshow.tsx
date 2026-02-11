@@ -42,14 +42,14 @@ const SLIDES: Slide[] = [
     id: 'organization',
     badge: 'Fleet Overview',
     badgeIcon: <Users className="w-3.5 h-3.5" />,
-    badgeColor: 'text-violet-400 bg-violet-500/10 border-violet-500/20',
+    badgeColor: 'text-red-400 bg-red-500/10 border-red-500/20',
     headline: 'Your AI Fleet,',
     headlineAccent: 'Organized',
     subtitle:
       'Visualize your entire agent hierarchy. See who\'s working on what and monitor performance in real time.',
-    accentFrom: 'from-violet-400',
-    accentTo: 'to-purple-500',
-    glowColor: 'rgb(167 139 250 / 0.12)',
+    accentFrom: 'from-red-400',
+    accentTo: 'to-red-600',
+    glowColor: 'rgb(220 38 38 / 0.12)',
     screenshot: '/showcase/organization.png',
   },
   {
@@ -71,7 +71,7 @@ const SLIDES: Slide[] = [
 const SLIDE_ICONS = [LayoutGrid, Users, GitBranch]
 const PROGRESS_COLORS: [string, string][] = [
   ['#22d3ee', '#3b82f6'],
-  ['#a78bfa', '#a855f7'],
+  ['#f87171', '#dc2626'],
   ['#fbbf24', '#f97316'],
 ]
 
