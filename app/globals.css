@@ -719,3 +719,64 @@
 .scrollbar-hide::-webkit-scrollbar {
   display: none;  /* Chrome, Safari and Opera */
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   SWISS DESIGN SYSTEM — Foundation Tokens
+   Mathematical grid (4px/8px), AAA contrast, minimal palette.
+   ═══════════════════════════════════════════════════════════════ */
+
+@layer base {
+  :root {
+    /* Swiss surfaces (dark theme is primary) */
+    --swiss-bg: #0A0D14;
+    --swiss-surface: #111520;
+    --swiss-elevated: #161B28;
+    --swiss-border: #1E2436;
+    --swiss-border-subtle: #171C2A;
+
+    /* Swiss text hierarchy */
+    --swiss-text-primary: #F0F2F5;
+    --swiss-text-secondary: #8B92A5;
+    --swiss-text-tertiary: #555D73;
+
+    /* Swiss accent */
+    --swiss-accent: #3B82F6;
+    --swiss-accent-hover: #2563EB;
+
+    /* Swiss semantic */
+    --swiss-success: #22C55E;
+    --swiss-warning: #F59E0B;
+    --swiss-error: #EF4444;
+    --swiss-info: #3B82F6;
+
+    /* Swiss grid */
+    --swiss-grid: 8px;
+    --swiss-grid-half: 4px;
+    --swiss-radius: 12px;
+  }
+}
+
+@layer utilities {
+  /* Swiss typography utilities */
+  .swiss-label {
+    color: var(--swiss-text-tertiary);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    line-height: 16px;
+  }
+
+  .swiss-mono {
+    font-family: 'JetBrains Mono', var(--font-mono), ui-monospace, monospace;
+    font-variant-numeric: tabular-nums;
+    font-size: 13px;
+    line-height: 20px;
+  }
+
+  .swiss-divider {
+    height: 1px;
+    background-color: var(--swiss-border);
+    border: none;
+  }
+}
