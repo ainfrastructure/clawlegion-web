@@ -127,7 +127,7 @@ export default function NotificationCenter() {
                   onClick={() => setFilter(tab)}
                   className={`px-3 py-1 text-xs rounded-md capitalize transition-colors ${
                     filter === tab 
-                      ? "bg-blue-600 text-white" 
+                      ? "bg-red-600 text-white" 
                       : "text-slate-400 hover:bg-slate-700"
                   }`}
                 >

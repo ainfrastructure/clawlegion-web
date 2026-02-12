@@ -48,7 +48,7 @@ export function MetricsCards() {
             change: agents.summary?.online > 0 ? 100 : 0,
             changeLabel: 'online now',
             icon: <Users className="w-5 h-5" />,
-            color: 'text-blue-400'
+            color: 'text-red-400'
           },
           {
             id: 'tasks-active',
@@ -110,7 +110,7 @@ export function MetricsCards() {
           style={{ animationDelay: `${index * 100}ms` }}
         >
           {/* Animated gradient overlay on hover */}
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-600/0 via-blue-600/5 to-purple-600/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+          <div className="absolute inset-0 bg-gradient-to-r from-red-600/0 via-red-600/5 to-red-900/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
           
           {/* Icon with glow effect */}
           <div className={`absolute top-4 right-4 ${metric.color} opacity-20 group-hover:opacity-40 transition-opacity`}>
@@ -144,7 +144,7 @@ export function MetricsCards() {
           
           {/* Bottom accent line */}
           <div className={`absolute bottom-0 left-0 right-0 h-0.5 ${
-            metric.color.includes('blue') ? 'bg-gradient-to-r from-blue-500/0 via-blue-500 to-blue-500/0' :
+            metric.color.includes('red') ? 'bg-gradient-to-r from-red-500/0 via-red-500 to-red-500/0' :
             metric.color.includes('green') ? 'bg-gradient-to-r from-green-500/0 via-green-500 to-green-500/0' :
             metric.color.includes('yellow') ? 'bg-gradient-to-r from-yellow-500/0 via-yellow-500 to-yellow-500/0' :
             'bg-gradient-to-r from-slate-500/0 via-slate-500 to-slate-500/0'

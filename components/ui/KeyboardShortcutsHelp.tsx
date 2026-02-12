@@ -71,7 +71,7 @@ export function KeyboardShortcutsHelp() {
                       className="flex items-center justify-between py-1.5"
                     >
                       <span className="text-sm text-slate-300">{binding.description}</span>
-                      <kbd className={`px-2 py-1 bg-slate-800 border border-white/[0.06] rounded text-xs font-mono ${binding.isCustom ? 'text-blue-400 border-blue-500/30' : ''}`}>
+                      <kbd className={`px-2 py-1 bg-slate-800 border border-white/[0.06] rounded text-xs font-mono ${binding.isCustom ? 'text-red-400 border-red-500/30' : ''}`}>
                         {binding.currentDisplay}
                       </kbd>
                     </div>
