@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -397,12 +395,10 @@
 
   .pipeline-strip {
     animation: slide-strip 60s linear infinite;
-    will-change: transform;
   }
 
   .pipeline-strip-mobile {
     animation: slide-strip 40s linear infinite;
-    will-change: transform;
   }
 
   /* Agent pipeline animations */
@@ -565,11 +561,32 @@
   }
 }
 
-/* Reduced-motion: disable pipeline strip animation */
+/* Mobile: disable heavy continuous animations for faster paint + less GPU usage */
+@media (max-width: 768px) {
+  .council-hero-container { animation: none; }
+  .council-hero-glow { animation: none; filter: blur(10px); opacity: 0.7; }
+  .shimmer-btn::after { animation: none; display: none; }
+  .animate-card-breathe { animation: none; }
+  .animate-flow-particle { animation: none; display: none; }
+  .animate-glow-border-pulse { animation: none; }
+}
+
+/* Reduced-motion: disable all continuous animations */
 @media (prefers-reduced-motion: reduce) {
   .pipeline-strip,
-  .pipeline-strip-mobile {
+  .pipeline-strip-mobile,
+  .council-hero-container,
+  .council-hero-glow,
+  .animate-card-breathe,
+  .animate-flow-particle,
+  .animate-glow-border-pulse,
+  .animate-float,
+  .animate-pulse-slow {
     animation: none !important;
+  }
+  .shimmer-btn::after {
+    animation: none !important;
+    display: none !important;
   }
 }
 

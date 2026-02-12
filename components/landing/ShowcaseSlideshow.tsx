@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback, useRef } from 'react'
+import Image from 'next/image'
 import {
   LayoutGrid,
   Users,
@@ -81,12 +82,13 @@ const INTERVAL_MS = 5500
 
 function ScreenContent({ slide }: { slide: Slide }) {
   return (
-    <img
+    <Image
       src={slide.screenshot}
       alt={`${slide.badge} screenshot`}
-      className="w-full h-full object-contain"
-      loading="lazy"
-      decoding="async"
+      fill
+      className="object-contain"
+      sizes="(max-width: 768px) 95vw, 55vw"
+      quality={80}
     />
   )
 }
