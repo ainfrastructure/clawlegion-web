@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react'
 import { Menu, X } from 'lucide-react'
-import Image from 'next/image'
 import { MascotIcon } from './MascotIcon'
 import { LAUNCH_CONFIG } from '@/lib/launch-config'
 
@@ -79,12 +78,16 @@ export function LandingNav({ bannerVisible = false, onContactClick }: LandingNav
           {/* Logo — only visible after scrolling past hero */}
           <div className={`flex items-center transition-all duration-300 ${pastHero ? 'w-auto opacity-100' : 'w-0 opacity-0 overflow-hidden md:w-0 md:opacity-0 md:overflow-hidden'}`}>
             <a href="#" className="flex items-center h-8">
-              <Image
-                src="/agents/clawlegion-logo-transparent.png"
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/optimized/agents/logo-256w.webp"
+                srcSet="/optimized/agents/logo-256w.webp 1x, /optimized/agents/logo-384w.webp 2x"
                 alt="ClawLegion"
                 width={140}
                 height={32}
                 className="object-contain"
+                loading="lazy"
+                decoding="async"
               />
             </a>
           </div>

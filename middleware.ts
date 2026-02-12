@@ -16,6 +16,7 @@ export async function middleware(request: NextRequest) {
     '/avatars/',       // Avatar images (public/avatars/)
     '/demo-',          // Demo video + poster (public/demo-*)
     '/showcase/',       // Showcase screenshots for landing page
+    '/optimized/',      // Pre-optimized WebP images for landing page
   ]
 
   // Check if path is public

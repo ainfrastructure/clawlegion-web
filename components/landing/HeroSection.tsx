@@ -1,14 +1,9 @@
-'use client'
-
-import { ArrowRight, Eye, Loader2, CheckCircle } from 'lucide-react'
-import Image from 'next/image'
+import { Eye } from 'lucide-react'
 import { MascotHero } from './MascotHero'
-import { useEarlyAccessForm } from '@/hooks/useEarlyAccessForm'
+import { EarlyAccessFormClient } from './EarlyAccessFormClient'
 import { LAUNCH_CONFIG } from '@/lib/launch-config'
 
 export function HeroSection() {
-  const { email, setEmail, status, errorMessage, handleSubmit } = useEarlyAccessForm('hero')
-
   return (
     <section className="relative min-h-screen flex flex-col items-center justify-center px-4 sm:px-6 pt-24 pb-16 overflow-hidden">
       {/* Background grid */}
@@ -29,15 +24,19 @@ export function HeroSection() {
           <MascotHero />
         </div>
 
-        {/* Headline — Logo */}
+        {/* Headline — Logo (pre-optimized WebP) */}
         <div className="mb-6 flex justify-center">
-          <Image
-            src="/agents/clawlegion-logo-transparent.png"
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/optimized/agents/logo-640w.webp"
+            srcSet="/optimized/agents/logo-384w.webp 384w, /optimized/agents/logo-640w.webp 640w, /optimized/agents/logo-1080w.webp 1080w"
+            sizes="(max-width: 640px) 384px, 500px"
             alt="ClawLegion"
             width={500}
             height={115}
             className="object-contain"
-            priority
+            fetchPriority="high"
+            decoding="async"
           />
         </div>
 
@@ -54,42 +53,8 @@ export function HeroSection() {
           </span>
         </div>
 
-        {/* Email form CTA */}
-        {status === 'success' ? (
-          <div className="inline-flex items-center gap-3 px-6 py-4 glass-2 rounded-xl text-green-400 mb-4">
-            <CheckCircle className="w-5 h-5" />
-            <span className="font-medium">You&apos;re on the list! We&apos;ll be in touch.</span>
-          </div>
-        ) : (
-          <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 max-w-lg mx-auto mb-4">
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@company.com"
-              required
-              className="flex-1 px-4 py-3.5 glass-2 rounded-xl text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
-            />
-            <button
-              type="submit"
-              disabled={status === 'loading'}
-              className="px-6 py-3.5 bg-blue-600 hover:bg-blue-500 disabled:bg-blue-600/50 text-white rounded-xl font-semibold transition-colors flex items-center justify-center gap-2 shadow-lg shadow-blue-500/25 text-sm whitespace-nowrap shimmer-btn"
-            >
-              {status === 'loading' ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                <>
-                  {LAUNCH_CONFIG.ctaText}
-                  <ArrowRight className="w-4 h-4" />
-                </>
-              )}
-            </button>
-          </form>
-        )}
-
-        {status === 'error' && (
-          <p className="text-sm text-red-400 mb-4">{errorMessage}</p>
-        )}
+        {/* Email form CTA — client island */}
+        <EarlyAccessFormClient />
 
         {/* Microcopy */}
         <p className="text-xs text-slate-500 mb-4">{LAUNCH_CONFIG.guaranteeText}</p>

@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect, useCallback, useRef } from 'react'
-import Image from 'next/image'
 import {
   LayoutGrid,
   Users,
@@ -81,14 +80,19 @@ const INTERVAL_MS = 5500
 /* ─── Screenshot renderer ─── */
 
 function ScreenContent({ slide }: { slide: Slide }) {
+  // Use pre-optimized WebP — no on-the-fly transcoding
+  const baseName = slide.screenshot.replace('/showcase/', '').replace('.png', '')
   return (
-    <Image
-      src={slide.screenshot}
-      alt={`${slide.badge} screenshot`}
-      fill
-      className="object-contain"
+    /* eslint-disable-next-line @next/next/no-img-element */
+    <img
+      src={`/optimized/showcase/${baseName}-828w.webp`}
+      srcSet={`/optimized/showcase/${baseName}-640w.webp 640w, /optimized/showcase/${baseName}-828w.webp 828w, /optimized/showcase/${baseName}-1200w.webp 1200w`}
       sizes="(max-width: 768px) 95vw, 55vw"
-      quality={80}
+      alt={`${slide.badge} screenshot`}
+      className="object-contain"
+      loading="lazy"
+      decoding="async"
+      style={{ position: 'absolute', height: '100%', width: '100%', inset: 0, color: 'transparent' }}
     />
   )
 }
