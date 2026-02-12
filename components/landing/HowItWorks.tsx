@@ -365,14 +365,18 @@ const ROTATE_MS = 5000
 
 export function HowItWorks() {
   const sectionRef = useRef<HTMLDivElement>(null)
-  const [visible, setVisible] = useState(false)
+  // Start visible so SSR/pre-hydration content is not hidden behind opacity-0
+  const [visible, setVisible] = useState(true)
+  const [animateReady, setAnimateReady] = useState(false)
   const [activeIdx, setActiveIdx] = useState(0)
   const [isPaused, setIsPaused] = useState(false)
 
-  // Visibility observer
+  // On mount: if not in viewport, hide and set up observer to animate in.
+  // If already in viewport (or no IntersectionObserver), stay visible.
   useEffect(() => {
     const el = sectionRef.current
     if (!el) return
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
@@ -382,7 +386,21 @@ export function HowItWorks() {
       },
       { threshold: 0.05 }
     )
-    observer.observe(el)
+
+    // Check if element is currently in viewport
+    const rect = el.getBoundingClientRect()
+    const inViewport = rect.top < window.innerHeight && rect.bottom > 0
+
+    if (inViewport) {
+      // Already visible — no animation needed, stay visible
+      setVisible(true)
+    } else {
+      // Not in viewport — hide and animate in when scrolled to
+      setVisible(false)
+      setAnimateReady(true)
+      observer.observe(el)
+    }
+
     return () => observer.disconnect()
   }, [])
 
@@ -410,7 +428,9 @@ export function HowItWorks() {
       {/* Header */}
       <div className="max-w-5xl mx-auto px-4 sm:px-6">
         <div
-          className={`text-center mb-8 transition-all duration-700 ${
+          className={`text-center mb-8 ${
+            animateReady ? 'transition-all duration-700' : ''
+          } ${
             visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
           }`}
         >
@@ -458,7 +478,7 @@ export function HowItWorks() {
       {/* Active pipeline — ONLY ONE rendered at a time */}
       <div
         key={template.name}
-        className={`transition-opacity duration-500 ${visible ? 'opacity-100' : 'opacity-0'}`}
+        className={`${animateReady ? 'transition-opacity duration-500' : ''} ${visible ? 'opacity-100' : 'opacity-0'}`}
       >
         <PipelineView template={template} />
       </div>
