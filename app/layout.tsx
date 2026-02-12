@@ -45,6 +45,10 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
       <head>
+        {/* Critical inline CSS: prevent white flash on mobile before stylesheets load */}
+        <style dangerouslySetInnerHTML={{ __html: `
+          html, body { background-color: #020617; color: #e2e8f0; }
+        `}} />
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-LBGN5QEL3D"
           strategy="afterInteractive"
