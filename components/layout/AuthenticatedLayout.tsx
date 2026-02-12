@@ -5,6 +5,7 @@ import { useSession } from 'next-auth/react'
 import { usePathname } from 'next/navigation'
 import { Sidebar, MainContent } from './Sidebar'
 import { SidebarProvider } from './SidebarContext'
+import { useSidebar } from './SidebarContext'
 import { MobileNav } from './MobileNav'
 import { MobileHeader } from './MobileHeader'
 import { MobileDrawer } from './MobileDrawer'
@@ -15,7 +16,9 @@ import { CommandPalette } from '@/components/ui/CommandPalette'
 import { KeyboardShortcutsHelp } from '@/components/ui/KeyboardShortcutsHelp'
 import { GlobalKeyboardShortcuts } from '@/components/ui/GlobalKeyboardShortcuts'
 import { NotificationCenter } from '@/components/notifications/NotificationCenter'
+import { NotificationBell } from '@/components/notifications/NotificationBell'
 import { TaskNotificationManager } from '@/components/features/TaskNotificationManager'
+import { ModeSelector } from '@/components/onboarding/ModeSelector'
 import { useNotificationSocket } from '@/hooks/useNotificationSocket'
 
 function LiveClock() {
@@ -101,6 +104,21 @@ function AuthenticatedContent({ children }: { children: React.ReactNode }) {
 
   return (
     <SidebarProvider>
+      <DesktopLayout isFullHeight={isFullHeight}>
+        {children}
+      </DesktopLayout>
+      {overlays}
+    </SidebarProvider>
+  )
+}
+
+/** Desktop layout inner component — can access SidebarContext */
+function DesktopLayout({ children, isFullHeight }: { children: React.ReactNode; isFullHeight: boolean }) {
+  const { uiMode } = useSidebar()
+
+  return (
+    <>
+      <ModeSelector />
       <Sidebar />
       <MainContent fullHeight={isFullHeight}>
         {!isFullHeight && (
@@ -116,6 +134,8 @@ function AuthenticatedContent({ children }: { children: React.ReactNode }) {
                   <LiveClock />
                 </div>
                 <div className="w-px h-3.5 bg-white/[0.06]" />
+                {uiMode === 'easy' && <NotificationBell />}
+                {uiMode === 'easy' && <div className="w-px h-3.5 bg-white/[0.06]" />}
                 <NotificationCenter />
               </div>
             </div>
@@ -123,8 +143,7 @@ function AuthenticatedContent({ children }: { children: React.ReactNode }) {
         )}
         {children}
       </MainContent>
-      {overlays}
-    </SidebarProvider>
+    </>
   )
 }
 

@@ -171,7 +171,7 @@ export function Sidebar() {
 
       {/* Navigation */}
       <nav className="flex-1 overflow-y-auto py-4">
-        <div className="space-y-1 px-2">
+        <div className="space-y-1 px-2 transition-all duration-300 ease-out">
           {navItems.map((item) => {
             const isActive = isItemActive(item)
             const hasSubItems = item.subItems && item.subItems.length > 0
@@ -334,13 +334,19 @@ export function Sidebar() {
 }
 
 export function MainContent({ children, fullHeight }: { children: React.ReactNode; fullHeight?: boolean }) {
-  const { collapsed } = useSidebar()
+  const { collapsed, isModeTransitioning } = useSidebar()
 
   return (
     <div className={`transition-all duration-200 ${collapsed ? "ml-16" : "ml-56"} ${
       fullHeight ? "h-screen overflow-hidden" : "min-h-screen"
     }`}>
-      {children}
+      <div
+        className={`transition-opacity duration-300 ease-out ${
+          isModeTransitioning ? 'opacity-0' : 'opacity-100'
+        }`}
+      >
+        {children}
+      </div>
     </div>
   )
 }

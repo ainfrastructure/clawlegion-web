@@ -15,6 +15,8 @@ import {
   DangerZoneTab,
 } from '@/components/settings'
 import { tabs } from '@/components/settings/SettingsTabs'
+import { useSidebar } from '@/components/layout/SidebarContext'
+import { EasyModeSettingsView } from '@/components/mode-aware/SettingsView'
 
 const tabDescriptions: Record<string, string> = {
   'api-keys': 'Manage provider keys, monitor usage, and control priority routing.',
@@ -29,12 +31,34 @@ const tabDescriptions: Record<string, string> = {
 function SettingsContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
+  const { uiMode } = useSidebar()
   const activeTab = searchParams.get('tab') || 'api-keys'
 
   const setTab = (tab: string) => {
     router.push(`/settings?tab=${tab}`)
   }
 
+  // Easy Mode: simplified settings view
+  if (uiMode === 'easy') {
+    return (
+      <PageContainer>
+        <div className="mb-6 sm:mb-8">
+          <div className="flex items-center gap-2 text-sm text-slate-500 mb-1">
+            <Settings size={14} />
+            <span>Settings</span>
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-bold text-white">Settings</h1>
+          <p className="text-sm text-slate-400 mt-1">
+            Customize your interface, notifications, and account
+          </p>
+          <div className="mt-3 h-px bg-gradient-to-r from-white/[0.06] via-white/[0.03] to-transparent" />
+        </div>
+        <EasyModeSettingsView />
+      </PageContainer>
+    )
+  }
+
+  // Power Mode: full tabbed settings
   const currentTab = tabs.find(t => t.id === activeTab)
   const tabLabel = currentTab?.label ?? 'Settings'
   const tabDescription = tabDescriptions[activeTab] ?? ''
