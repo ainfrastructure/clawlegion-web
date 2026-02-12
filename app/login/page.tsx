@@ -62,7 +62,7 @@ function LoginForm() {
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             placeholder="admin"
-            className="w-full pl-11 pr-4 py-3 bg-slate-800 border border-white/[0.06] rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+            className="w-full pl-11 pr-4 py-3 bg-slate-800 border border-white/[0.06] rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500"
             required
           />
         </div>
@@ -80,7 +80,7 @@ function LoginForm() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="••••••••"
-            className="w-full pl-11 pr-4 py-3 bg-slate-800 border border-white/[0.06] rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+            className="w-full pl-11 pr-4 py-3 bg-slate-800 border border-white/[0.06] rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500"
             required
           />
         </div>
@@ -89,7 +89,7 @@ function LoginForm() {
       <button
         type="submit"
         disabled={loading}
-        className="w-full py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-600/50 text-white font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
+        className="w-full py-3 bg-red-600 hover:bg-red-700 disabled:bg-red-600/50 text-white font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
       >
         {loading ? (
           <>
@@ -123,8 +123,8 @@ export default function LoginPage() {
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-500/20 rounded-2xl mb-4">
-            <Bot className="w-8 h-8 text-blue-500" />
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-red-500/20 rounded-2xl mb-4">
+            <Bot className="w-8 h-8 text-red-500" />
           </div>
           <h1 className="text-2xl font-bold text-white">ClawLegion</h1>
           <p className="text-slate-400 mt-2">Sign in to access the command center</p>
