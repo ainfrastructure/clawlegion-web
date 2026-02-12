@@ -68,9 +68,6 @@ export default function RootLayout({
         </Script>
       </head>
       <body className={`${dmSans.variable} ${jetbrainsMono.variable} font-sans ambient-bg`}>
-        <div style={{background:'#dc2626',color:'#fff',textAlign:'center',padding:'8px',fontSize:'12px',fontWeight:'bold',position:'fixed',top:0,left:0,right:0,zIndex:9999}}>
-          🔧 TEST BUILD — {new Date().toISOString().slice(0,16)} — commit 358e4a4
-        </div>
         <SessionProvider>
           <Providers>
             <ToastProvider>
