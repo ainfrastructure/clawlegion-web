@@ -122,13 +122,24 @@ export function EasyWorkPage() {
     }
   }, [showNewTask])
 
+  // Fetch repos for task creation (we'll use the first one as default)
+  const { data: repoData } = useQuery({
+    queryKey: ['repositories'],
+    queryFn: () => api.get('/task-tracking/repositories').then(r => r.data),
+    staleTime: 60000,
+  })
+
   // Create task mutation
   const createMutation = useMutation({
     mutationFn: async () => {
-      const res = await api.post('/tasks', {
+      const repos = repoData?.repositories ?? []
+      const defaultRepoId = repos[0]?.id
+
+      const res = await api.post('/task-tracking/tasks', {
         title: newTitle.trim(),
-        description: newDescription.trim() || undefined,
+        description: newDescription.trim() || 'Created from Easy Mode',
         priority: PRIORITY_MAP[newPriority] ?? 'P2',
+        ...(defaultRepoId ? { repositoryId: defaultRepoId } : {}),
       })
       return res.data
     },
