@@ -22,12 +22,6 @@ export function LandingFooter({ onContactClick }: LandingFooterProps) {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
           {/* Brand column */}
           <div className="col-span-2 md:col-span-1">
-            <div className="flex items-center gap-2 mb-4">
-              <MascotTrioIcon size={24} />
-              <span className="font-bold text-lg tracking-wide text-white" style={{ fontFamily: "'Cinzel', 'Georgia', serif" }}>
-                Claw<span className="text-red-500">Legion</span>
-              </span>
-            </div>
             <p className="text-sm text-slate-500 leading-relaxed">
               The command center for autonomous AI legions.
             </p>

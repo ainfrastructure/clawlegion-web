@@ -57,20 +57,22 @@ export function PricingSection() {
             <div className="absolute -inset-[1px] rounded-2xl bg-gradient-to-b from-blue-500/20 to-purple-500/20 -z-10 blur-sm" />
 
             {/* Limited spots badge */}
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-500/15 border border-amber-500/25 rounded-full text-amber-400 text-sm font-medium mb-6">
-              Limited Spots
+            <div className="text-center mb-6">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-500/15 border border-amber-500/25 rounded-full text-amber-400 text-sm font-medium">
+                Limited Spots
+              </div>
             </div>
 
             {/* Price */}
-            <div className="mb-6">
-              <div className="flex items-baseline gap-3">
+            <div className="text-center mb-6">
+              <div className="inline-flex items-baseline gap-3">
                 <span className="text-5xl font-bold text-white">${LAUNCH_CONFIG.earlyBirdPrice}</span>
                 <span className="text-slate-300">/mo</span>
               </div>
             </div>
 
             {/* Countdown */}
-            <div className="mb-6">
+            <div className="text-center mb-6">
               <p className="text-xs text-slate-400 uppercase tracking-wider font-medium mb-3">Spots closing in:</p>
               <CountdownTimer variant="large" />
             </div>
@@ -89,7 +91,7 @@ export function PricingSection() {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@company.com"
                   required
-                  className="w-full px-4 py-3 glass-2 rounded-xl text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
+                  className="w-full px-4 py-3 bg-white/[0.04] border border-white/[0.08] rounded-xl text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
                 />
                 <button
                   type="submit"

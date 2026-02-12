@@ -132,12 +132,12 @@ export function ModelsSection() {
             </span>
           </div>
           <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4 tracking-tight">
-            Powered by the AI Models of Your Choosing
+            Integrate the AI Models of Your Choosing
           </h2>
           <p className="text-base text-slate-400 max-w-xl mx-auto leading-relaxed">
-            Anthropic, OpenAI, Google, DeepSeek, Mistral, Meta, and many more.
+            Anthropic, OpenAI, Google, DeepSeek, Mistral, Meta, and more.
             <br className="hidden sm:block" />
-            Use any model. Switch freely. Your agents run on what works best.
+            Switch freely between any model on any subscription you own.
           </p>
         </div>
 
