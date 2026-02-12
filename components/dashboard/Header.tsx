@@ -29,12 +29,12 @@ export function Header() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Link href="/dashboard" className="flex items-center gap-2">
-              <Bot className="w-6 h-6 text-blue-500" />
+              <Bot className="w-6 h-6 text-red-500" />
               <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">
                 ClawLegion
               </h1>
             </Link>
-            <span className="text-xs px-2 py-0.5 bg-blue-500/20 text-blue-600 dark:text-blue-400 rounded-full font-medium">
+            <span className="text-xs px-2 py-0.5 bg-red-500/20 text-red-600 dark:text-red-400 rounded-full font-medium">
               Command Center
             </span>
           </div>
@@ -75,7 +75,7 @@ export function Header() {
             {/* New Session Button */}
             <Link
               href="/sessions/new"
-              className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+              className="px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition-colors flex items-center gap-2"
             >
               <Plus className="w-4 h-4" />
               <span className="hidden sm:inline">New Session</span>

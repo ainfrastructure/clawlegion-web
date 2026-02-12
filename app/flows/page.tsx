@@ -224,7 +224,7 @@ export default function FlowsPage() {
             <Workflow className="w-5 h-5 text-cyan-400" />
           </div>
           <div>
-            <h1 className="text-xl font-extrabold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
+            <h1 className="text-xl font-extrabold bg-gradient-to-r from-red-400 to-red-600 bg-clip-text text-transparent">
               Flow Builder
             </h1>
             <p className="text-xs text-slate-500">Create and manage agent pipeline configurations</p>

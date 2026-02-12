@@ -52,9 +52,9 @@ export function PricingSection() {
           </div>
 
           {/* Right: Pricing card */}
-          <div className="relative glass-3 rounded-2xl p-8 border border-blue-500/20 shadow-xl shadow-blue-500/5">
+          <div className="relative glass-3 rounded-2xl p-8 border border-red-500/20 shadow-xl shadow-red-500/5">
             {/* Glow border effect */}
-            <div className="absolute -inset-[1px] rounded-2xl bg-gradient-to-b from-blue-500/20 to-purple-500/20 -z-10 blur-sm" />
+            <div className="absolute -inset-[1px] rounded-2xl bg-gradient-to-b from-red-500/20 to-red-800/20 -z-10 blur-sm" />
 
             {/* Limited spots badge */}
             <div className="text-center mb-6">
@@ -91,12 +91,12 @@ export function PricingSection() {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@company.com"
                   required
-                  className="w-full px-4 py-3 bg-white/[0.04] border border-white/[0.08] rounded-xl text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
+                  className="w-full px-4 py-3 bg-white/[0.04] border border-white/[0.08] rounded-xl text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-red-500/50 text-sm"
                 />
                 <button
                   type="submit"
                   disabled={status === 'loading'}
-                  className="w-full px-6 py-3.5 bg-blue-600 hover:bg-blue-500 disabled:bg-blue-600/50 text-white rounded-xl font-semibold transition-colors flex items-center justify-center gap-2 shadow-lg shadow-blue-500/25 text-sm shimmer-btn"
+                  className="w-full px-6 py-3.5 bg-red-600 hover:bg-red-500 disabled:bg-red-600/50 text-white rounded-xl font-semibold transition-colors flex items-center justify-center gap-2 shadow-lg shadow-red-500/25 text-sm shimmer-btn"
                 >
                   {status === 'loading' ? (
                     <Loader2 className="w-4 h-4 animate-spin" />

@@ -6,7 +6,7 @@ const features = [
     title: 'Done before your coffee\'s ready',
     description: 'Your research agent finds trending topics at 3 AM, your writer drafts, your designer creates the header, and your publisher schedules it — all while you sleep.',
     accent: 'text-blue-400',
-    glow: 'group-hover:shadow-blue-500/20',
+    glow: 'group-hover:shadow-red-500/20',
   },
   {
     icon: Code2,
@@ -80,7 +80,7 @@ export function FeaturesGrid() {
           </p>
           <a
             href="#pricing"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-semibold transition-colors shadow-lg shadow-blue-500/25 text-sm shimmer-btn"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-red-600 hover:bg-red-500 text-white rounded-xl font-semibold transition-colors shadow-lg shadow-red-500/25 text-sm shimmer-btn"
           >
             See Pricing
           </a>

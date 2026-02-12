@@ -53,7 +53,7 @@ export function FilterChips({
             className={`
               flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-colors
               ${isSelected 
-                ? 'bg-blue-500/20 text-blue-400 border border-blue-500/50' 
+                ? 'bg-red-500/20 text-red-400 border border-red-500/50' 
                 : 'bg-slate-800 text-slate-400 border border-white/[0.06] hover:border-slate-600'
               }
             `}
@@ -144,7 +144,7 @@ export function FilterDropdown({
                   onClick={() => toggle(option.value)}
                   className={`
                     w-full flex items-center justify-between px-3 py-2 text-sm transition-colors
-                    ${isSelected ? 'bg-blue-500/10 text-blue-400' : 'text-slate-300 hover:bg-slate-800'}
+                    ${isSelected ? 'bg-red-500/10 text-red-400' : 'text-slate-300 hover:bg-slate-800'}
                   `}
                 >
                   <span>{option.label}</span>

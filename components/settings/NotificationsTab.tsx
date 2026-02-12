@@ -32,7 +32,7 @@ function Toggle({ checked, onChange, disabled }: { checked: boolean; onChange: (
       onClick={() => !disabled && onChange(!checked)}
       disabled={disabled}
       className={`w-10 h-5.5 rounded-full transition-all duration-200 ${
-        disabled ? 'bg-blue-500/50 cursor-not-allowed' : checked ? 'bg-blue-500 shadow-md shadow-blue-500/20' : 'bg-slate-700 hover:bg-slate-600'
+        disabled ? 'bg-blue-500/50 cursor-not-allowed' : checked ? 'bg-blue-500 shadow-md shadow-red-500/20' : 'bg-slate-700 hover:bg-slate-600'
       }`}
       style={{ width: '40px', height: '22px' }}
     >
@@ -94,7 +94,7 @@ export function NotificationsTab() {
           <button
             onClick={handleSave}
             disabled={updateSettings.isPending}
-            className="px-5 py-2.5 bg-blue-600 hover:bg-blue-500 rounded-xl text-sm font-medium transition-colors disabled:opacity-50 shadow-lg shadow-blue-500/10"
+            className="px-5 py-2.5 bg-red-600 hover:bg-red-500 rounded-xl text-sm font-medium transition-colors disabled:opacity-50 shadow-lg shadow-red-500/10"
           >
             {updateSettings.isPending ? 'Saving...' : 'Save Changes'}
           </button>

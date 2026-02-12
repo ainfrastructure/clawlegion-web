@@ -19,7 +19,7 @@ function Toggle({ checked, onChange }: { checked: boolean; onChange: (v: boolean
     <button
       type="button"
       onClick={() => onChange(!checked)}
-      className={`w-11 h-6 rounded-full transition-all duration-200 ${checked ? 'bg-blue-500 shadow-lg shadow-blue-500/20' : 'bg-slate-700'}`}
+      className={`w-11 h-6 rounded-full transition-all duration-200 ${checked ? 'bg-blue-500 shadow-lg shadow-red-500/20' : 'bg-slate-700'}`}
     >
       <div
         className={`w-4.5 h-4.5 bg-white rounded-full transition-transform mx-0.5 shadow-sm ${checked ? 'translate-x-5' : 'translate-x-0.5'}`}
@@ -448,7 +448,7 @@ export function IntegrationsTab() {
           <button
             onClick={handleSave}
             disabled={updateSettings.isPending}
-            className="px-5 py-2.5 bg-blue-600 hover:bg-blue-500 rounded-xl text-sm font-medium transition-colors disabled:opacity-50 shadow-lg shadow-blue-500/10"
+            className="px-5 py-2.5 bg-red-600 hover:bg-red-500 rounded-xl text-sm font-medium transition-colors disabled:opacity-50 shadow-lg shadow-red-500/10"
           >
             {updateSettings.isPending ? 'Saving...' : 'Save Changes'}
           </button>

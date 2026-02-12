@@ -34,7 +34,7 @@ const SLIDES: Slide[] = [
     subtitle:
       'From content campaigns to compliance audits — create, assign, and track tasks across your entire AI workforce.',
     accentFrom: 'from-cyan-400',
-    accentTo: 'to-blue-500',
+    accentTo: 'to-red-500',
     glowColor: 'rgb(34 211 238 / 0.12)',
     screenshot: '/showcase/tasks.png',
   },

@@ -49,7 +49,7 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
             onChange={(e) => setName(e.target.value)}
             placeholder="Your name"
             required
-            className="w-full px-3 py-2 bg-slate-800 border border-white/[0.06] rounded-lg text-white placeholder-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500/40 transition-colors"
+            className="w-full px-3 py-2 bg-slate-800 border border-white/[0.06] rounded-lg text-white placeholder-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/40 focus:border-red-500/40 transition-colors"
           />
         </div>
 
@@ -64,7 +64,7 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
             onChange={(e) => setEmail(e.target.value)}
             placeholder="you@example.com"
             required
-            className="w-full px-3 py-2 bg-slate-800 border border-white/[0.06] rounded-lg text-white placeholder-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500/40 transition-colors"
+            className="w-full px-3 py-2 bg-slate-800 border border-white/[0.06] rounded-lg text-white placeholder-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/40 focus:border-red-500/40 transition-colors"
           />
         </div>
 
@@ -80,7 +80,7 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
             required
             rows={4}
             maxLength={2000}
-            className="w-full px-3 py-2 bg-slate-800 border border-white/[0.06] rounded-lg text-white placeholder-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500/40 transition-colors resize-none"
+            className="w-full px-3 py-2 bg-slate-800 border border-white/[0.06] rounded-lg text-white placeholder-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/40 focus:border-red-500/40 transition-colors resize-none"
           />
           <p className="text-xs text-slate-600 mt-1 text-right">{message.length}/2000</p>
         </div>
@@ -92,7 +92,7 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
         <button
           type="submit"
           disabled={status === 'loading'}
-          className="w-full py-2.5 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-semibold rounded-lg transition-colors"
+          className="w-full py-2.5 bg-red-600 hover:bg-red-500 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-semibold rounded-lg transition-colors"
         >
           {status === 'loading' ? (
             <span className="flex items-center justify-center gap-2">
