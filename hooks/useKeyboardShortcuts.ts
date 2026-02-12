@@ -99,6 +99,13 @@ export function useKeyboardShortcuts(options: ShortcutOptions = {}) {
     // Handle Cmd/Ctrl combos (e.g. Cmd+K — let CommandPalette handle its own,
     // but we process other meta combos like Cmd+,)
     if (e.metaKey || e.ctrlKey) {
+      // Cmd+N / Ctrl+N → new task (same as 'n' single key)
+      if (key === 'n') {
+        e.preventDefault()
+        callbacks.onNewTask?.()
+        return
+      }
+
       const id = metaCombos.get(key)
       if (id) {
         // Let CommandPalette handle Cmd+K itself

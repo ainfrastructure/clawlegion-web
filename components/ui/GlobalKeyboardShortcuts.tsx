@@ -2,12 +2,15 @@
 
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts'
 import { useState } from 'react'
-import { EnhancedTaskModal } from '@/components/tasks/EnhancedTaskModal'
+import { TaskCreateModal } from '@/components/mode-aware'
 
 /**
  * Global keyboard shortcuts handler component.
  * All shortcut bindings are now managed by useShortcutConfig and
  * dispatched through useKeyboardShortcuts dynamically.
+ *
+ * The new-task shortcut (N key / Cmd+N) now opens the mode-aware
+ * TaskCreateModal which renders Easy or Power form based on user preference.
  */
 export function GlobalKeyboardShortcuts() {
   const [showNewTaskModal, setShowNewTaskModal] = useState(false)
@@ -32,16 +35,11 @@ export function GlobalKeyboardShortcuts() {
 
   return (
     <>
-      {showNewTaskModal && (
-        <EnhancedTaskModal
-          isOpen={showNewTaskModal}
-          onClose={() => setShowNewTaskModal(false)}
-          onTaskCreated={() => {
-            setShowNewTaskModal(false)
-          }}
-          repositories={[]}
-        />
-      )}
+      <TaskCreateModal
+        isOpen={showNewTaskModal}
+        onClose={() => setShowNewTaskModal(false)}
+        onTaskCreated={() => setShowNewTaskModal(false)}
+      />
     </>
   )
 }

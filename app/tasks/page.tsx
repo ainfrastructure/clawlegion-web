@@ -18,7 +18,7 @@ import {
   Sparkles,
 } from 'lucide-react'
 import { TaskDetailModal } from '@/components/tasks/TaskDetailModal'
-import { EnhancedTaskModal } from '@/components/tasks/EnhancedTaskModal'
+import { TaskCreateModal } from '@/components/mode-aware'
 import type { Task } from '@/types'
 
 // Local components
@@ -421,9 +421,9 @@ function TasksPageContent() {
         />
       )}
 
-      {/* New Task Modal */}
+      {/* New Task Modal — mode-aware (Easy / Power) */}
       <TaskErrorBoundary>
-        <EnhancedTaskModal
+        <TaskCreateModal
           isOpen={showNewTaskModal}
           onClose={() => setShowNewTaskModal(false)}
           onTaskCreated={() => {
