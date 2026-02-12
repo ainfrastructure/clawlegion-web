@@ -9,7 +9,7 @@
     --foreground: 15 23 42; /* slate-900 */
     --card: 255 255 255;
     --card-foreground: 15 23 42;
-    --primary: 59 130 246; /* blue-500 */
+    --primary: 220 38 38; /* ClawLegion crimson */
     --primary-foreground: 255 255 255;
     --secondary: 241 245 249; /* slate-100 */
     --secondary-foreground: 30 41 59; /* slate-800 */
@@ -21,7 +21,7 @@
     --destructive-foreground: 255 255 255;
     --border: 226 232 240; /* slate-200 */
     --input: 226 232 240;
-    --ring: 59 130 246;
+    --ring: 220 38 38;
     --radius: 0.5rem;
   }
 
@@ -221,7 +221,7 @@
   .ambient-bg {
     background-color: #020617;
     background-image:
-      radial-gradient(ellipse 80% 60% at 20% 0%, rgb(59 130 246 / 0.08), transparent),
+      radial-gradient(ellipse 80% 60% at 20% 0%, rgb(220 38 38 / 0.08), transparent),
       radial-gradient(ellipse 60% 50% at 80% 100%, rgb(139 92 246 / 0.06), transparent);
   }
 
@@ -368,8 +368,8 @@
 
   /* Sidebar active nav indicator */
   .nav-active-indicator {
-    box-shadow: inset 3px 0 0 0 rgb(59 130 246);
-    background: linear-gradient(to right, rgb(59 130 246 / 0.15), transparent);
+    box-shadow: inset 3px 0 0 0 rgb(220 38 38);
+    background: linear-gradient(to right, rgb(220 38 38 / 0.15), transparent);
   }
 
   /* CTA shimmer animation */

@@ -202,7 +202,7 @@ export function ExportButton<T extends Record<string, unknown>>({
                   <button
                     onClick={() => handleExport('json')}
                     disabled={selectedColumns.size === 0}
-                    className="flex-1 px-3 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-700 disabled:text-slate-500 rounded text-sm flex items-center justify-center gap-2"
+                    className="flex-1 px-3 py-2 bg-red-600 hover:bg-red-700 disabled:bg-slate-700 disabled:text-slate-500 rounded text-sm flex items-center justify-center gap-2"
                   >
                     <FileJson size={14} /> JSON
                   </button>

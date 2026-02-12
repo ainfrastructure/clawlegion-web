@@ -413,7 +413,7 @@ export function AddAgentModal({ open, onClose, onCreated }: AddAgentModalProps) 
               <button
                 type="submit"
                 disabled={submitting || !name.trim()}
-                className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg text-sm text-white font-medium transition-colors flex items-center gap-2"
+                className="px-5 py-2.5 bg-red-600 hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg text-sm text-white font-medium transition-colors flex items-center gap-2"
               >
                 {submitting ? (
                   <>

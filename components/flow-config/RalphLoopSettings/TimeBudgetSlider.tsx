@@ -78,7 +78,7 @@ export function TimeBudgetSlider({ value, onChange }: TimeBudgetSliderProps) {
             className={`
               px-2.5 py-1 text-xs font-medium rounded-md transition-all duration-150
               ${value === preset 
-                ? 'bg-blue-600 text-white' 
+                ? 'bg-red-600 text-white' 
                 : 'bg-slate-700 text-slate-300 hover:bg-slate-600'}
             `}
           >

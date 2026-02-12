@@ -19,7 +19,7 @@ function Toggle({ checked, onChange }: { checked: boolean; onChange: (v: boolean
     <button
       type="button"
       onClick={() => onChange(!checked)}
-      className={`w-11 h-6 rounded-full transition-all duration-200 ${checked ? 'bg-blue-500 shadow-lg shadow-red-500/20' : 'bg-slate-700'}`}
+      className={`w-11 h-6 rounded-full transition-all duration-200 ${checked ? 'bg-red-500 shadow-lg shadow-red-500/20' : 'bg-slate-700'}`}
     >
       <div
         className={`w-4.5 h-4.5 bg-white rounded-full transition-transform mx-0.5 shadow-sm ${checked ? 'translate-x-5' : 'translate-x-0.5'}`}

@@ -43,7 +43,7 @@ function getTypeStyles(type: ActivityType) {
         bg: 'bg-blue-400/[0.04]',
         text: 'text-blue-300',
         label: 'Tool Call',
-        labelColor: 'text-blue-400/70',
+        labelColor: 'text-red-400/70',
         Icon: Terminal,
       }
     case 'tool_result':
@@ -315,7 +315,7 @@ export function AgentActivityPopover({
             }}
             className="
               w-full px-4 py-2 flex items-center justify-center gap-1.5
-              text-xs font-medium text-blue-400 hover:text-blue-300
+              text-xs font-medium text-red-400 hover:text-red-300
               hover:bg-blue-400/[0.05] transition-all
             "
           >

@@ -36,7 +36,7 @@ function MobileModeToggle({
         className={cn(
           'flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-all',
           mode === 'dms'
-            ? 'bg-blue-600 text-white shadow-sm'
+            ? 'bg-red-600 text-white shadow-sm'
             : 'text-slate-400 hover:text-slate-200 hover:bg-slate-700/50'
         )}
       >
@@ -48,7 +48,7 @@ function MobileModeToggle({
         className={cn(
           'flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-all',
           mode === 'rooms'
-            ? 'bg-blue-600 text-white shadow-sm'
+            ? 'bg-red-600 text-white shadow-sm'
             : 'text-slate-400 hover:text-slate-200 hover:bg-slate-700/50'
         )}
       >
@@ -80,7 +80,7 @@ function DMAgentList({
             className={cn(
               'flex flex-col items-center gap-1 p-2 rounded-lg transition-all',
               isSelected
-                ? 'bg-blue-600/20 border border-blue-500/50'
+                ? 'bg-red-600/20 border border-blue-500/50'
                 : 'glass-2 hover:bg-slate-700/50 border border-transparent'
             )}
           >
@@ -179,7 +179,7 @@ function RoomList({
             className={cn(
               'flex items-center gap-2 px-3 py-2.5 rounded-lg text-left transition-all',
               isSelected
-                ? 'bg-blue-600/20 border border-blue-500/50 text-white'
+                ? 'bg-red-600/20 border border-blue-500/50 text-white'
                 : 'glass-2 hover:bg-slate-700/50 text-slate-400 border border-transparent'
             )}
           >

@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
@@ -113,8 +114,16 @@ export function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
         {/* Header */}
         <div className="flex items-center justify-between h-14 px-4 border-b border-slate-800">
           <div className="flex items-center gap-2">
-            <Bot className="w-6 h-6 text-blue-500" />
-            <span className="font-bold text-lg text-white">ClawLegion</span>
+            <Image
+              src="/agents/clawlegion-logo-transparent.png"
+              alt="ClawLegion"
+              width={24}
+              height={24}
+              className="object-contain"
+            />
+            <span className="font-bold text-lg text-white">
+              Claw<span className="text-red-500">Legion</span>
+            </span>
           </div>
           <button
             onClick={onClose}
@@ -141,7 +150,7 @@ export function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
                     onClick={onClose}
                     className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
                       active
-                        ? 'bg-blue-500/20 text-blue-400'
+                        ? 'bg-red-500/20 text-red-400'
                         : 'text-slate-300 hover:bg-slate-800 hover:text-white'
                     }`}
                   >
@@ -162,7 +171,7 @@ export function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
                           onClick={onClose}
                           className={`block px-3 py-2 rounded-lg text-sm transition-colors ${
                             pathname === subItem.href
-                              ? 'text-blue-400 bg-blue-500/10'
+                              ? 'text-red-400 bg-red-500/10'
                               : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
                           }`}
                         >

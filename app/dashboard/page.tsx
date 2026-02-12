@@ -315,7 +315,7 @@ export default function DashboardPage() {
             </p>
           </div>
           <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
-            <Link href="/agents/org" data-testid="btn-quick-actions" className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg flex items-center justify-center gap-2 transition-colors text-sm sm:text-base">
+            <Link href="/agents/org" data-testid="btn-quick-actions" className="px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg flex items-center justify-center gap-2 transition-colors text-sm sm:text-base">
               <Bot size={18} /> Quick Actions
             </Link>
           </div>
@@ -328,7 +328,7 @@ export default function DashboardPage() {
             label="Active Agents"
             value={activeAgents}
             subtext={`of ${agents.length} total`}
-            color="blue"
+            color="red"
           />
           <MetricCard
             icon={<ListTodo className="text-purple-400" />}
@@ -402,7 +402,7 @@ export default function DashboardPage() {
 
           <div className="space-y-3">
             <QueueRow label="Backlog" count={boardData?.stats?.backlog ?? 0} color="slate" />
-            <QueueRow label="To Do" count={boardData?.stats?.todo ?? 0} color="blue" />
+            <QueueRow label="To Do" count={boardData?.stats?.todo ?? 0} color="red" />
             <QueueRow label="In Progress" count={boardData?.stats?.inProgress ?? 0} color="amber" />
             <QueueRow label="Completed" count={boardData?.stats?.completed ?? 0} color="green" />
           </div>
@@ -637,7 +637,7 @@ function MobileSection({ title, icon, count, expanded, onToggle, seeAllHref, chi
 function QueueRow({ label, count, color }: { label: string; count: number; color: string }) {
   const colors: Record<string, string> = {
     slate: 'bg-slate-600',
-    blue: 'bg-blue-600',
+    blue: 'bg-red-600',
     amber: 'bg-amber-600',
     green: 'bg-green-600',
   }

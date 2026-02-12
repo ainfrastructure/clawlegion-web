@@ -158,7 +158,7 @@ export function MobileDashboardView({
           <div className="flex gap-2">
             <Link
               href="/agents/org"
-              className="p-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
+              className="p-2 bg-red-600 hover:bg-red-700 rounded-lg transition-colors"
               aria-label="Quick Actions"
             >
               <Zap size={18} />

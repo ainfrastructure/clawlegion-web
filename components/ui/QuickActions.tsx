@@ -28,7 +28,7 @@ export function QuickActions() {
         const event = new KeyboardEvent('keydown', { key: 'k', metaKey: true })
         document.dispatchEvent(event)
       },
-      color: 'hover:bg-blue-500/20 hover:text-blue-400'
+      color: 'hover:bg-red-500/20 hover:text-blue-400'
     },
     {
       id: 'new-task',

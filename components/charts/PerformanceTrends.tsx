@@ -102,7 +102,7 @@ export function PerformanceTrends({
               onClick={() => handleRangeChange(range.value)}
               className={`px-3 py-1 text-sm rounded transition-colors ${
                 selectedRange === range.value
-                  ? "bg-blue-600 text-white"
+                  ? "bg-red-600 text-white"
                   : "bg-gray-700 text-gray-300 hover:bg-gray-600"
               }`}
             >

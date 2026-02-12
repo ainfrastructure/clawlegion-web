@@ -25,7 +25,7 @@ export function ChatModeToggle({
         className={cn(
           'flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-all',
           mode === 'dms'
-            ? 'bg-blue-600 text-white shadow-sm'
+            ? 'bg-red-600 text-white shadow-sm'
             : 'text-slate-400 hover:text-slate-200 hover:bg-slate-700/50'
         )}
       >
@@ -42,7 +42,7 @@ export function ChatModeToggle({
         className={cn(
           'flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-all',
           mode === 'rooms'
-            ? 'bg-blue-600 text-white shadow-sm'
+            ? 'bg-red-600 text-white shadow-sm'
             : 'text-slate-400 hover:text-slate-200 hover:bg-slate-700/50'
         )}
       >

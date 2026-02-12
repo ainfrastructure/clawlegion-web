@@ -159,7 +159,7 @@ export function TaskDiscussionThread({
           <button
             onClick={onPostComment}
             disabled={!commentText.trim() || isPosting}
-            className="px-3 py-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-40 disabled:hover:bg-blue-600 text-white rounded-lg flex items-center gap-1.5 text-sm font-medium transition-colors"
+            className="px-3 py-2 bg-red-600 hover:bg-red-700 disabled:opacity-40 disabled:hover:bg-red-600 text-white rounded-lg flex items-center gap-1.5 text-sm font-medium transition-colors"
           >
             {isPosting ? (
               <Loader2 className="w-4 h-4 animate-spin" />

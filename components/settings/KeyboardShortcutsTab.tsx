@@ -10,7 +10,7 @@ function Toggle({ checked, onChange }: { checked: boolean; onChange: (v: boolean
     <button
       type="button"
       onClick={() => onChange(!checked)}
-      className={`w-11 h-6 rounded-full transition-all duration-200 ${checked ? 'bg-blue-500 shadow-lg shadow-blue-500/20' : 'bg-slate-700'}`}
+      className={`w-11 h-6 rounded-full transition-all duration-200 ${checked ? 'bg-red-500 shadow-lg shadow-red-500/20' : 'bg-slate-700'}`}
     >
       <div
         className="bg-white rounded-full transition-transform shadow-sm"

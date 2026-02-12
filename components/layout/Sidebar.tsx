@@ -1,6 +1,6 @@
 'use client'
 import { GlobalSearch } from "@/components/search"
-import { MascotTrioIcon } from '@/components/landing/MascotTrioIcon'
+import Image from 'next/image'
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
@@ -146,18 +146,32 @@ export function Sidebar() {
 
   return (
     <aside
-      className={`fixed left-0 top-0 h-full bg-slate-950/80 backdrop-blur-xl border-r border-white/[0.06] flex flex-col z-40 transition-all duration-200 ${
+      className={`fixed left-0 top-0 h-full bg-[#0F172A]/95 backdrop-blur-xl border-r border-white/[0.06] flex flex-col z-40 transition-all duration-200 ${
         collapsed ? 'w-16' : 'w-56'
       }`}
     >
       {/* Logo */}
       <div className={`h-14 flex items-center border-b border-white/[0.06] ${collapsed ? 'justify-center px-2' : 'px-4'}`}>
         {collapsed ? (
-          <MascotTrioIcon size={28} />
+          <Image
+            src="/agents/clawlegion-logo-transparent.png"
+            alt="ClawLegion"
+            width={28}
+            height={28}
+            className="object-contain"
+          />
         ) : (
-          <Link href="/dashboard" className="flex items-center gap-2">
-            <MascotTrioIcon size={28} />
-            <span className="font-bold text-lg">ClawLegion</span>
+          <Link href="/dashboard" className="flex items-center gap-2.5">
+            <Image
+              src="/agents/clawlegion-logo-transparent.png"
+              alt="ClawLegion"
+              width={28}
+              height={28}
+              className="object-contain"
+            />
+            <span className="font-bold text-lg text-white">
+              Claw<span className="text-red-500">Legion</span>
+            </span>
           </Link>
         )}
       </div>
@@ -186,7 +200,7 @@ export function Sidebar() {
                     data-testid={`nav-${item.href.replace(/\//g, '-').slice(1) || 'home'}`}
                     className={`flex-1 flex items-center gap-3 px-3 py-2 rounded-lg transition-all ${
                       isActive
-                        ? 'bg-blue-500/15 text-blue-400 shadow-glow-blue/30'
+                        ? 'bg-red-500/15 text-red-400'
                         : 'text-slate-400 hover:bg-white/[0.04] hover:text-white'
                     } ${collapsed ? 'justify-center' : ''}`}
                     title={collapsed ? item.label : undefined}
@@ -224,7 +238,7 @@ export function Sidebar() {
                           data-testid={`nav-${subItem.href.replace(/\//g, '-').slice(1)}`}
                           className={`block px-3 py-1.5 rounded-lg text-sm transition-colors ${
                             isSubActive
-                              ? 'text-blue-400 bg-blue-500/10'
+                              ? 'text-red-400 bg-red-500/10'
                               : 'text-slate-500 hover:text-slate-300 hover:bg-white/[0.04]'
                           }`}
                         >
@@ -254,8 +268,8 @@ export function Sidebar() {
               </>
             ) : (
               <>
-                <Eye className="w-3.5 h-3.5 text-blue-400" />
-                <span className="text-slate-400">Switch to <span className="text-blue-400 font-medium">Easy Mode</span></span>
+                <Eye className="w-3.5 h-3.5 text-red-400" />
+                <span className="text-slate-400">Switch to <span className="text-red-400 font-medium">Easy Mode</span></span>
               </>
             )}
           </button>
@@ -269,7 +283,7 @@ export function Sidebar() {
             className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-white/[0.04] transition-colors"
             title={uiMode === 'easy' ? 'Switch to Power Mode' : 'Switch to Easy Mode'}
           >
-            {uiMode === 'easy' ? <Zap className="w-4 h-4 text-amber-400" /> : <Eye className="w-4 h-4 text-blue-400" />}
+            {uiMode === 'easy' ? <Zap className="w-4 h-4 text-amber-400" /> : <Eye className="w-4 h-4 text-red-400" />}
           </button>
         </div>
       )}

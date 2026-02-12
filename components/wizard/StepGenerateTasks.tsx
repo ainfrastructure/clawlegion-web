@@ -104,7 +104,7 @@ export default function StepGenerateTasks({ data, updateData, onNext, onPrev }: 
           </p>
           <button
             onClick={handleGenerate}
-            className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold"
+            className="px-8 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 font-semibold"
           >
             Generate Tasks with Claude
           </button>
@@ -114,7 +114,7 @@ export default function StepGenerateTasks({ data, updateData, onNext, onPrev }: 
       {/* Generating */}
       {isGenerating && (
         <div className="text-center py-12">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-blue-600 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-red-600 mx-auto mb-4"></div>
           <h3 className="text-lg font-semibold text-gray-900 mb-2">Generating Tasks...</h3>
           <p className="text-gray-600 mb-2">
             Claude Code is analyzing your goal and creating actionable tasks
@@ -125,7 +125,7 @@ export default function StepGenerateTasks({ data, updateData, onNext, onPrev }: 
           <div className="mt-6 max-w-md mx-auto">
             <div className="flex items-start space-x-3 text-left">
               <div className="flex-shrink-0 mt-1">
-                <div className="animate-pulse w-2 h-2 bg-blue-600 rounded-full"></div>
+                <div className="animate-pulse w-2 h-2 bg-red-600 rounded-full"></div>
               </div>
               <div className="text-sm text-gray-600">
                 Analyzing project structure and requirements...
@@ -208,7 +208,7 @@ export default function StepGenerateTasks({ data, updateData, onNext, onPrev }: 
         {hasGeneratedTasks && !isGenerating && (
           <button
             onClick={onNext}
-            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold"
+            className="px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 font-semibold"
           >
             Review Tasks
           </button>

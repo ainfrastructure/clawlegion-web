@@ -118,7 +118,7 @@ export function SoulEditorModal({ agentId, agentName, onClose }: SoulEditorModal
               className={cn(
                 "px-4 py-1.5 rounded-lg flex items-center gap-2 transition-colors text-sm",
                 hasChanges 
-                  ? "bg-blue-600 hover:bg-blue-700 text-white" 
+                  ? "bg-red-600 hover:bg-red-700 text-white" 
                   : "bg-slate-700 text-slate-500 cursor-not-allowed"
               )}
             >

@@ -149,7 +149,7 @@ export function AgentDetailModal({ agent, isOpen, onClose, onDeleted }: AgentDet
                 <Zap size={14} className="text-amber-400" />
                 Current Task
               </h3>
-              <p className="text-sm text-blue-400 font-mono">{agent.currentTask}</p>
+              <p className="text-sm text-red-400 font-mono">{agent.currentTask}</p>
             </div>
           )}
 
@@ -179,7 +179,7 @@ export function AgentDetailModal({ agent, isOpen, onClose, onDeleted }: AgentDet
                 {soulData && (
                   <button
                     onClick={() => setShowSoulEditor(true)}
-                    className="text-sm text-blue-400 hover:text-blue-300 flex items-center gap-1"
+                    className="text-sm text-red-400 hover:text-red-300 flex items-center gap-1"
                   >
                     View Full <ChevronRight size={14} />
                   </button>
@@ -212,7 +212,7 @@ export function AgentDetailModal({ agent, isOpen, onClose, onDeleted }: AgentDet
               <div className="flex items-center justify-between mb-2">
                 <div>
                   <h3 className="font-medium text-white flex items-center gap-2">
-                    <BookOpen size={16} className="text-blue-400" />
+                    <BookOpen size={16} className="text-red-400" />
                     AGENTS.md
                   </h3>
                   <p className="text-xs text-slate-500 mt-0.5 ml-6">Workspace rules, coding standards, and workflow guidelines</p>
@@ -220,7 +220,7 @@ export function AgentDetailModal({ agent, isOpen, onClose, onDeleted }: AgentDet
                 {agentsmdData && (
                   <button
                     onClick={() => setShowAgentsEditor(true)}
-                    className="text-sm text-blue-400 hover:text-blue-300 flex items-center gap-1"
+                    className="text-sm text-red-400 hover:text-red-300 flex items-center gap-1"
                   >
                     View Full <ChevronRight size={14} />
                   </button>

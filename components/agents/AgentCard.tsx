@@ -115,7 +115,7 @@ function FullCard({ agent, showStats, showHealth, showActions, onPause, onConfig
       {agent.currentTask && (
         <div className="text-xs sm:text-sm text-slate-400 mb-3 p-2 bg-slate-800/50 rounded">
           <span className="text-slate-500">Working on:</span>{' '}
-          <span className="text-blue-400 font-mono">{agent.currentTask}</span>
+          <span className="text-red-400 font-mono">{agent.currentTask}</span>
         </div>
       )}
       
@@ -128,7 +128,7 @@ function FullCard({ agent, showStats, showHealth, showActions, onPause, onConfig
             <span className="text-sm font-medium text-white">{agent.stats.tasksCompleted ?? 0}</span>
           </div>
           <div className="flex items-center gap-2">
-            <Clock size={14} className="text-blue-400" />
+            <Clock size={14} className="text-red-400" />
             <span className="text-xs text-slate-500">Avg:</span>
             <span className="text-sm font-medium text-white">
               {agent.stats.avgResponseTime ? `${Math.round(agent.stats.avgResponseTime)}s` : '-'}
@@ -215,7 +215,7 @@ function CompactCard({ agent, showHealth, onClick }: AgentCardProps) {
       
       {agent.currentTask && (
         <div className="text-xs text-slate-400 mb-2 truncate">
-          Working on: <span className="text-blue-400 font-mono">{agent.currentTask}</span>
+          Working on: <span className="text-red-400 font-mono">{agent.currentTask}</span>
         </div>
       )}
       

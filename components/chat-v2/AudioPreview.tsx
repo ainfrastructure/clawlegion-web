@@ -158,7 +158,7 @@ export function AudioPreview({
           disabled={disabled}
           className={cn(
             'flex items-center justify-center w-10 h-10 rounded-full',
-            'bg-blue-500 hover:bg-blue-600 text-white',
+            'bg-red-500 hover:bg-red-600 text-white',
             'transition-colors',
             'disabled:opacity-50 disabled:cursor-not-allowed'
           )}

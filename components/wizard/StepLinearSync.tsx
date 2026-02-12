@@ -170,7 +170,7 @@ export default function StepLinearSync({ data, updateData, onNext, onPrev }: Pro
             <button
               onClick={handleValidateKey}
               disabled={validateMutation.isPending || !apiKey.trim()}
-              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed font-semibold"
+              className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed font-semibold"
             >
               {validateMutation.isPending ? 'Validating...' : 'Validate'}
             </button>
@@ -269,7 +269,7 @@ export default function StepLinearSync({ data, updateData, onNext, onPrev }: Pro
           </ul>
           <button
             onClick={handleSync}
-            className="w-full px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold"
+            className="w-full px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 font-semibold"
           >
             Sync {data.tasks.length} Tasks to Linear
           </button>
@@ -279,7 +279,7 @@ export default function StepLinearSync({ data, updateData, onNext, onPrev }: Pro
       {/* Syncing Progress */}
       {isSyncing && (
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-blue-600 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-red-600 mx-auto mb-4"></div>
           <h3 className="text-lg font-semibold text-blue-900 mb-2">{syncProgress}</h3>
           <p className="text-sm text-blue-700">
             This may take a few seconds...
@@ -353,7 +353,7 @@ export default function StepLinearSync({ data, updateData, onNext, onPrev }: Pro
         {data.linearConfig?.synced && (
           <button
             onClick={onNext}
-            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold"
+            className="px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 font-semibold"
           >
             Continue to Configuration
           </button>

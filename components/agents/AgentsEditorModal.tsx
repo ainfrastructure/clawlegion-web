@@ -86,7 +86,7 @@ export function AgentsEditorModal({ agentId, agentName, onClose }: AgentsEditorM
         {/* Header */}
         <div className="flex items-center justify-between px-4 py-3 border-b border-white/[0.06] bg-slate-800/50">
           <div className="flex items-center gap-3">
-            <BookOpen size={20} className="text-blue-400" />
+            <BookOpen size={20} className="text-red-400" />
             <div>
               <h2 className="font-semibold text-white">Edit AGENTS.md</h2>
               <p className="text-xs text-slate-400">{agentName}</p>
@@ -118,7 +118,7 @@ export function AgentsEditorModal({ agentId, agentName, onClose }: AgentsEditorM
               className={cn(
                 "px-4 py-1.5 rounded-lg flex items-center gap-2 transition-colors text-sm",
                 hasChanges 
-                  ? "bg-blue-600 hover:bg-blue-700 text-white" 
+                  ? "bg-red-600 hover:bg-red-700 text-white" 
                   : "bg-slate-700 text-slate-500 cursor-not-allowed"
               )}
             >
