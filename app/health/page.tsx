@@ -125,7 +125,7 @@ export default function HealthPage() {
       <div className="flex items-center justify-between animate-fade-in-up">
         <div>
           <div className="flex items-center gap-3">
-            <Activity className="w-7 h-7 text-blue-400" />
+            <Activity className="w-7 h-7 text-red-400" />
             <h1 className="heading-xl">System Health</h1>
           </div>
           {data && (

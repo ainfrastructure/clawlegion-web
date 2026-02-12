@@ -156,7 +156,7 @@ export default function AgentOrgPage() {
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold text-white flex items-center gap-2 sm:gap-3">
-              <Users className="text-blue-400" size={28} /> Agent Organization
+              <Users className="text-red-400" size={28} /> Agent Organization
             </h1>
             <p className="text-sm sm:text-base text-slate-400 mt-1">
               Team structure and flow presets
@@ -166,7 +166,7 @@ export default function AgentOrgPage() {
             <button
               data-testid="btn-add-agent"
               onClick={() => setShowAddAgent(true)}
-              className="px-3 sm:px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg flex items-center justify-center gap-2 transition-colors text-sm font-medium"
+              className="px-3 sm:px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg flex items-center justify-center gap-2 transition-colors text-sm font-medium"
             >
               <Plus size={16} /> Add Agent
             </button>
@@ -250,7 +250,7 @@ export default function AgentOrgPage() {
           </div>
           <Link
             href="/flows"
-            className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-blue-400 hover:text-blue-300 hover:bg-blue-500/10 rounded-lg transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-colors"
           >
             Open Flow Builder <ArrowRight size={14} />
           </Link>

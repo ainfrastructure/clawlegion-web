@@ -181,7 +181,7 @@ export default function LearningsPage() {
               Findings from ClawLegion agent experiments
             </p>
           </div>
-          <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors">
+          <button className="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg transition-colors">
             <RefreshCw className="w-4 h-4" />
             Generate Content
           </button>
@@ -193,7 +193,7 @@ export default function LearningsPage() {
             onClick={() => setActiveTab('learnings')}
             className={`px-4 py-2 rounded-lg transition-colors ${
               activeTab === 'learnings'
-                ? 'bg-blue-600 text-white'
+                ? 'bg-red-600 text-white'
                 : 'text-gray-400 hover:text-white hover:bg-gray-800'
             }`}
           >
@@ -206,7 +206,7 @@ export default function LearningsPage() {
             onClick={() => setActiveTab('content')}
             className={`px-4 py-2 rounded-lg transition-colors ${
               activeTab === 'content'
-                ? 'bg-blue-600 text-white'
+                ? 'bg-red-600 text-white'
                 : 'text-gray-400 hover:text-white hover:bg-gray-800'
             }`}
           >
@@ -270,7 +270,7 @@ export default function LearningsPage() {
             {/* Open Questions */}
             <div className="lg:col-span-2 bg-gray-800/50 rounded-xl p-6 border border-gray-700">
               <h2 className="text-lg font-semibold text-white flex items-center gap-2 mb-4">
-                <HelpCircle className="w-5 h-5 text-blue-400" />
+                <HelpCircle className="w-5 h-5 text-red-400" />
                 Open Questions
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
@@ -319,7 +319,7 @@ export default function LearningsPage() {
             <div className="text-xs text-gray-400">Failures</div>
           </div>
           <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700 text-center">
-            <div className="text-2xl font-bold text-blue-400">{openQuestions.length}</div>
+            <div className="text-2xl font-bold text-red-400">{openQuestions.length}</div>
             <div className="text-xs text-gray-400">Open Questions</div>
           </div>
           <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700 text-center">
