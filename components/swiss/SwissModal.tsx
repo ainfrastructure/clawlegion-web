@@ -112,7 +112,7 @@ export function SwissModal({
           'bg-[var(--swiss-surface)] border border-[var(--swiss-border)]',
           'rounded-swiss-md shadow-swiss-lg',
           'max-h-[80vh] flex flex-col',
-          'animate-in fade-in-0 slide-in-from-top-4 duration-200',
+          'animate-[swiss-modal-in_200ms_ease-out]',
           className
         )}
       >
