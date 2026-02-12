@@ -49,11 +49,6 @@ export default function RootLayout({
         <style dangerouslySetInnerHTML={{ __html: `
           html, body { background-color: #020617; color: #e2e8f0; }
         `}} />
-        {/* 
-          Mark JS-ready AFTER first paint so CSS scroll-reveal animations don't hide SSR content.
-          Double-rAF ensures the class is added after the browser has painted the initial HTML.
-        */}
-        <script dangerouslySetInnerHTML={{ __html: `requestAnimationFrame(function(){requestAnimationFrame(function(){document.documentElement.classList.add('js-ready')})})` }} />
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-LBGN5QEL3D"
           strategy="afterInteractive"

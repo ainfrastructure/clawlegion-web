@@ -365,44 +365,8 @@ const ROTATE_MS = 5000
 
 export function HowItWorks() {
   const sectionRef = useRef<HTMLDivElement>(null)
-  // Start visible so SSR/pre-hydration content is not hidden behind opacity-0
-  const [visible, setVisible] = useState(true)
-  const [animateReady, setAnimateReady] = useState(false)
   const [activeIdx, setActiveIdx] = useState(0)
   const [isPaused, setIsPaused] = useState(false)
-
-  // On mount: if not in viewport, hide and set up observer to animate in.
-  // If already in viewport (or no IntersectionObserver), stay visible.
-  useEffect(() => {
-    const el = sectionRef.current
-    if (!el) return
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setVisible(true)
-          observer.disconnect()
-        }
-      },
-      { threshold: 0.05 }
-    )
-
-    // Check if element is currently in viewport
-    const rect = el.getBoundingClientRect()
-    const inViewport = rect.top < window.innerHeight && rect.bottom > 0
-
-    if (inViewport) {
-      // Already visible — no animation needed, stay visible
-      setVisible(true)
-    } else {
-      // Not in viewport — hide and animate in when scrolled to
-      setVisible(false)
-      setAnimateReady(true)
-      observer.observe(el)
-    }
-
-    return () => observer.disconnect()
-  }, [])
 
   // Auto-rotate
   const next = useCallback(() => {
@@ -410,10 +374,10 @@ export function HowItWorks() {
   }, [])
 
   useEffect(() => {
-    if (!visible || isPaused) return
+    if (isPaused) return
     const timer = setInterval(next, ROTATE_MS)
     return () => clearInterval(timer)
-  }, [visible, isPaused, next])
+  }, [isPaused, next])
 
   const template = TEMPLATES[activeIdx]
 
@@ -427,13 +391,7 @@ export function HowItWorks() {
     >
       {/* Header */}
       <div className="max-w-5xl mx-auto px-4 sm:px-6">
-        <div
-          className={`text-center mb-8 ${
-            animateReady ? 'transition-all duration-700' : ''
-          } ${
-            visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
-          }`}
-        >
+        <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2 mb-4">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
@@ -476,10 +434,7 @@ export function HowItWorks() {
       </div>
 
       {/* Active pipeline — ONLY ONE rendered at a time */}
-      <div
-        key={template.name}
-        className={`${animateReady ? 'transition-opacity duration-500' : ''} ${visible ? 'opacity-100' : 'opacity-0'}`}
-      >
+      <div key={template.name}>
         <PipelineView template={template} />
       </div>
 
