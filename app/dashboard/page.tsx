@@ -113,14 +113,14 @@ function EasyModeDashboard() {
         <div className="glass-2 rounded-xl p-5">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold text-white">In Progress</h2>
-            <Link href="/tasks" className="text-sm text-blue-400 hover:text-blue-300 flex items-center gap-1">
+            <Link href="/tasks" className="text-sm text-red-400 hover:text-red-300 flex items-center gap-1">
               View all <ArrowRight size={14} />
             </Link>
           </div>
           {activeTasks.length === 0 ? (
             <div className="text-center py-8 text-slate-500">
               <p>No active tasks right now</p>
-              <Link href="/tasks" className="text-blue-400 hover:text-blue-300 text-sm mt-2 inline-block">
+              <Link href="/tasks" className="text-red-400 hover:text-red-300 text-sm mt-2 inline-block">
                 Create a task to get started
               </Link>
             </div>
@@ -324,7 +324,7 @@ export default function DashboardPage() {
         {/* Key Metrics Bar - 1 col mobile, 2 col tablet, 4 col desktop */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           <MetricCard
-            icon={<Users className="text-blue-400" />}
+            icon={<Users className="text-red-400" />}
             label="Active Agents"
             value={activeAgents}
             subtext={`of ${agents.length} total`}
@@ -354,7 +354,7 @@ export default function DashboardPage() {
         <div className="lg:col-span-2 glass-2 rounded-xl p-4 sm:p-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg sm:text-xl font-semibold text-white flex items-center gap-2">
-              <Cpu className="text-blue-400" /> Agent Fleet
+              <Cpu className="text-red-400" /> Agent Fleet
             </h2>
             <Link href="/agents" className="text-sm text-slate-400 hover:text-white flex items-center gap-1">
               Manage <ArrowRight size={14} />
@@ -548,7 +548,7 @@ function MobileDashboardView({
       {/* Agents Section (Collapsible) */}
       <MobileSection
         title="Agents"
-        icon={<Bot size={16} className="text-blue-400" />}
+        icon={<Bot size={16} className="text-red-400" />}
         count={agents.length}
         expanded={agentsExpanded}
         onToggle={() => setAgentsExpanded(!agentsExpanded)}
@@ -608,7 +608,7 @@ function MobileSection({ title, icon, count, expanded, onToggle, seeAllHref, chi
             <Link
               href={seeAllHref}
               onClick={(e) => e.stopPropagation()}
-              className="text-xs text-blue-400 hover:text-blue-300"
+              className="text-xs text-red-400 hover:text-red-300"
             >
               See All →
             </Link>
