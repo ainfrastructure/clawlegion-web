@@ -47,7 +47,7 @@ export function HeroSection() {
 
         {/* Price */}
         <div className="flex items-center justify-center gap-3 mb-8">
-          <span className="text-3xl font-bold text-white">${LAUNCH_CONFIG.earlyBirdPrice}/mo</span>
+          <span className="text-3xl font-bold text-white">Free Beta</span>
           <span className="px-2.5 py-1 bg-amber-500/15 border border-amber-500/25 rounded-full text-amber-400 text-sm font-medium">
             Limited Spots
           </span>

@@ -30,7 +30,7 @@ export function PricingSection() {
             One plan. Full legion. Infinite workflows.
           </h2>
           <p className="text-lg text-slate-400 max-w-2xl mx-auto">
-            Early access pricing — limited spots at this rate.
+            Join the free beta — limited spots available. No payment required.
           </p>
         </div>
 
@@ -46,7 +46,7 @@ export function PricingSection() {
             ))}
             <div className="pt-4 mt-4 border-t border-white/10">
               <p className="text-slate-500 text-sm">
-                All features included at <span className="text-white font-semibold">${LAUNCH_CONFIG.earlyBirdPrice}/mo</span>
+                All features included — <span className="text-white font-semibold">free during beta</span>
               </p>
             </div>
           </div>
@@ -66,8 +66,8 @@ export function PricingSection() {
             {/* Price */}
             <div className="text-center mb-6">
               <div className="inline-flex items-baseline gap-3">
-                <span className="text-5xl font-bold text-white">${LAUNCH_CONFIG.earlyBirdPrice}</span>
-                <span className="text-slate-300">/mo</span>
+                <span className="text-5xl font-bold text-white">Free</span>
+                <span className="text-slate-300">beta</span>
               </div>
             </div>
 
