@@ -14,27 +14,24 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setThemeState] = useState<Theme>('dark')
-  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
-    setMounted(true)
     const stored = localStorage.getItem('ralph-theme') as Theme | null
-    if (stored) {
+    if (stored && stored !== 'dark') {
       setThemeState(stored)
+      document.documentElement.classList.remove('dark')
     }
   }, [])
 
   useEffect(() => {
-    if (mounted) {
-      const root = document.documentElement
-      if (theme === 'dark') {
-        root.classList.add('dark')
-      } else {
-        root.classList.remove('dark')
-      }
-      localStorage.setItem('ralph-theme', theme)
+    const root = document.documentElement
+    if (theme === 'dark') {
+      root.classList.add('dark')
+    } else {
+      root.classList.remove('dark')
     }
-  }, [theme, mounted])
+    localStorage.setItem('ralph-theme', theme)
+  }, [theme])
 
   const setTheme = (newTheme: Theme) => {
     setThemeState(newTheme)
