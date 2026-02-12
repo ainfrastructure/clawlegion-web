@@ -11,6 +11,7 @@
 'use client'
 
 import { ReactNode, useEffect, useRef, useCallback } from 'react'
+import { createPortal } from 'react-dom'
 import { clsx } from 'clsx'
 import { X } from 'lucide-react'
 
@@ -52,33 +53,29 @@ export function SwissModal({
   size = 'md',
   className,
 }: SwissModalProps) {
-  const dialogRef = useRef<HTMLDialogElement>(null)
   const contentRef = useRef<HTMLDivElement>(null)
 
-  // Open/close dialog
+  // Lock body scroll when open
   useEffect(() => {
-    const dialog = dialogRef.current
-    if (!dialog) return
-
-    if (open && !dialog.open) {
-      dialog.showModal()
-    } else if (!open && dialog.open) {
-      dialog.close()
+    if (open) {
+      const prev = document.body.style.overflow
+      document.body.style.overflow = 'hidden'
+      return () => { document.body.style.overflow = prev }
     }
   }, [open])
 
-  // Handle escape key (native dialog handles this, but we need onClose callback)
+  // Handle escape key
   useEffect(() => {
-    const dialog = dialogRef.current
-    if (!dialog) return
-
-    const handleCancel = (e: Event) => {
-      e.preventDefault()
-      onClose()
+    if (!open) return
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.preventDefault()
+        onClose()
+      }
     }
-    dialog.addEventListener('cancel', handleCancel)
-    return () => dialog.removeEventListener('cancel', handleCancel)
-  }, [onClose])
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [open, onClose])
 
   // Close on backdrop click
   const handleBackdropClick = useCallback((e: React.MouseEvent) => {
@@ -89,22 +86,22 @@ export function SwissModal({
 
   if (!open) return null
 
-  return (
-    <dialog
-      ref={dialogRef}
+  const modal = (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-swiss-4"
       onClick={handleBackdropClick}
-      className={clsx(
-        'fixed inset-0 z-50 m-0 p-0',
-        'w-full h-full max-w-none max-h-none',
-        'bg-transparent',
-        'backdrop:bg-black/60',
-        'open:flex items-center justify-center',
-      )}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby={title ? 'swiss-modal-title' : undefined}
     >
+      {/* Backdrop */}
+      <div className="absolute inset-0 bg-black/60" aria-hidden="true" />
+
+      {/* Content */}
       <div
         ref={contentRef}
         className={clsx(
-          'w-full mx-swiss-4',
+          'relative w-full',
           sizeStyles[size],
           'bg-[var(--swiss-surface)] border border-[var(--swiss-border)]',
           'rounded-swiss-md',
@@ -118,7 +115,10 @@ export function SwissModal({
           <div className="flex items-start justify-between p-swiss-6 border-b border-[var(--swiss-border-subtle)]">
             <div className="flex-1 min-w-0">
               {title && (
-                <h2 className="text-swiss-lg font-semibold text-[var(--swiss-text-primary)]">
+                <h2
+                  id="swiss-modal-title"
+                  className="text-swiss-lg font-semibold text-[var(--swiss-text-primary)]"
+                >
                   {title}
                 </h2>
               )}
@@ -157,6 +157,12 @@ export function SwissModal({
           </div>
         )}
       </div>
-    </dialog>
+    </div>
   )
+
+  // Use portal to render at document root
+  if (typeof document !== 'undefined') {
+    return createPortal(modal, document.body)
+  }
+  return modal
 }
