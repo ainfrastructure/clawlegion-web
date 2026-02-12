@@ -56,12 +56,12 @@ export function StickyCtaBar() {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@company.com"
               required
-              className="flex-1 px-3 py-2 glass-2 rounded-lg text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
+              className="flex-1 px-3 py-2 glass-2 rounded-lg text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-red-500/50 text-sm"
             />
             <button
               type="submit"
               disabled={status === 'loading'}
-              className="px-5 py-2 bg-blue-600 hover:bg-blue-500 disabled:bg-blue-600/50 text-white rounded-lg font-semibold transition-colors flex items-center gap-1.5 text-sm whitespace-nowrap shimmer-btn"
+              className="px-5 py-2 bg-red-600 hover:bg-red-500 disabled:bg-red-600/50 text-white rounded-lg font-semibold transition-colors flex items-center gap-1.5 text-sm whitespace-nowrap shimmer-btn"
             >
               {status === 'loading' ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
@@ -77,7 +77,7 @@ export function StickyCtaBar() {
           {/* Mobile: scroll to pricing */}
           <a
             href="#pricing"
-            className="md:hidden px-5 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-semibold transition-colors text-sm whitespace-nowrap shimmer-btn"
+            className="md:hidden px-5 py-2 bg-red-600 hover:bg-red-500 text-white rounded-lg font-semibold transition-colors text-sm whitespace-nowrap shimmer-btn"
           >
             Claim Now
           </a>
