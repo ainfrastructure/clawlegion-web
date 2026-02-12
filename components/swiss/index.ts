@@ -77,3 +77,18 @@ export type { SwissButtonProps, SwissButtonVariant, SwissButtonSize } from './Sw
 // ─── Forms ───
 export { SwissInput, SwissTextarea } from './SwissInput'
 export type { SwissInputProps, SwissTextareaProps, SwissInputSize } from './SwissInput'
+
+// ─── Task Components ───
+export { SwissTaskCard } from './SwissTaskCard'
+export type { SwissTaskCardProps } from './SwissTaskCard'
+
+export { SwissTabBar } from './SwissTabBar'
+export type { SwissTabBarProps, SwissTabItem } from './SwissTabBar'
+
+// ─── Agent Components ───
+export { SwissAgentCard } from './SwissAgentCard'
+export type { SwissAgentCardProps } from './SwissAgentCard'
+
+// ─── Dialogs ───
+export { SwissModal } from './SwissModal'
+export type { SwissModalProps, SwissModalSize } from './SwissModal'

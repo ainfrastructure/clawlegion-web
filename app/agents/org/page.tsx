@@ -5,6 +5,8 @@ import { useQuery } from '@tanstack/react-query'
 import Link from 'next/link'
 import Image from 'next/image'
 import { PageContainer } from '@/components/layout'
+import { useSidebar } from '@/components/layout/SidebarContext'
+import { EasyTeamPage } from '@/components/easy'
 import { type AgentData } from '@/components/agents'
 import { OrgAgentCard } from '@/components/agents/OrgAgentCard'
 import { AgentDetailModal } from '@/components/agents/AgentDetailModal'
@@ -69,6 +71,16 @@ async function fetchHealth(): Promise<HealthData> {
 const LEADERSHIP_NAMES = ['caesar', 'lux']
 
 export default function AgentOrgPage() {
+  const { uiMode } = useSidebar()
+
+  if (uiMode === 'easy') {
+    return <EasyTeamPage />
+  }
+
+  return <PowerAgentOrgPage />
+}
+
+function PowerAgentOrgPage() {
   const [selectedAgent, setSelectedAgent] = useState<AgentData | null>(null)
   const [showDetailModal, setShowDetailModal] = useState(false)
   const [showAddAgent, setShowAddAgent] = useState(false)

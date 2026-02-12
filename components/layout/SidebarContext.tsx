@@ -17,10 +17,23 @@ const SidebarContext = createContext<LayoutContextType | undefined>(undefined)
 export function SidebarProvider({ children }: { children: ReactNode }) {
   const [collapsed, setCollapsed] = useState(false)
   const [uiMode, setUIModeState] = useState<UIMode>('power')
+  const [urlOverride, setUrlOverride] = useState(false)
 
-  // Load UI mode from localStorage on mount
+  // Load UI mode: URL param > localStorage
   useEffect(() => {
-    const saved = typeof window !== 'undefined' ? localStorage.getItem('clawlegion-ui-mode') : null
+    if (typeof window === 'undefined') return
+
+    // Check URL parameter first (override, but don't persist)
+    const params = new URLSearchParams(window.location.search)
+    const urlMode = params.get('mode')
+    if (urlMode === 'easy' || urlMode === 'power') {
+      setUIModeState(urlMode)
+      setUrlOverride(true)
+      return
+    }
+
+    // Fall back to localStorage
+    const saved = localStorage.getItem('clawlegion-ui-mode')
     if (saved === 'easy' || saved === 'power') {
       setUIModeState(saved)
     }
@@ -30,6 +43,7 @@ export function SidebarProvider({ children }: { children: ReactNode }) {
 
   const setUIMode = (mode: UIMode) => {
     setUIModeState(mode)
+    setUrlOverride(false)
     if (typeof window !== 'undefined') {
       localStorage.setItem('clawlegion-ui-mode', mode)
     }

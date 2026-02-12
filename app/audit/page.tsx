@@ -5,6 +5,8 @@ import { useSearchParams, useRouter } from 'next/navigation'
 import { formatDate } from '@/lib/utils'
 import { useQuery } from '@tanstack/react-query'
 import { PageContainer } from '@/components/layout'
+import { useSidebar } from '@/components/layout/SidebarContext'
+import { EasyAuditPage } from '@/components/easy'
 import { ExportButton } from '@/components/ExportButton'
 import { ActivityFeed } from '@/components/audit/ActivityFeed'
 import {
@@ -80,6 +82,12 @@ const entityTypeConfig: Record<string, { icon: React.ReactNode; color: string }>
 }
 
 export default function AuditPage() {
+  const { uiMode } = useSidebar()
+
+  if (uiMode === 'easy') {
+    return <EasyAuditPage />
+  }
+
   return (
     <Suspense fallback={
       <PageContainer>

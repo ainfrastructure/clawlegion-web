@@ -6,6 +6,8 @@ import { useSearchParams, useRouter, usePathname } from 'next/navigation'
 import Link from 'next/link'
 import api from '@/lib/api'
 import { PageContainer } from '@/components/layout'
+import { useSidebar } from '@/components/layout/SidebarContext'
+import { EasyWorkPage } from '@/components/easy'
 import {
   ListTodo,
   Plus,
@@ -40,6 +42,20 @@ import {
 // ============================================
 
 export default function TasksPage() {
+  const { uiMode } = useSidebar()
+
+  if (uiMode === 'easy') {
+    return (
+      <Suspense fallback={
+        <PageContainer>
+          <div className="text-center text-slate-400 py-12">Loading...</div>
+        </PageContainer>
+      }>
+        <EasyWorkPage />
+      </Suspense>
+    )
+  }
+
   return (
     <Suspense fallback={
       <PageContainer>

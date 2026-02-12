@@ -3,6 +3,8 @@
 import { Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { PageContainer } from '@/components/layout'
+import { useSidebar } from '@/components/layout/SidebarContext'
+import { EasySettingsPage } from '@/components/easy'
 import { Settings } from 'lucide-react'
 import {
   SettingsTabs,
@@ -71,6 +73,12 @@ function SettingsContent() {
 }
 
 export default function SettingsPage() {
+  const { uiMode } = useSidebar()
+
+  if (uiMode === 'easy') {
+    return <EasySettingsPage />
+  }
+
   return (
     <Suspense>
       <SettingsContent />

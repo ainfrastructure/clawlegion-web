@@ -16,6 +16,7 @@ import { KeyboardShortcutsHelp } from '@/components/ui/KeyboardShortcutsHelp'
 import { GlobalKeyboardShortcuts } from '@/components/ui/GlobalKeyboardShortcuts'
 import { NotificationCenter } from '@/components/notifications/NotificationCenter'
 import { TaskNotificationManager } from '@/components/features/TaskNotificationManager'
+import { ModeOnboarding } from '@/components/easy/ModeOnboarding'
 import { useNotificationSocket } from '@/hooks/useNotificationSocket'
 
 function LiveClock() {
@@ -66,6 +67,7 @@ function AuthenticatedContent({ children }: { children: React.ReactNode }) {
       <KeyboardShortcutsHelp />
       <GlobalKeyboardShortcuts />
       <TaskNotificationManager />
+      <ModeOnboarding />
     </>
   )
 
