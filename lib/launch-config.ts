@@ -12,10 +12,10 @@ export const LAUNCH_CONFIG = {
   claimedSlots: 47,
 
   // Copy
-  badgeText: 'Free Beta — Limited Spots',
-  ctaText: 'Join the Beta — Free',
-  navCtaText: 'Join Beta — Free',
-  guaranteeText: 'Sign up for early access. No payment required.',
+  badgeText: 'Limited Spots Available',
+  ctaText: 'Claim Your Spot — $49/mo',
+  navCtaText: '$49/mo — Claim Now',
+  guaranteeText: 'Limited spots. Cancel anytime.',
 } as const
 
 export type LaunchConfig = typeof LAUNCH_CONFIG

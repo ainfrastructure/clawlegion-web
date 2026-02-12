@@ -41,7 +41,7 @@ export function StickyCtaBar() {
         <div className="flex items-center justify-between gap-4">
           {/* Price anchor */}
           <div className="flex items-center gap-3 shrink-0">
-            <span className="text-white font-bold text-lg">Free Beta</span>
+            <span className="text-white font-bold text-lg">${LAUNCH_CONFIG.earlyBirdPrice}/mo</span>
             <span className="text-amber-400 text-sm font-medium">Limited Spots</span>
             <span className="hidden sm:inline">
               <CountdownTimer variant="compact" />
@@ -67,7 +67,7 @@ export function StickyCtaBar() {
                 <Loader2 className="w-4 h-4 animate-spin" />
               ) : (
                 <>
-                  Join Beta
+                  Claim Now
                   <ArrowRight className="w-3.5 h-3.5" />
                 </>
               )}
@@ -79,7 +79,7 @@ export function StickyCtaBar() {
             href="#pricing"
             className="md:hidden px-5 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-semibold transition-colors text-sm whitespace-nowrap shimmer-btn"
           >
-            Join Beta
+            Claim Now
           </a>
 
           {/* Dismiss */}
