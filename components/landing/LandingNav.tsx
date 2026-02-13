@@ -38,11 +38,10 @@ function MiniAgentFlow() {
 }
 
 type LandingNavProps = {
-  bannerVisible?: boolean
   onContactClick?: () => void
 }
 
-export function LandingNav({ bannerVisible = false, onContactClick }: LandingNavProps) {
+export function LandingNav({ onContactClick }: LandingNavProps) {
   const [scrolled, setScrolled] = useState(false)
   const [pastHero, setPastHero] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
@@ -65,9 +64,7 @@ export function LandingNav({ bannerVisible = false, onContactClick }: LandingNav
 
   return (
     <nav
-      className={`fixed left-0 right-0 z-50 transition-all duration-300 ${
-        bannerVisible ? 'top-[41px]' : 'top-0'
-      } ${
+      className={`sticky top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrolled
           ? 'glass-2 border-b border-white/[0.06]'
           : 'bg-transparent'
