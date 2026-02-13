@@ -248,7 +248,7 @@ describe('exportData logic', () => {
 
   it('generates correct filename with timestamp for CSV', () => {
     const filename = 'export'
-    const format: ExportFormat = 'csv'
+    const format = 'csv' as ExportFormat
     
     const timestamp = new Date().toISOString().split('T')[0]
     const expectedFilename = `${filename}_${timestamp}.${format}`
@@ -263,7 +263,7 @@ describe('exportData logic', () => {
   })
 
   it('uses text/csv mime type for CSV export', () => {
-    const format: ExportFormat = 'csv'
+    const format = 'csv' as ExportFormat
     const mimeType = format === 'json' ? 'application/json' : 'text/csv'
     expect(mimeType).toBe('text/csv')
   })

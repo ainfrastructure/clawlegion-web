@@ -181,3 +181,18 @@ export function getWorkflowForDomain(domain?: string): WorkflowStep[] {
 export type TaskStatus = TaskStatusKey
 export const statusConfig = STATUS_CONFIG
 export const statusFlowOrder = STATUS_ORDER
+
+// Graph node colors (for TaskGraphView and graph page)
+// These are the raw hex values for canvas/SVG rendering
+export const graphStatusColors: Record<string, { bg: string; border: string; text: string; dot: string }> = {
+  backlog:      { bg: '#1e293b', border: '#475569', text: '#f1f5f9', dot: '#64748b' },
+  todo:         { bg: '#1e3a5f', border: '#3b82f6', text: '#ffffff', dot: '#3b82f6' },
+  in_progress:  { bg: '#422006', border: '#f59e0b', text: '#ffffff', dot: '#f59e0b' },
+  building:     { bg: '#422006', border: '#f59e0b', text: '#ffffff', dot: '#f59e0b' },
+  researching:  { bg: '#3b0764', border: '#a855f7', text: '#ffffff', dot: '#a855f7' },
+  planning:     { bg: '#3b0764', border: '#a855f7', text: '#ffffff', dot: '#a855f7' },
+  verifying:    { bg: '#312e81', border: '#818cf8', text: '#ffffff', dot: '#818cf8' },
+  done:         { bg: '#052e16', border: '#22c55e', text: '#ffffff', dot: '#22c55e' },
+  completed:    { bg: '#052e16', border: '#22c55e', text: '#ffffff', dot: '#22c55e' },
+  failed:       { bg: '#450a0a', border: '#ef4444', text: '#ffffff', dot: '#ef4444' },
+};

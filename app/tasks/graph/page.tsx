@@ -3,7 +3,25 @@
 import { useState, useCallback } from 'react';
 import Link from 'next/link';
 import { ArrowLeft, X, Check, GitBranch } from 'lucide-react';
-import TaskGraphView, { statusColors } from '@/components/TaskGraphView';
+import dynamic from 'next/dynamic';
+import { graphStatusColors as statusColors } from '@/components/tasks/config/status';
+
+// Dynamically import the heavy TaskGraphView component (contains React Flow ~200KB)
+// This reduces initial bundle for users who don't visit this page
+const TaskGraphView = dynamic(
+  () => import('@/components/TaskGraphView').then(mod => mod.default),
+  { 
+    ssr: false,
+    loading: () => (
+      <div className="flex items-center justify-center h-full bg-slate-900">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+          <p className="text-slate-400">Loading graph visualization...</p>
+        </div>
+      </div>
+    )
+  }
+);
 import { DecomposeModal } from '@/components/tasks/DecomposeModal';
 import { SearchInput } from '@/components/ui/SearchInput';
 import { FilterChips } from '@/components/ui/FilterChips';
