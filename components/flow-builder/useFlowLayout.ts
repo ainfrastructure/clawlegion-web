@@ -13,8 +13,8 @@ const NODE_HEIGHT = 160
 const NODE_SEP = 100
 const RANK_SEP = 100
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-let dagreModule: any = null
+type DagreModule = typeof import('@dagrejs/dagre')
+let dagreModule: DagreModule | null = null
 
 export function useFlowLayout(steps: PipelineStep[]) {
   const [dagreReady, setDagreReady] = useState(!!dagreModule)

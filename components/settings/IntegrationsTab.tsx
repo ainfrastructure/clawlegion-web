@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
+import Image from 'next/image'
 import {
   useSystemSettings,
   useUpdateSystemSettings,
@@ -90,7 +91,7 @@ function IntegrationCard({
           </div>
           <Toggle
             checked={'enabled' in config ? config.enabled : false}
-            onChange={(v) => onUpdate({ enabled: v } as any)}
+            onChange={(v) => onUpdate({ enabled: v } as Partial<IntegrationConfig[Provider]>)}
           />
         </div>
 
@@ -116,7 +117,7 @@ function IntegrationCard({
                 <input
                   type="text"
                   value={(config as IntegrationConfig['linear']).teamId}
-                  onChange={(e) => onUpdate({ teamId: e.target.value } as any)}
+                  onChange={(e) => onUpdate({ teamId: e.target.value } as Partial<IntegrationConfig[Provider]>)}
                   placeholder="e.g. TEAM-123"
                   className="w-full px-3 py-2 bg-slate-800/40 border border-white/[0.08] rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500/40 transition-all"
                 />
@@ -125,7 +126,7 @@ function IntegrationCard({
                 <span className="text-sm text-slate-400">Sync tasks to Linear</span>
                 <Toggle
                   checked={(config as IntegrationConfig['linear']).syncEnabled}
-                  onChange={(v) => onUpdate({ syncEnabled: v } as any)}
+                  onChange={(v) => onUpdate({ syncEnabled: v } as Partial<IntegrationConfig[Provider]>)}
                 />
               </div>
             </>
@@ -139,7 +140,7 @@ function IntegrationCard({
                   <input
                     type="text"
                     value={(config as IntegrationConfig['github']).owner}
-                    onChange={(e) => onUpdate({ owner: e.target.value } as any)}
+                    onChange={(e) => onUpdate({ owner: e.target.value } as Partial<IntegrationConfig[Provider]>)}
                     placeholder="username or org"
                     className="w-full px-3 py-2 bg-slate-800/40 border border-white/[0.08] rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500/40 transition-all"
                   />
@@ -149,7 +150,7 @@ function IntegrationCard({
                   <input
                     type="text"
                     value={(config as IntegrationConfig['github']).repo}
-                    onChange={(e) => onUpdate({ repo: e.target.value } as any)}
+                    onChange={(e) => onUpdate({ repo: e.target.value } as Partial<IntegrationConfig[Provider]>)}
                     placeholder="repo-name"
                     className="w-full px-3 py-2 bg-slate-800/40 border border-white/[0.08] rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500/40 transition-all"
                   />
@@ -159,7 +160,7 @@ function IntegrationCard({
                 <span className="text-sm text-slate-400">Auto-create issues</span>
                 <Toggle
                   checked={(config as IntegrationConfig['github']).issueCreationEnabled}
-                  onChange={(v) => onUpdate({ issueCreationEnabled: v } as any)}
+                  onChange={(v) => onUpdate({ issueCreationEnabled: v } as Partial<IntegrationConfig[Provider]>)}
                 />
               </div>
             </>
@@ -171,7 +172,7 @@ function IntegrationCard({
               <input
                 type="text"
                 value={(config as IntegrationConfig['discord']).webhookUrl}
-                onChange={(e) => onUpdate({ webhookUrl: e.target.value } as any)}
+                onChange={(e) => onUpdate({ webhookUrl: e.target.value } as Partial<IntegrationConfig[Provider]>)}
                 placeholder="https://discord.com/api/webhooks/..."
                 className="w-full px-3 py-2 bg-slate-800/40 border border-white/[0.08] rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500/40 transition-all"
               />
@@ -185,7 +186,7 @@ function IntegrationCard({
                 <input
                   type="password"
                   value={(config as IntegrationConfig['telegram']).botToken}
-                  onChange={(e) => onUpdate({ botToken: e.target.value } as any)}
+                  onChange={(e) => onUpdate({ botToken: e.target.value } as Partial<IntegrationConfig[Provider]>)}
                   placeholder="123456:ABC-DEF..."
                   className="w-full px-3 py-2 bg-slate-800/40 border border-white/[0.08] rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500/40 transition-all"
                 />
@@ -195,7 +196,7 @@ function IntegrationCard({
                 <input
                   type="text"
                   value={(config as IntegrationConfig['telegram']).chatId}
-                  onChange={(e) => onUpdate({ chatId: e.target.value } as any)}
+                  onChange={(e) => onUpdate({ chatId: e.target.value } as Partial<IntegrationConfig[Provider]>)}
                   placeholder="-1001234567890"
                   className="w-full px-3 py-2 bg-slate-800/40 border border-white/[0.08] rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500/40 transition-all"
                 />
@@ -301,10 +302,13 @@ function XIntegrationCard() {
         {status?.connected && status.account && (
           <div className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-white/[0.03] mb-3">
             {status.account.avatarUrl && (
-              <img
+              <Image
                 src={status.account.avatarUrl}
                 alt={status.account.displayName}
-                className="w-8 h-8 rounded-full ring-2 ring-white/10"
+                width={32}
+                height={32}
+                className="rounded-full ring-2 ring-white/10"
+                unoptimized
               />
             )}
             <div className="flex-1 min-w-0">
