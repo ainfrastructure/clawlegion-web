@@ -42,7 +42,6 @@ export function StickyCtaBar() {
           {/* Price anchor */}
           <div className="flex items-center gap-3 shrink-0">
             <span className="text-white font-bold text-lg">${LAUNCH_CONFIG.earlyBirdPrice}/mo</span>
-            <span className="text-amber-400 text-sm font-medium">Limited Spots</span>
             <span className="hidden sm:inline">
               <CountdownTimer variant="compact" />
             </span>

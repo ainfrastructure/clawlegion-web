@@ -56,12 +56,7 @@ export function PricingSection() {
             {/* Glow border effect */}
             <div className="absolute -inset-[1px] rounded-2xl bg-gradient-to-b from-blue-500/20 to-purple-500/20 -z-10 blur-sm" />
 
-            {/* Limited spots badge */}
-            <div className="text-center mb-6">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-500/15 border border-amber-500/25 rounded-full text-amber-400 text-sm font-medium">
-                Limited Spots
-              </div>
-            </div>
+            {/* Removed Limited Spots badge */}
 
             {/* Price */}
             <div className="text-center mb-6">
