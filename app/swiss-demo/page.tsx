@@ -71,39 +71,39 @@ export default function SwissDemoPage() {
 
         {/* Metrics Grid */}
         <SwissSection title="System Metrics">
-          <SwissGrid cols={4} gap="lg">
+          <SwissGrid columns={4} gap="lg">
             <SwissMetricCard
-              title="Active Agents"
+              label="Active Agents"
               value="4"
-              trend="+1"
+              trend="up"
+              trendValue="+1"
               icon={<Bot className="h-5 w-5" />}
-              status="success"
             />
             <SwissMetricCard
-              title="Tasks Completed"
+              label="Tasks Completed"
               value="127"
-              trend="+12%"
+              trend="up"
+              trendValue="+12%"
               icon={<CheckCircle2 className="h-5 w-5" />}
-              status="success"
             />
             <SwissMetricCard
-              title="System Load"
+              label="System Load"
               value="64%"
-              trend="-5%"
+              trend="down"
+              trendValue="-5%"
               icon={<Zap className="h-5 w-5" />}
-              status="warning"
             />
             <SwissMetricCard
-              title="Uptime"
+              label="Uptime"
               value="99.9%"
-              trend="stable"
+              trend="neutral"
+              trendValue="stable"
               icon={<Clock className="h-5 w-5" />}
-              status="success"
             />
           </SwissGrid>
         </SwissSection>
 
-        <SwissGrid cols={2} gap="xl">
+        <SwissGrid columns={2} gap="xl">
           
           {/* Agent Status Cards */}
           <SwissSection title="Agent Fleet">
