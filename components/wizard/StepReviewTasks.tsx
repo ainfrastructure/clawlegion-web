@@ -86,7 +86,7 @@ export default function StepReviewTasks({ data, updateData, onNext, onPrev }: Pr
           <p className="text-gray-600">No tasks generated yet</p>
           <button
             onClick={onPrev}
-            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            className="mt-4 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
           >
             Go back to generate tasks
           </button>
@@ -300,7 +300,7 @@ export default function StepReviewTasks({ data, updateData, onNext, onPrev }: Pr
         <button
           onClick={onNext}
           disabled={data.tasks.length === 0}
-          className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed font-semibold"
+          className="px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed font-semibold"
         >
           Continue to Configuration
         </button>

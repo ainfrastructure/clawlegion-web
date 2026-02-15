@@ -115,9 +115,9 @@ export default function SessionWizard() {
                   disabled={step.id > currentStep}
                   className={`relative flex items-center justify-center w-10 h-10 rounded-full border-2 transition-colors ${
                     step.id < currentStep
-                      ? 'bg-blue-600 border-blue-600 text-white'
+                      ? 'bg-red-600 border-red-600 text-white'
                       : step.id === currentStep
-                      ? 'bg-white dark:bg-slate-800 border-blue-600 text-blue-600'
+                      ? 'bg-white dark:bg-slate-800 border-red-600 text-red-600'
                       : 'bg-white dark:bg-slate-800 border-gray-300 dark:border-slate-600 text-gray-400 dark:text-slate-500'
                   } ${step.id <= currentStep ? 'cursor-pointer hover:opacity-80' : 'cursor-not-allowed'}`}
                 >
@@ -139,7 +139,7 @@ export default function SessionWizard() {
                 {index < steps.length - 1 && (
                   <div
                     className={`hidden md:block absolute top-5 left-1/2 w-full h-0.5 ${
-                      step.id < currentStep ? 'bg-blue-600' : 'bg-gray-300 dark:bg-slate-600'
+                      step.id < currentStep ? 'bg-red-600' : 'bg-gray-300 dark:bg-slate-600'
                     }`}
                     style={{ width: 'calc(100% - 40px)', marginLeft: '20px' }}
                   />

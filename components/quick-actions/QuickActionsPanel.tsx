@@ -66,7 +66,7 @@ export function QuickActionsPanel() {
       id: 'new-task',
       label: 'New Task',
       icon: Plus,
-      color: 'bg-blue-600 hover:bg-blue-500',
+      color: 'bg-red-600 hover:bg-red-500',
       action: () => document.dispatchEvent(new CustomEvent('create-task')),
     },
     {

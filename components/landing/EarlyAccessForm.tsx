@@ -12,7 +12,7 @@ export function EarlyAccessForm() {
     <section id="early-access" className="relative px-4 sm:px-6 py-24 overflow-hidden">
       {/* Enhanced ambient glow */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-blue-500/10 rounded-full blur-[128px]" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-red-500/10 rounded-full blur-[128px]" />
       </div>
 
       <div className="relative z-10 max-w-2xl mx-auto text-center">
@@ -43,12 +43,12 @@ export function EarlyAccessForm() {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@company.com"
               required
-              className="flex-1 px-4 py-3 glass-2 rounded-xl text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
+              className="flex-1 px-4 py-3 glass-2 rounded-xl text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-red-500/50 text-sm"
             />
             <button
               type="submit"
               disabled={status === 'loading'}
-              className="px-6 py-3 bg-blue-600 hover:bg-blue-500 disabled:bg-blue-600/50 text-white rounded-xl font-semibold transition-colors flex items-center justify-center gap-2 shadow-lg shadow-blue-500/25 text-sm whitespace-nowrap shimmer-btn"
+              className="px-6 py-3 bg-red-600 hover:bg-red-500 disabled:bg-red-600/50 text-white rounded-xl font-semibold transition-colors flex items-center justify-center gap-2 shadow-lg shadow-red-500/25 text-sm whitespace-nowrap shimmer-btn"
             >
               {status === 'loading' ? (
                 <Loader2 className="w-4 h-4 animate-spin" />

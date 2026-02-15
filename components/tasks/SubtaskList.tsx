@@ -205,7 +205,7 @@ export function SubtaskList({ parentId, subtasks, onSubtaskClick }: SubtaskListP
               }
             }}
             disabled={!newTitle.trim() || createSubtaskMutation.isPending}
-            className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-40 text-white rounded-lg text-xs font-medium transition-colors"
+            className="px-3 py-1.5 bg-red-600 hover:bg-red-700 disabled:opacity-40 text-white rounded-lg text-xs font-medium transition-colors"
           >
             {createSubtaskMutation.isPending ? (
               <Loader2 className="w-3.5 h-3.5 animate-spin" />

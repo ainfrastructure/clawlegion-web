@@ -91,7 +91,7 @@ function ConfirmModal({ action, onConfirm, onCancel, loading }: ConfirmModalProp
             className={`flex-1 px-4 py-2 rounded-lg transition-colors disabled:opacity-50 ${
               action.dangerous
                 ? 'bg-red-600 hover:bg-red-700 text-white'
-                : 'bg-blue-600 hover:bg-blue-700 text-white'
+                : 'bg-red-600 hover:bg-red-700 text-white'
             }`}
           >
             {loading ? 'Processing...' : 'Confirm'}
@@ -117,7 +117,7 @@ export function QuickActionsBar({ agentId, taskId, compact = false }: QuickActio
     red: 'bg-red-500/10 border-red-500/30 text-red-400 hover:bg-red-500/20',
     yellow: 'bg-yellow-500/10 border-yellow-500/30 text-yellow-400 hover:bg-yellow-500/20',
     green: 'bg-green-500/10 border-green-500/30 text-green-400 hover:bg-green-500/20',
-    blue: 'bg-blue-500/10 border-blue-500/30 text-blue-400 hover:bg-blue-500/20',
+    blue: 'bg-blue-500/10 border-blue-500/30 text-blue-400 hover:bg-red-500/20',
     purple: 'bg-purple-500/10 border-purple-500/30 text-purple-400 hover:bg-purple-500/20',
   };
 

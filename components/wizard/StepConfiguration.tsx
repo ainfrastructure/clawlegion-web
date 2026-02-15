@@ -74,7 +74,7 @@ export default function StepConfiguration({ data, updateData, onNext, onPrev }: 
           <h3 className="text-lg font-semibold text-gray-900 dark:text-slate-100">Quality Checks</h3>
           <button
             onClick={addQualityCheck}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm"
+            className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 text-sm"
           >
             + Add Check
           </button>
@@ -161,7 +161,7 @@ export default function StepConfiguration({ data, updateData, onNext, onPrev }: 
                 onClick={() => updateData({ maxRuntime: value })}
                 className={`px-3 py-1 rounded text-sm transition-colors
                   ${data.maxRuntime === value 
-                    ? 'bg-blue-600 text-white' 
+                    ? 'bg-red-600 text-white' 
                     : 'bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-slate-300 hover:bg-gray-200 dark:hover:bg-slate-600'}`}
               >
                 {label}
@@ -181,7 +181,7 @@ export default function StepConfiguration({ data, updateData, onNext, onPrev }: 
         </button>
         <button
           onClick={onNext}
-          className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold transition-colors"
+          className="px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 font-semibold transition-colors"
         >
           Review Summary
         </button>

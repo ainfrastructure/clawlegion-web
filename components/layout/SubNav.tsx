@@ -28,7 +28,7 @@ export function SubNav({ items, basePath }: SubNavProps) {
             href={item.href}
             className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
               isActive
-                ? 'bg-blue-500/20 text-blue-400'
+                ? 'bg-red-500/20 text-red-400'
                 : 'text-slate-400 hover:bg-slate-700 hover:text-white'
             }`}
           >

@@ -136,7 +136,7 @@ export default function PreferencesPage() {
           disabled={!hasChanges || saving}
           className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${
             hasChanges
-              ? "bg-blue-600 hover:bg-blue-700 text-white"
+              ? "bg-red-600 hover:bg-red-700 text-white"
               : saved
               ? "bg-green-600 text-white"
               : "bg-slate-700 text-slate-400"
@@ -175,7 +175,7 @@ export default function PreferencesPage() {
                 onClick={() => setTheme(opt.value as UserPreferences["theme"])}
                 className={`flex flex-col items-center gap-2 p-4 rounded-lg border transition-all ${
                   preferences.theme === opt.value
-                    ? "border-blue-500 bg-blue-500/10 text-blue-400"
+                    ? "border-red-500 bg-red-500/10 text-red-400"
                     : "border-white/[0.06] bg-slate-800/50 text-slate-400 hover:border-slate-600"
                 }`}
               >
@@ -288,7 +288,7 @@ export default function PreferencesPage() {
         </Section>
 
         {/* Chat */}
-        <Section icon={<MessageSquare className="text-blue-400" />} title="Chat">
+        <Section icon={<MessageSquare className="text-red-400" />} title="Chat">
           <div className="space-y-4">
             <Toggle
               label="Auto-Scroll"
@@ -355,7 +355,7 @@ function Toggle({
       <button
         onClick={() => onChange(!checked)}
         className={`relative w-12 h-6 rounded-full transition-colors ${
-          checked ? "bg-blue-600" : "bg-slate-600"
+          checked ? "bg-red-600" : "bg-slate-600"
         }`}
       >
         <div
@@ -385,7 +385,7 @@ function Select({
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
+        className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:border-red-500"
       >
         {options.map((opt) => (
           <option key={opt.value} value={opt.value}>

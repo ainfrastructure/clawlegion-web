@@ -9,7 +9,7 @@
     --foreground: 15 23 42; /* slate-900 */
     --card: 255 255 255;
     --card-foreground: 15 23 42;
-    --primary: 59 130 246; /* blue-500 */
+    --primary: 220 38 38; /* ClawLegion crimson */
     --primary-foreground: 255 255 255;
     --secondary: 241 245 249; /* slate-100 */
     --secondary-foreground: 30 41 59; /* slate-800 */
@@ -21,7 +21,7 @@
     --destructive-foreground: 255 255 255;
     --border: 226 232 240; /* slate-200 */
     --input: 226 232 240;
-    --ring: 59 130 246;
+    --ring: 220 38 38;
     --radius: 0.5rem;
   }
 
@@ -31,7 +31,7 @@
     --foreground: 241 245 249; /* slate-100 */
     --card: 30 41 59; /* slate-800 */
     --card-foreground: 241 245 249;
-    --primary: 59 130 246; /* blue-500 */
+    --primary: 220 38 38; /* ClawLegion crimson */
     --primary-foreground: 255 255 255;
     --secondary: 51 65 85; /* slate-700 */
     --secondary-foreground: 241 245 249;
@@ -43,7 +43,14 @@
     --destructive-foreground: 255 255 255;
     --border: 51 65 85; /* slate-700 */
     --input: 51 65 85;
-    --ring: 59 130 246;
+    --ring: 220 38 38; /* ClawLegion crimson */
+
+    /* ClawLegion Brand Tokens */
+    --cl-crimson: #DC2626;
+    --cl-crimson-hover: #B91C1C;
+    --cl-crimson-muted: #7F1D1D;
+    --cl-navy: #0F172A;
+    --cl-navy-light: #1E293B;
 
     /* Glass surfaces */
     --glass-bg: rgb(255 255 255 / 0.03);
@@ -53,7 +60,7 @@
     --glass-3: rgb(255 255 255 / 0.10);
 
     /* Glow accents */
-    --glow-primary: rgb(59 130 246 / 0.5);
+    --glow-primary: rgb(220 38 38 / 0.5);
     --glow-success: rgb(16 185 129 / 0.5);
     --glow-danger: rgb(239 68 68 / 0.5);
     --glow-purple: rgb(139 92 246 / 0.5);
@@ -61,8 +68,9 @@
     /* Shadow tokens */
     --shadow-glass: 0 4px 24px -1px rgb(0 0 0 / 0.3), 0 2px 8px -2px rgb(0 0 0 / 0.2);
     --shadow-glass-lg: 0 8px 40px -4px rgb(0 0 0 / 0.4), 0 4px 16px -4px rgb(0 0 0 / 0.3);
-    --shadow-glow-blue: 0 0 20px -4px rgb(59 130 246 / 0.3);
+    --shadow-glow-blue: 0 0 20px -4px rgb(220 38 38 / 0.3);
     --shadow-glow-purple: 0 0 20px -4px rgb(139 92 246 / 0.3);
+    --shadow-glow-crimson: 0 0 20px -4px rgb(220 38 38 / 0.4);
   }
 }
 
@@ -183,6 +191,10 @@
     box-shadow: var(--shadow-glow-purple);
   }
 
+  .glow-crimson {
+    box-shadow: var(--shadow-glow-crimson);
+  }
+
   /* Typography utilities */
   .heading-xl {
     @apply text-3xl sm:text-4xl font-bold tracking-tight text-white;
@@ -209,7 +221,7 @@
   .ambient-bg {
     background-color: #020617;
     background-image:
-      radial-gradient(ellipse 80% 60% at 20% 0%, rgb(59 130 246 / 0.08), transparent),
+      radial-gradient(ellipse 80% 60% at 20% 0%, rgb(220 38 38 / 0.08), transparent),
       radial-gradient(ellipse 60% 50% at 80% 100%, rgb(139 92 246 / 0.06), transparent);
   }
 
@@ -356,8 +368,8 @@
 
   /* Sidebar active nav indicator */
   .nav-active-indicator {
-    box-shadow: inset 3px 0 0 0 rgb(59 130 246);
-    background: linear-gradient(to right, rgb(59 130 246 / 0.15), transparent);
+    box-shadow: inset 3px 0 0 0 rgb(220 38 38);
+    background: linear-gradient(to right, rgb(220 38 38 / 0.15), transparent);
   }
 
   /* CTA shimmer animation */

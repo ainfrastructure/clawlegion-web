@@ -93,7 +93,7 @@ export function EasyVsPower() {
               onClick={() => setActiveTab('power')}
               className={`px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 ${
                 activeTab === 'power'
-                  ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg shadow-blue-500/25'
+                  ? 'bg-gradient-to-r from-red-500 to-red-700 text-white shadow-lg shadow-red-500/25'
                   : 'text-slate-400 hover:text-white'
               }`}
             >
@@ -153,7 +153,7 @@ export function EasyVsPower() {
           >
             {/* Tagline */}
             <div className="text-center mb-8">
-              <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-300 text-sm font-medium">
+              <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-red-500/10 border border-red-500/20 text-red-300 text-sm font-medium">
                 Full control. Every lever. Your infrastructure.
               </span>
             </div>
@@ -161,9 +161,9 @@ export function EasyVsPower() {
               {powerFeatures.map((feature) => (
                 <div
                   key={feature.title}
-                  className="glass-2 glass-gradient-border rounded-2xl p-6 group hover:bg-white/[0.08] transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/10"
+                  className="glass-2 glass-gradient-border rounded-2xl p-6 group hover:bg-white/[0.08] transition-all duration-300 hover:shadow-lg hover:shadow-red-500/10"
                 >
-                  <div className="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center mb-4">
+                  <div className="w-12 h-12 rounded-xl bg-red-500/10 flex items-center justify-center mb-4">
                     <feature.icon className="w-6 h-6 text-blue-400" />
                   </div>
                   <h3 className="text-base font-semibold text-white mb-2">{feature.title}</h3>

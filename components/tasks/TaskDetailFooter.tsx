@@ -50,7 +50,7 @@ export function TaskDetailFooter({
             <button
               onClick={onStartTask}
               disabled={isStarting}
-              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg flex items-center gap-2 text-sm font-medium disabled:opacity-50 transition-colors shadow-glow-blue"
+              className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg flex items-center gap-2 text-sm font-medium disabled:opacity-50 transition-colors shadow-glow-blue"
             >
               {isStarting ? (
                 <Loader2 className="w-4 h-4 animate-spin" />

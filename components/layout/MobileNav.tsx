@@ -71,7 +71,7 @@ export function MobileNav() {
               onClick={() => setShowMore(false)}
               className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
                 isActive(item.href)
-                  ? 'bg-blue-500/20 text-blue-400'
+                  ? 'bg-red-500/20 text-red-400'
                   : 'text-slate-300 hover:bg-slate-800'
               }`}
             >
@@ -96,7 +96,7 @@ export function MobileNav() {
                   onClick={() => setShowMore(!showMore)}
                   className={`flex flex-col items-center justify-center min-w-[64px] min-h-[48px] px-3 py-2 rounded-lg transition-colors ${
                     active
-                      ? 'text-blue-400'
+                      ? 'text-red-400'
                       : 'text-slate-400 hover:text-white'
                   }`}
                 >
@@ -112,14 +112,14 @@ export function MobileNav() {
                 href={tab.href}
                 className={`flex flex-col items-center justify-center min-w-[64px] min-h-[48px] px-3 py-2 rounded-lg transition-colors ${
                   active
-                    ? 'text-blue-400'
+                    ? 'text-red-400'
                     : 'text-slate-400 hover:text-white'
                 }`}
               >
                 <div className="relative">
                   <Icon className="w-6 h-6" />
                   {active && (
-                    <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-blue-400 rounded-full" />
+                    <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-red-400 rounded-full" />
                   )}
                 </div>
                 <span className="text-xs mt-1 font-medium">{tab.label}</span>

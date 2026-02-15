@@ -74,7 +74,7 @@ export default function StepRepository({ data, updateData, onNext }: Props) {
               onClick={() => handleSelect(repo)}
               className={`text-left p-6 rounded-lg border-2 transition-all ${
                 data.repositoryId === repo.id
-                  ? 'border-blue-600 bg-blue-50 dark:bg-blue-900/20 shadow-md'
+                  ? 'border-red-600 bg-blue-50 dark:bg-blue-900/20 shadow-md'
                   : 'border-gray-200 dark:border-slate-700 hover:border-gray-300 dark:hover:border-slate-600 hover:shadow bg-white dark:bg-slate-800'
               }`}
             >
@@ -104,7 +104,7 @@ export default function StepRepository({ data, updateData, onNext }: Props) {
         <button
           onClick={onNext}
           disabled={!canProceed}
-          className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed font-semibold"
+          className="px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed font-semibold"
         >
           Continue
         </button>

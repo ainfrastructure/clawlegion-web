@@ -188,7 +188,7 @@ export function ChatSidebar({ activeTarget, onSelectTarget, userId = 'default-us
                     className={cn(
                       "w-full flex items-center gap-2 px-2 py-1.5 rounded-md text-sm transition-colors text-left",
                       active
-                        ? "bg-blue-600/20 text-white"
+                        ? "bg-red-600/20 text-white"
                         : "text-slate-400 hover:bg-slate-800 hover:text-slate-200",
                       collapsed && "justify-center"
                     )}
@@ -248,7 +248,7 @@ export function ChatSidebar({ activeTarget, onSelectTarget, userId = 'default-us
                     className={cn(
                       "w-full flex items-center gap-2 px-2 py-1.5 rounded-md text-sm transition-colors text-left",
                       active
-                        ? "bg-blue-600/20 text-white"
+                        ? "bg-red-600/20 text-white"
                         : "text-slate-400 hover:bg-slate-800 hover:text-slate-200",
                       collapsed && "justify-center"
                     )}

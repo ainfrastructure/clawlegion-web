@@ -98,7 +98,7 @@ export function PresetSelector({ presets, selectedId, onChange, isCustomized }: 
                 className={`
                   w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left
                   transition-colors duration-150
-                  ${selectedId === preset.id ? 'bg-blue-600/20 text-blue-100' : 'hover:bg-slate-700/50 text-slate-200'}
+                  ${selectedId === preset.id ? 'bg-red-600/20 text-blue-100' : 'hover:bg-slate-700/50 text-slate-200'}
                 `}
               >
                 {getPresetIcon(preset.id)}
@@ -128,7 +128,7 @@ export function PresetSelector({ presets, selectedId, onChange, isCustomized }: 
                     className={`
                       w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left
                       transition-colors duration-150
-                      ${selectedId === preset.id ? 'bg-blue-600/20 text-blue-100' : 'hover:bg-slate-700/50 text-slate-200'}
+                      ${selectedId === preset.id ? 'bg-red-600/20 text-blue-100' : 'hover:bg-slate-700/50 text-slate-200'}
                     `}
                   >
                     <Sparkles className="w-4 h-4 text-emerald-400" />

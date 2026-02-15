@@ -72,7 +72,7 @@ export function ActiveSessions({ sessions, isLoading }: ActiveSessionsProps) {
           <p className="text-sm text-slate-500 dark:text-slate-400">No sessions yet</p>
           <Link
             href="/sessions/new"
-            className="inline-block mt-3 px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors"
+            className="inline-block mt-3 px-4 py-2 bg-red-600 text-white text-sm rounded-lg hover:bg-red-700 transition-colors"
           >
             <span className="flex items-center gap-1">
               <Plus className="w-4 h-4" />

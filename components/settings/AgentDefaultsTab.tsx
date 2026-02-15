@@ -178,7 +178,7 @@ export function AgentDefaultsTab() {
           <button
             onClick={handleSave}
             disabled={updateSettings.isPending}
-            className="px-5 py-2.5 bg-blue-600 hover:bg-blue-500 rounded-xl text-sm font-medium flex items-center gap-2 transition-colors disabled:opacity-50 shadow-lg shadow-blue-500/10"
+            className="px-5 py-2.5 bg-red-600 hover:bg-red-500 rounded-xl text-sm font-medium flex items-center gap-2 transition-colors disabled:opacity-50 shadow-lg shadow-red-500/10"
           >
             <Save size={14} /> {updateSettings.isPending ? 'Saving...' : 'Save'}
           </button>

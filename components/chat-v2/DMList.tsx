@@ -80,7 +80,7 @@ export function DMList({ selectedAgentId, onSelectAgent, userId = 'default-user'
             className={cn(
               'flex items-center gap-3 w-full p-2 rounded-lg transition-all text-left',
               isSelected
-                ? 'bg-blue-600/20 border border-blue-500/30'
+                ? 'bg-red-600/20 border border-blue-500/30'
                 : 'hover:glass-2 border border-transparent'
             )}
           >

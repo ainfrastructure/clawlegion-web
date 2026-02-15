@@ -115,9 +115,10 @@ const config: Config = {
       boxShadow: {
         'glass': '0 4px 24px -1px rgb(0 0 0 / 0.3), 0 2px 8px -2px rgb(0 0 0 / 0.2)',
         'glass-lg': '0 8px 40px -4px rgb(0 0 0 / 0.4), 0 4px 16px -4px rgb(0 0 0 / 0.3)',
-        'glow-blue': '0 0 20px -4px rgb(59 130 246 / 0.3)',
+        'glow-blue': '0 0 20px -4px rgb(220 38 38 / 0.3)',
         'glow-purple': '0 0 20px -4px rgb(139 92 246 / 0.3)',
         'glow-emerald': '0 0 20px -4px rgb(16 185 129 / 0.3)',
+        'glow-crimson': '0 0 20px -4px rgb(220 38 38 / 0.3)',
         'inner-light': 'inset 0 1px 0 0 rgb(255 255 255 / 0.06)',
         // Swiss: subtle, architectural shadows
         'swiss-sm': '0 1px 2px 0 rgb(0 0 0 / 0.05)',

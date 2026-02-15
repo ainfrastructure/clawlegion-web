@@ -99,7 +99,7 @@ export function InjectTaskModal({ agentId, agentName, onClose }: InjectTaskModal
           <button
             onClick={() => injectTaskMutation.mutate(task)}
             disabled={!task.title || injectTaskMutation.isPending}
-            className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded font-medium disabled:opacity-50 flex items-center justify-center gap-2 transition-colors"
+            className="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 rounded font-medium disabled:opacity-50 flex items-center justify-center gap-2 transition-colors"
           >
             <Send size={16} />
             {injectTaskMutation.isPending ? 'Injecting...' : 'Inject'}

@@ -307,7 +307,7 @@ export function CreateRoomDialog({ open, onClose, onCreated }: CreateRoomDialogP
               disabled={isCreating || !name.trim()}
               className={cn(
                 'px-4 py-2 rounded-lg text-sm font-medium',
-                'bg-blue-600 text-white hover:bg-blue-500',
+                'bg-red-600 text-white hover:bg-red-500',
                 'disabled:opacity-50 disabled:cursor-not-allowed',
                 'transition-colors flex items-center gap-2'
               )}
