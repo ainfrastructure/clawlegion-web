@@ -6,6 +6,7 @@ import {
   SwissGrid,
   SwissHeader,
   SwissInput,
+  SwissTextarea,
   SwissMetricCard,
   SwissSection,
   SwissStatusBadge,
@@ -119,8 +120,9 @@ export default function SwissDemoPage() {
                       </div>
                     </div>
                     <SwissStatusBadge 
-                      status={agent.status as 'active' | 'busy' | 'idle'}
-                      variant="dot"
+                      label={agent.status}
+                      type={agent.status === 'active' ? 'active' : agent.status === 'busy' ? 'warning' : 'neutral'}
+                      dot
                     />
                   </div>
                 </SwissCard>
@@ -131,15 +133,18 @@ export default function SwissDemoPage() {
           {/* Task Management */}
           <SwissSection title="Recent Tasks">
             <SwissTable
-              headers={['Task', 'Status', 'Assignee']}
-              rows={mockTasks.map(task => [
-                task.title,
-                <SwissStatusBadge 
-                  key={task.id} 
-                  status={task.status as 'completed' | 'in_progress' | 'pending'}
-                />,
-                task.assignee
-              ])}
+              columns={[
+                { key: 'title', label: 'Task', align: 'left' },
+                { key: 'status', label: 'Status', align: 'center', render: (task: any) => (
+                  <SwissStatusBadge 
+                    label={task.status.replace('_', ' ')}
+                    type={task.status === 'completed' ? 'success' : task.status === 'in_progress' ? 'active' : 'neutral'}
+                  />
+                )},
+                { key: 'assignee', label: 'Assignee', align: 'left' }
+              ]}
+              data={mockTasks}
+              getRowKey={(task) => task.id}
             />
           </SwissSection>
 
@@ -151,12 +156,11 @@ export default function SwissDemoPage() {
             <SwissInput 
               label="Agent Name"
               placeholder="e.g., Caesar"
-              helper="Choose a distinctive Roman name"
+              helperText="Choose a distinctive Roman name"
             />
-            <SwissInput 
+            <SwissTextarea 
               label="Role Description"
               placeholder="e.g., Strategic coordinator"
-              multiline
               rows={3}
             />
             <div className="flex gap-3 pt-2">
@@ -172,7 +176,11 @@ export default function SwissDemoPage() {
             icon={<Users className="h-12 w-12" />}
             title="No team members yet"
             description="Get started by inviting your first team member to join ClawLegion"
-            action={<SwissButton variant="primary">Invite Team Member</SwissButton>}
+            action={{
+              label: "Invite Team Member",
+              onClick: () => console.log("Invite clicked"),
+              variant: "primary"
+            }}
           />
         </SwissSection>
 
