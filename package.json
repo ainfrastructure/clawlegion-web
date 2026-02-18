@@ -13,7 +13,10 @@
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:headed": "playwright test --headed",
-    "test:e2e:report": "playwright show-report e2e-report"
+    "test:e2e:report": "playwright show-report e2e-report",
+    "test:visual": "playwright test visual-regression.spec.ts",
+    "test:visual:update": "playwright test visual-regression.spec.ts --update-snapshots",
+    "test:visual:headed": "playwright test visual-regression.spec.ts --headed"
   },
   "dependencies": {
     "@dagrejs/dagre": "^2.0.4",
