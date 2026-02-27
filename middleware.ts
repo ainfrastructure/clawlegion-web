@@ -17,6 +17,7 @@ export async function middleware(request: NextRequest) {
     '/demo-',          // Demo video + poster (public/demo-*)
     '/showcase/',       // Showcase screenshots for landing page
     '/optimized/',      // Pre-optimized WebP images for landing page
+    '/health',         // Health status page - public for monitoring
   ]
 
   // Check if path is public
