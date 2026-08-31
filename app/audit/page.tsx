@@ -5,6 +5,8 @@ import { useSearchParams, useRouter } from 'next/navigation'
 import { formatDate } from '@/lib/utils'
 import { useQuery } from '@tanstack/react-query'
 import { PageContainer } from '@/components/layout'
+import { useUIMode } from '@/hooks/useUIMode'
+import { ActivityFeed as EasyActivityFeed } from '@/components/mode-aware/ActivityFeed'
 import { ExportButton } from '@/components/ExportButton'
 import { ActivityFeed } from '@/components/audit/ActivityFeed'
 import {
@@ -86,9 +88,23 @@ export default function AuditPage() {
         <div className="text-center text-slate-400 py-12">Loading...</div>
       </PageContainer>
     }>
-      <AuditPageContent />
+      <AuditPageRouter />
     </Suspense>
   )
+}
+
+function AuditPageRouter() {
+  const { isEasy } = useUIMode()
+
+  if (isEasy) {
+    return (
+      <PageContainer>
+        <EasyActivityFeed />
+      </PageContainer>
+    )
+  }
+
+  return <AuditPageContent />
 }
 
 function AuditPageContent() {

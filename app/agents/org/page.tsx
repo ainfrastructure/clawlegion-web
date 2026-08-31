@@ -5,6 +5,8 @@ import { useQuery } from '@tanstack/react-query'
 import Link from 'next/link'
 import Image from 'next/image'
 import { PageContainer } from '@/components/layout'
+import { useUIMode } from '@/hooks/useUIMode'
+import { AgentGrid } from '@/components/mode-aware/AgentGrid'
 import { type AgentData } from '@/components/agents'
 import { OrgAgentCard } from '@/components/agents/OrgAgentCard'
 import { AgentDetailModal } from '@/components/agents/AgentDetailModal'
@@ -22,7 +24,7 @@ import {
 } from 'lucide-react'
 
 // ============================================
-// AGENT ORGANIZATION PAGE - Redesigned
+// AGENT ORGANIZATION PAGE - Mode-Aware
 // ============================================
 
 interface ApiAgent {
@@ -69,6 +71,20 @@ async function fetchHealth(): Promise<HealthData> {
 const LEADERSHIP_NAMES = ['caesar', 'lux']
 
 export default function AgentOrgPage() {
+  const { isEasy } = useUIMode()
+
+  if (isEasy) {
+    return (
+      <PageContainer>
+        <AgentGrid />
+      </PageContainer>
+    )
+  }
+
+  return <AgentOrgPowerMode />
+}
+
+function AgentOrgPowerMode() {
   const [selectedAgent, setSelectedAgent] = useState<AgentData | null>(null)
   const [showDetailModal, setShowDetailModal] = useState(false)
   const [showAddAgent, setShowAddAgent] = useState(false)

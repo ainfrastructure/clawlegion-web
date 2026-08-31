@@ -37,7 +37,7 @@ interface NavItem {
   subItems?: NavSubItem[]
 }
 
-// Easy mode: 5 simple items
+// Easy mode: 5 simple items — Home (⌂), Work (☐), Team (◎), Log (✎), Settings (⚙)
 const EASY_NAV_ITEMS: NavItem[] = [
   {
     href: '/dashboard',
@@ -57,7 +57,7 @@ const EASY_NAV_ITEMS: NavItem[] = [
   {
     href: '/audit',
     icon: <ScrollText className="w-5 h-5" />,
-    label: 'Audit'
+    label: 'Log'
   },
   {
     href: '/settings',
@@ -249,8 +249,10 @@ export function Sidebar() {
           >
             {uiMode === 'easy' ? (
               <>
-                <Zap className="w-3.5 h-3.5 text-amber-400" />
-                <span className="text-slate-400">Switch to <span className="text-amber-400 font-medium">Power Mode</span></span>
+                <span className="text-sm">🔌</span>
+                <span className="text-slate-400 flex-1 text-left">
+                  <span className="text-amber-400 font-medium">Power Mode</span> →
+                </span>
               </>
             ) : (
               <>

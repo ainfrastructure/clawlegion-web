@@ -476,6 +476,12 @@
     animation: fade-in 0.2s ease-out;
   }
 
+  /* Swiss Modal entrance animation */
+  @keyframes swiss-modal-in {
+    from { opacity: 0; transform: translateY(-16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
   /* Showcase slideshow animations */
   @keyframes showcase-slide-enter {
     from { transform: translateY(12px); }
@@ -718,4 +724,132 @@
 
 .scrollbar-hide::-webkit-scrollbar {
   display: none;  /* Chrome, Safari and Opera */
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SWISS DESIGN SYSTEM — Alpine Clarity
+   Philosophy: Function over form, objective communication,
+   mathematical precision, high contrast, purposeful space.
+   ═══════════════════════════════════════════════════════════════ */
+
+@layer base {
+  /* Swiss Design tokens — Easy Mode surfaces */
+  :root {
+    --swiss-bg: #FAFAFA;
+    --swiss-surface: #FFFFFF;
+    --swiss-surface-raised: #F7F7F8;
+    --swiss-surface-sunken: #EBEBED;
+    --swiss-border: #D4D4D8;
+    --swiss-border-subtle: #EBEBED;
+    --swiss-text-primary: #0A0A0A;
+    --swiss-text-secondary: #52525B;
+    --swiss-text-tertiary: #71717A;
+    --swiss-text-muted: #A1A1AA;
+    --swiss-accent: #2563EB;
+    --swiss-accent-hover: #1D4ED8;
+    --swiss-accent-muted: #DBEAFE;
+    --swiss-success: #16A34A;
+    --swiss-warning: #D97706;
+    --swiss-error: #DC2626;
+    --swiss-radius: 4px;
+    --swiss-grid: 8px;
+    --swiss-grid-half: 4px;
+    --swiss-transition: 150ms cubic-bezier(0.25, 0.1, 0.25, 1);
+  }
+
+  .dark {
+    --swiss-bg: #09090B;
+    --swiss-surface: #18181B;
+    --swiss-surface-raised: #27272A;
+    --swiss-surface-sunken: #0F0F12;
+    --swiss-border: #27272A;
+    --swiss-border-subtle: #1E1E22;
+    --swiss-text-primary: #FAFAFA;
+    --swiss-text-secondary: #A1A1AA;
+    --swiss-text-tertiary: #71717A;
+    --swiss-text-muted: #52525B;
+    --swiss-accent: #3B82F6;
+    --swiss-accent-hover: #2563EB;
+    --swiss-accent-muted: #1E3A5F;
+    --swiss-success: #22C55E;
+    --swiss-warning: #F59E0B;
+    --swiss-error: #EF4444;
+  }
+}
+
+@layer utilities {
+  /* ─── Swiss Surface Utilities ─── */
+  .swiss-surface {
+    background-color: var(--swiss-surface);
+    border: 1px solid var(--swiss-border);
+    border-radius: var(--swiss-radius);
+  }
+
+  .swiss-surface-raised {
+    background-color: var(--swiss-surface-raised);
+    border: 1px solid var(--swiss-border-subtle);
+    border-radius: var(--swiss-radius);
+  }
+
+  .swiss-surface-sunken {
+    background-color: var(--swiss-surface-sunken);
+    border-radius: var(--swiss-radius);
+  }
+
+  /* ─── Swiss Typography Utilities ─── */
+  .swiss-heading {
+    color: var(--swiss-text-primary);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+
+  .swiss-body {
+    color: var(--swiss-text-secondary);
+    font-weight: 400;
+    letter-spacing: 0;
+    line-height: 1.6;
+  }
+
+  .swiss-label {
+    color: var(--swiss-text-tertiary);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    line-height: 16px;
+  }
+
+  .swiss-mono {
+    font-family: var(--font-mono), ui-monospace, monospace;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
+  }
+
+  /* ─── Swiss Grid Utilities ─── */
+  .swiss-grid-bg {
+    background-image:
+      linear-gradient(var(--swiss-border-subtle) 1px, transparent 1px),
+      linear-gradient(90deg, var(--swiss-border-subtle) 1px, transparent 1px);
+    background-size: var(--swiss-grid) var(--swiss-grid);
+  }
+
+  /* ─── Swiss Divider ─── */
+  .swiss-divider {
+    height: 1px;
+    background-color: var(--swiss-border);
+    border: none;
+    margin: calc(var(--swiss-grid) * 3) 0;
+  }
+
+  /* ─── Swiss Focus Ring ─── */
+  .swiss-focus {
+    outline: 2px solid var(--swiss-accent);
+    outline-offset: 2px;
+  }
+
+  /* ─── Swiss Transition ─── */
+  .swiss-transition {
+    transition: all var(--swiss-transition);
+  }
 }

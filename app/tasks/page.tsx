@@ -6,6 +6,8 @@ import { useSearchParams, useRouter, usePathname } from 'next/navigation'
 import Link from 'next/link'
 import api from '@/lib/api'
 import { PageContainer } from '@/components/layout'
+import { useUIMode } from '@/hooks/useUIMode'
+import { TaskList } from '@/components/mode-aware/TaskList'
 import {
   ListTodo,
   Plus,
@@ -36,7 +38,7 @@ import {
 } from './components'
 
 // ============================================
-// TASKS PAGE - Mobile Responsive
+// TASKS PAGE - Mode-Aware
 // ============================================
 
 export default function TasksPage() {
@@ -46,9 +48,23 @@ export default function TasksPage() {
         <div className="text-center text-slate-400 py-12">Loading tasks...</div>
       </PageContainer>
     }>
-      <TasksPageContent />
+      <TasksPageRouter />
     </Suspense>
   )
+}
+
+function TasksPageRouter() {
+  const { isEasy } = useUIMode()
+
+  if (isEasy) {
+    return (
+      <PageContainer>
+        <TaskList />
+      </PageContainer>
+    )
+  }
+
+  return <TasksPageContent />
 }
 
 function TasksPageContent() {

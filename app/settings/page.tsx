@@ -3,6 +3,8 @@
 import { Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { PageContainer } from '@/components/layout'
+import { useUIMode } from '@/hooks/useUIMode'
+import { SettingsView as EasySettingsView } from '@/components/mode-aware/SettingsView'
 import { Settings } from 'lucide-react'
 import {
   SettingsTabs,
@@ -70,10 +72,24 @@ function SettingsContent() {
   )
 }
 
+function SettingsRouter() {
+  const { isEasy } = useUIMode()
+
+  if (isEasy) {
+    return (
+      <PageContainer>
+        <EasySettingsView />
+      </PageContainer>
+    )
+  }
+
+  return <SettingsContent />
+}
+
 export default function SettingsPage() {
   return (
     <Suspense>
-      <SettingsContent />
+      <SettingsRouter />
     </Suspense>
   )
 }

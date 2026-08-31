@@ -7,9 +7,11 @@ import { PageContainer } from '@/components/layout'
 import { AgentCard, AgentCardWithActivity, type AgentData, type AgentStatus } from '@/components/agents'
 import { getAgentByName } from '@/components/chat-v2/agentConfig'
 import { MetricCard } from '@/components/ui/MetricCard'
+import { SwissMetricCard, SwissSection, SwissTaskCard, SwissEmptyState } from '@/components/swiss'
 import { MobileAgentScroller, type MobileAgentData } from '@/components/dashboard'
 import { useMobile } from '@/hooks/useMobile'
 import { useSidebar } from '@/components/layout/SidebarContext'
+import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import {
   Cpu,
@@ -47,6 +49,7 @@ function formatUptime(seconds: number): string {
 // ============================================
 
 function EasyModeDashboard() {
+  const { data: session } = useSession()
   const { data: boardData } = useQuery({
     queryKey: ['board'],
     queryFn: () => api.get('/tasks/board').then(r => r.data),
@@ -78,116 +81,96 @@ function EasyModeDashboard() {
   const qualityScore = metrics?.quality.avgDeliverableScore
   const hoursSaved = metrics?.roi.estimatedHoursSaved ?? 0
 
+  const userName = session?.user?.name ?? 'there'
+
   return (
     <PageContainer>
-      <div className="space-y-8">
+      <div className="space-y-swiss-8">
         {/* Greeting */}
         <div>
-          <h1 className="text-2xl font-bold text-white">Welcome back</h1>
-          <p className="text-slate-400 mt-1">Here&apos;s what&apos;s happening with your work</p>
+          <h1 className="text-swiss-2xl font-semibold text-[var(--swiss-text-primary)] tracking-tight">
+            Welcome back, {userName}
+          </h1>
+          <p className="text-swiss-sm text-[var(--swiss-text-tertiary)] mt-swiss-1">
+            Here is what is happening
+          </p>
         </div>
 
-        {/* Your Output - 3 key metrics */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <MetricCard
-            icon={<CheckCircle2 className="text-green-400" />}
+        {/* Your Output - 3 SwissMetricCards */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-swiss-4">
+          <SwissMetricCard
+            icon={<CheckCircle2 size={16} />}
             label="Tasks Done"
             value={completedCount}
-            color="green"
           />
-          <MetricCard
-            icon={<Star className="text-amber-400" />}
+          <SwissMetricCard
+            icon={<Star size={16} />}
             label="Quality Score"
             value={qualityScore != null ? `${qualityScore}/100` : 'N/A'}
-            color="amber"
           />
-          <MetricCard
-            icon={<Zap className="text-purple-400" />}
+          <SwissMetricCard
+            icon={<Zap size={16} />}
             label="Hours Saved"
             value={hoursSaved >= 1000 ? `${(hoursSaved / 1000).toFixed(1)}k` : String(hoursSaved)}
-            color="purple"
           />
         </div>
 
-        {/* What's happening - active tasks */}
-        <div className="glass-2 rounded-xl p-5">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-white">In Progress</h2>
-            <Link href="/tasks" className="text-sm text-blue-400 hover:text-blue-300 flex items-center gap-1">
+        {/* In Progress section */}
+        <SwissSection title="In Progress">
+          <div className="flex items-center justify-between mb-swiss-4">
+            <div />
+            <Link href="/tasks" className="text-swiss-sm text-[var(--swiss-accent)] hover:underline flex items-center gap-1">
               View all <ArrowRight size={14} />
             </Link>
           </div>
           {activeTasks.length === 0 ? (
-            <div className="text-center py-8 text-slate-500">
-              <p>No active tasks right now</p>
-              <Link href="/tasks" className="text-blue-400 hover:text-blue-300 text-sm mt-2 inline-block">
-                Create a task to get started
-              </Link>
-            </div>
+            <SwissEmptyState
+              icon={<ListTodo size={24} />}
+              title="No active tasks right now"
+              description="Tasks will appear here when work is in progress"
+              action={{
+                label: 'Create a task',
+                onClick: () => { window.location.href = '/tasks' },
+                variant: 'primary',
+              }}
+            />
           ) : (
-            <div className="space-y-3">
+            <div className="space-y-swiss-2">
               {activeTasks.map((task: any) => (
-                <EasyTaskCard key={task.id} task={task} />
+                <SwissTaskCard
+                  key={task.id}
+                  taskId={task.shortId}
+                  title={task.title}
+                  status={task.status}
+                  priority={task.priority}
+                  assignee={task.assignedTo ?? task.assignee}
+                  onClick={() => { window.location.href = `/tasks?taskId=${task.id}` }}
+                />
               ))}
             </div>
           )}
-        </div>
+        </SwissSection>
 
-        {/* Recently Completed */}
+        {/* Recently Done section */}
         {recentlyCompleted.length > 0 && (
-          <div className="glass-2 rounded-xl p-5">
-            <h2 className="text-lg font-semibold text-white mb-4">Recently Completed</h2>
-            <div className="space-y-3">
+          <SwissSection title="Recently Done" divider>
+            <div className="space-y-swiss-2">
               {recentlyCompleted.map((task: any) => (
-                <EasyTaskCard key={task.id} task={task} />
+                <SwissTaskCard
+                  key={task.id}
+                  taskId={task.shortId}
+                  title={task.title}
+                  status={task.status}
+                  priority={task.priority}
+                  assignee={task.assignedTo ?? task.assignee}
+                  onClick={() => { window.location.href = `/tasks?taskId=${task.id}` }}
+                />
               ))}
             </div>
-          </div>
+          </SwissSection>
         )}
       </div>
     </PageContainer>
-  )
-}
-
-function EasyTaskCard({ task }: { task: any }) {
-  const statusColors: Record<string, string> = {
-    in_progress: 'bg-amber-500/20 text-amber-400',
-    building: 'bg-amber-500/20 text-amber-400',
-    researching: 'bg-indigo-500/20 text-indigo-400',
-    planning: 'bg-violet-500/20 text-violet-400',
-    verifying: 'bg-cyan-500/20 text-cyan-400',
-    done: 'bg-green-500/20 text-green-400',
-    completed: 'bg-green-500/20 text-green-400',
-  }
-
-  const statusLabels: Record<string, string> = {
-    in_progress: 'In Progress',
-    building: 'Building',
-    researching: 'Researching',
-    planning: 'Planning',
-    verifying: 'Verifying',
-    done: 'Done',
-    completed: 'Done',
-  }
-
-  const badgeClass = statusColors[task.status] ?? 'bg-slate-700 text-slate-300'
-  const label = statusLabels[task.status] ?? task.status
-
-  return (
-    <Link
-      href={`/tasks?taskId=${task.id}`}
-      className="flex items-center justify-between p-3 rounded-lg bg-white/[0.02] hover:bg-white/[0.05] border border-white/[0.04] transition-colors"
-    >
-      <div className="flex-1 min-w-0 mr-3">
-        <p className="text-sm font-medium text-slate-200 truncate">{task.title}</p>
-        {task.assignedTo && (
-          <p className="text-xs text-slate-500 mt-0.5">Assigned to {task.assignedTo}</p>
-        )}
-      </div>
-      <span className={`text-xs px-2 py-0.5 rounded-full whitespace-nowrap ${badgeClass}`}>
-        {label}
-      </span>
-    </Link>
   )
 }
 
