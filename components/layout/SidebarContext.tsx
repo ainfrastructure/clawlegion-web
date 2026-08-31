@@ -32,6 +32,14 @@ export function SidebarProvider({ children }: { children: ReactNode }) {
     setUIModeState(mode)
     if (typeof window !== 'undefined') {
       localStorage.setItem('clawlegion-ui-mode', mode)
+      // Fire-and-forget server-side sync
+      fetch('/api/profile/preferences', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ uiMode: mode }),
+      }).catch(() => {
+        // Silent fail — localStorage is source of truth
+      })
     }
   }
 
